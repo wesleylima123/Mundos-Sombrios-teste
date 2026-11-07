@@ -497,7 +497,17 @@ window.MS_DB_READY = (async function () {
             const { data, error } = await supabase.rpc('append_table_event_v3', {
                 p_table_id: id, p_event_type: String(eventType), p_payload: payload || {}, p_client_event_id: clientEventId
             });
-            if (!error) return { data: data || null, error: null };
+            if (!error) {
+                // O Broadcast disparado pelo gatilho do banco chega com alguns segundos de atraso.
+                // Retransmite a linha já gravada pelo canal aberto para entrega imediata;
+                // os receptores descartam a cópia do gatilho pelo mesmo id.
+                const live = activeRealtimeChannels.get(id)?.channel;
+                if (live && data?.id) {
+                    Promise.resolve(live.send({ type: 'broadcast', event: 'table:event', payload: data }))
+                        .catch(err => console.warn('[Mundos Sombrios] Broadcast imediato falhou; o gatilho do banco entrega:', err));
+                }
+                return { data: data || null, error: null };
+            }
             // Compatibilidade controlada com instalações ainda sem a migração V2.7.
             if (!/append_table_event_v3|schema cache|function/i.test(String(error.message || error))) return { data: null, error };
             const actorId = String(window.currentUser?.authUserId || window.currentUser?.id || '');

@@ -1,0 +1,31 @@
+/* Fichas flutuantes e formulário canônico de pontos. */
+#ms-sheet-floats{position:fixed;inset:0;pointer-events:none;z-index:16030}
+#ms-sheet-floats[hidden],#ms-sheet-floats [hidden],.ms-participant-window[hidden]{display:none!important}
+.ms-sheet-orb{position:fixed;pointer-events:auto;width:60px;height:60px;min-width:44px;border-radius:50%;border:2px solid #c6aa70;color:#f1ddb2;background:radial-gradient(circle at 35% 20%,#394353,#10151e 75%);box-shadow:0 5px 22px #0009;font:700 1rem Georgia,serif;cursor:grab;touch-action:none}
+.ms-sheet-orb[aria-expanded=true]{outline:3px solid #8bd7df;outline-offset:3px}
+.ms-sheet-mini,.ms-participant-window{position:fixed;pointer-events:auto;z-index:16031;color:#e7eaf0;background:#101720;border:1px solid #8c7d60;border-radius:12px;box-shadow:0 15px 65px #000b;overflow:hidden;font:400 .9375rem/1.5 Arial,sans-serif}
+.ms-sheet-mini{width:min(360px,calc(100vw - 16px));max-height:calc(100dvh - 100px);display:flex;flex-direction:column}
+.ms-sheet-mini header,.ms-participant-window header{display:flex;justify-content:space-between;gap:6px;align-items:center;padding:8px;border-bottom:1px solid #364150;background:#182230}
+.ms-sheet-mini button,.ms-participant-window button,.ms-points-dialog button{min-height:44px;border:1px solid #536174;border-radius:6px;background:#1b2838;color:#eff2f7;padding:8px 12px;font:600 .875rem/1.35 Arial,sans-serif;cursor:pointer}
+.ms-sheet-mini :focus-visible,.ms-sheet-orb:focus-visible,.ms-participant-window :focus-visible,.ms-points-dialog :focus-visible{outline:3px solid #90dbe5;outline-offset:2px}
+.ms-sheet-drag{cursor:grab!important;touch-action:none;flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis}
+.ms-sheet-private{font-size:.75rem;color:#c2b590;margin:8px 12px}
+.ms-sheet-mini-body{overflow:auto;overscroll-behavior:contain;padding:12px;min-height:0}
+.ms-sheet-mini .ms-viewer-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.ms-sheet-mini .ms-viewer-grid article{padding:8px;background:#192230;border:1px solid #344053;border-radius:6px}
+.ms-sheet-mini .ms-viewer-grid span,.ms-sheet-mini .ms-viewer-grid strong{display:block}
+.ms-sheet-mini .ms-viewer-grid strong{font-size:1.125rem;color:#f0d79f}
+.ms-sheet-mini .ms-evo-sheet-list article{display:grid;padding:8px 0;border-bottom:1px solid #303b49}
+.ms-sheet-mini .ms-viewer-section{margin-bottom:18px}.ms-sheet-mini p{overflow-wrap:anywhere}
+.ms-sheet-mini footer,.ms-participant-window footer{display:flex;gap:8px;padding:10px;border-top:1px solid #364150}
+.ms-participant-window{width:min(900px,calc(100vw - 16px));max-height:calc(100dvh - 100px);display:flex;flex-direction:column;z-index:16020}
+.ms-participant-window>p{margin:12px 18px;color:#b8c4d4}.ms-participant-window main{padding:16px;overflow:auto;min-height:0}
+.ms-participant-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:14px}
+.ms-participant-grid article{background:#172130;border:1px solid #465368;border-radius:10px;padding:18px}.ms-participant-grid h3{font:600 1.25rem Georgia,serif;color:#eddbb9}.ms-participant-grid p{color:#bac6d8;min-height:44px}
+.ms-participant-grid dl{display:flex;flex-wrap:wrap;gap:12px}.ms-participant-grid dt{font-size:.75rem}.ms-participant-grid dd{margin:0;font-size:1.1rem}.ms-participant-seal{display:grid;place-items:center;width:44px;height:44px;border:1px solid #a68c59;border-radius:50%;color:#ead5aa}
+.ms-points-dialog{width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 56px);overflow:auto;border:1px solid #a78e5c;border-radius:14px;background:#101720;color:#eef2f6;padding:24px;box-shadow:0 20px 90px #000b;font:400 1rem/1.5 Arial,sans-serif}
+.ms-points-dialog::backdrop{background:#03070dbe;backdrop-filter:blur(4px)}
+.ms-points-dialog header,.ms-points-dialog footer{display:flex;justify-content:space-between;gap:12px;align-items:center}.ms-points-dialog h2{margin:4px 0 12px;font:500 1.75rem Georgia,serif}.ms-points-dialog small{color:#d6bf8b;letter-spacing:.08em}
+.ms-points-dialog label{display:grid;gap:8px;margin:18px 0}.ms-points-dialog :is(input,select,textarea){min-height:44px;width:100%;box-sizing:border-box;padding:10px;background:#080f18;color:#f4f6fa;border:1px solid #617089;border-radius:6px;font:inherit}.ms-points-dialog textarea{min-height:80px}.ms-points-dialog .primary{background:#d9c08b;color:#101720}.ms-points-dialog button:disabled{opacity:.5;cursor:not-allowed}
+.ms-points-balances{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px;background:#192332;border-radius:8px}.ms-points-balances b{display:block}.ms-points-preview{display:block;padding:14px;border-left:3px solid #93d9dd;background:#172a30}.ms-points-dialog [data-error]{color:#ffb7ac}
+@media(prefers-reduced-motion:reduce){.ms-sheet-mini,.ms-sheet-orb{transition:none;animation:none}}

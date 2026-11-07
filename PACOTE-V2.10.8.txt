@@ -1,0 +1,18 @@
+SITE OFICIAL MS — V2.10.8
+
+Revisão de QA do Grid/Matriz Tática com testes reais como Jogador, Mestre e ADM.
+
+Correções principais:
+- Grid voltou a ocupar integralmente o workspace; removido colapso 0x0 do canvas/overlay.
+- Dock de ferramentas reorganizado em grupos horizontais: Movimento, Mestre, Medição e Estado.
+- Controles GM não ficam mais empilhados/cortados, inclusive no mobile.
+- Editor da Matriz elevado acima das fichas flutuantes e overlays auxiliares.
+- Rodapé mobile mantém Restaurar, Descartar e Aplicar à Cena sempre acessíveis.
+- Painel ganhou resumo vivo da matriz e nomenclatura mais clara para ajustes de mapa/tabuleiro.
+- Medalhões de ficha respeitam a área segura abaixo do cabeçalho da janela ativa.
+- master-tools.js passa a integrar o runtime sob demanda da Mesa, garantindo persistência da Matriz em entradas frias.
+
+Validação:
+- 310 testes / 291 aprovados / 0 falhas / 19 condicionais ou ignorados.
+- 12/12 combinações responsivas aprovadas nos três papéis.
+- Preview, formatos, calibração, descartar, aplicar, snap, visibilidade, medição, NPC, tamanho de totem e broadcast efêmero validados em navegador.

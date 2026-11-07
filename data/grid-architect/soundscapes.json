@@ -1,0 +1,222 @@
+[
+  {
+    "id": "exodo_archive",
+    "name": "Arquivo Nexo",
+    "universe": "exodo",
+    "category": "tecnológico",
+    "file": "assets/grid-architect/audio/exodo_archive.ogg",
+    "description": "Ventilação profunda, servidores biotecnológicos e pulsos de dados distantes.",
+    "defaultVolume": 0.34,
+    "loop": true
+  },
+  {
+    "id": "exodo_biolab",
+    "name": "Laboratório Biométrico",
+    "universe": "exodo",
+    "category": "biotecnológico",
+    "file": "assets/grid-architect/audio/exodo_biolab.ogg",
+    "description": "Ar estéril, maquinário úmido, servos discretos e atividade orgânica controlada.",
+    "defaultVolume": 0.34,
+    "loop": true
+  },
+  {
+    "id": "exodo_industrial",
+    "name": "Complexo Industrial",
+    "universe": "exodo",
+    "category": "industrial",
+    "file": "assets/grid-architect/audio/exodo_industrial.ogg",
+    "description": "Turbinas, hidráulica e ressonância metálica de infraestrutura pesada.",
+    "defaultVolume": 0.34,
+    "loop": true
+  },
+  {
+    "id": "exodo_city_rain",
+    "name": "Megacidade sob Chuva",
+    "universe": "exodo",
+    "category": "urbano",
+    "file": "assets/grid-architect/audio/exodo_city_rain.ogg",
+    "description": "Chuva sobre metal e vidro, tráfego distante e baixa vibração urbana.",
+    "defaultVolume": 0.34,
+    "loop": true
+  },
+  {
+    "id": "ocultatun_archive",
+    "name": "Arquivo Interdito",
+    "universe": "ocultatun",
+    "category": "investigação",
+    "file": "assets/grid-architect/audio/ocultatun_archive.ogg",
+    "description": "Silêncio de arquivo, madeira, salas profundas e ressonância baixa.",
+    "defaultVolume": 0.34,
+    "loop": true
+  },
+  {
+    "id": "ocultatun_ritual",
+    "name": "Câmara Ritual",
+    "universe": "ocultatun",
+    "category": "ritual",
+    "file": "assets/grid-architect/audio/ocultatun_ritual.ogg",
+    "description": "Sub-harmônicos, ar imóvel e ressonâncias de pedra sem melodia definida.",
+    "defaultVolume": 0.34,
+    "loop": true
+  },
+  {
+    "id": "ocultatun_anomaly",
+    "name": "Anomalia Ativa",
+    "universe": "ocultatun",
+    "category": "anomalia",
+    "file": "assets/grid-architect/audio/ocultatun_anomaly.ogg",
+    "description": "Batimentos espectrais instáveis, pressão grave e artefatos eletrônicos impossíveis.",
+    "defaultVolume": 0.34,
+    "loop": true
+  },
+  {
+    "id": "ocultatun_subterranean",
+    "name": "Subsolo Inundado",
+    "universe": "ocultatun",
+    "category": "subterrâneo",
+    "file": "assets/grid-architect/audio/ocultatun_subterranean.ogg",
+    "description": "Água, tubulações, goteiras e vibração estrutural distante.",
+    "defaultVolume": 0.34,
+    "loop": true
+  },
+  {
+    "id": "forest_night",
+    "name": "Floresta Noturna",
+    "universe": "generic",
+    "category": "natural",
+    "file": "assets/grid-architect/audio/forest_night.ogg",
+    "description": "Vento baixo, insetos discretos e atividade orgânica distante.",
+    "defaultVolume": 0.3,
+    "loop": true
+  },
+  {
+    "id": "storm",
+    "name": "Tempestade",
+    "universe": "generic",
+    "category": "clima",
+    "file": "assets/grid-architect/audio/storm.ogg",
+    "description": "Chuva densa, vento e trovões graves distantes, sem picos agressivos.",
+    "defaultVolume": 0.3,
+    "loop": true
+  },
+  {
+    "id": "fire_ruins",
+    "name": "Ruínas em Chamas",
+    "universe": "generic",
+    "category": "fogo",
+    "file": "assets/grid-architect/audio/fire_ruins.ogg",
+    "description": "Crepitação de fogo, fluxo de ar e estrutura ressoando ao fundo.",
+    "defaultVolume": 0.3,
+    "loop": true
+  },
+  {
+    "id": "quiet_room",
+    "name": "Sala Silenciosa",
+    "universe": "generic",
+    "category": "interior",
+    "file": "assets/grid-architect/audio/quiet_room.ogg",
+    "description": "Room tone discreto com elétrica distante, ideal para investigação e diálogo.",
+    "defaultVolume": 0.3,
+    "loop": true
+  },
+  {
+    "id": "rain_light",
+    "name": "Chuva Leve",
+    "universe": "generic",
+    "category": "clima",
+    "file": "assets/grid-architect/audio/rain_light.ogg",
+    "description": "Gotas finas e difusas com baixa pressão grave; adequada a diálogos longos.",
+    "defaultVolume": 0.3,
+    "loop": true
+  },
+  {
+    "id": "rain_heavy",
+    "name": "Chuva Pesada",
+    "universe": "generic",
+    "category": "clima",
+    "file": "assets/grid-architect/audio/rain_heavy.ogg",
+    "description": "Cortina de chuva densa, massa de água e rumble distante sem transientes agressivos.",
+    "defaultVolume": 0.3,
+    "loop": true
+  },
+  {
+    "id": "wind_hollow",
+    "name": "Vento Oco",
+    "universe": "generic",
+    "category": "clima",
+    "file": "assets/grid-architect/audio/wind_hollow.ogg",
+    "description": "Corrente de ar atravessando corredores, ruínas ou estruturas vazias.",
+    "defaultVolume": 0.3,
+    "loop": true
+  },
+  {
+    "id": "cave_drips",
+    "name": "Caverna e Goteiras",
+    "universe": "generic",
+    "category": "subterrâneo",
+    "file": "assets/grid-architect/audio/cave_drips.ogg",
+    "description": "Room tone pétreo, goteiras esparsas e grande sensação de profundidade.",
+    "defaultVolume": 0.3,
+    "loop": true
+  },
+  {
+    "id": "water_pumps",
+    "name": "Bombas d’Água",
+    "universe": "generic",
+    "category": "industrial",
+    "file": "assets/grid-architect/audio/water_pumps.ogg",
+    "description": "Motores graves, tubulações e água mecânica em ciclos discretos.",
+    "defaultVolume": 0.3,
+    "loop": true
+  },
+  {
+    "id": "machine_room",
+    "name": "Sala de Máquinas",
+    "universe": "generic",
+    "category": "industrial",
+    "file": "assets/grid-architect/audio/machine_room.ogg",
+    "description": "Múltiplos motores em baixa frequência, servo-mecânica e vibração estrutural.",
+    "defaultVolume": 0.3,
+    "loop": true
+  },
+  {
+    "id": "fluorescent",
+    "name": "Fluorescentes",
+    "universe": "generic",
+    "category": "interior",
+    "file": "assets/grid-architect/audio/fluorescent.ogg",
+    "description": "Hum elétrico frio e mínimo, pensado para hospitais, escritórios e corredores vazios.",
+    "defaultVolume": 0.3,
+    "loop": true
+  },
+  {
+    "id": "subway",
+    "name": "Metrô Subterrâneo",
+    "universe": "generic",
+    "category": "urbano",
+    "file": "assets/grid-architect/audio/subway.ogg",
+    "description": "Túnel grave, vibração ferroviária distante e pressão de infraestrutura subterrânea.",
+    "defaultVolume": 0.3,
+    "loop": true
+  },
+  {
+    "id": "radio_static",
+    "name": "Rádio e Interferência",
+    "universe": "generic",
+    "category": "eletrônico",
+    "file": "assets/grid-architect/audio/radio_static.ogg",
+    "description": "Estática de banda média, impulsos fragmentados e interferência controlada.",
+    "defaultVolume": 0.3,
+    "loop": true
+  },
+  {
+    "id": "archive_room",
+    "name": "Arquivo Silencioso",
+    "universe": "generic",
+    "category": "investigação",
+    "file": "assets/grid-architect/audio/archive_room.ogg",
+    "description": "Poeira, sala fechada, madeira e energia elétrica quase imperceptível.",
+    "defaultVolume": 0.3,
+    "loop": true
+  }
+]

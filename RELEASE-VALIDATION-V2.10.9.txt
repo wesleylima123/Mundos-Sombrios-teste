@@ -1,0 +1,19 @@
+SITE OFICIAL MS — RELEASE VALIDATION V2.10.9
+
+[OK] Versão canônica: 2.10.9
+[OK] Syntax check: 61 arquivos JavaScript válidos
+[OK] Testes automatizados: 312 total / 293 pass / 0 fail / 19 skip
+[OK] Build de produção concluído
+[OK] offline-local reconstruído
+[OK] sandbox-offline reconstruído
+[OK] dist preparado pelo build e excluído dos ZIPs de fonte
+[OK] Grid Engine preserva ortogonal, hex horizontal, hex vertical e modo livre
+[OK] Preview não destrutivo e sincronização por Cena preservados
+[OK] Paleta da Matriz não usa backdrop/modal e não bloqueia o mapa
+[OK] Paleta arrastável por ponteiro e teclado, com posição persistente
+[OK] Paleta recolhível para barra compacta
+[OK] Estrutura, Alinhamento, Visual, Escala e Totem separados por abas
+[OK] DESCARTAR restaura o rascunho sem fechar a paleta
+[OK] APLICAR À CENA mantém a paleta aberta após persistir
+[OK] Calibração O/X/Y e preview compartilhado preservados
+[OK] Nova arte Encruzilhada dos Mundos incorporada e otimizada em WebP

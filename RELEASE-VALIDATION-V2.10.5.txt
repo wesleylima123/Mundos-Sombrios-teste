@@ -1,0 +1,9 @@
+Mundos Sombrios V2.10.5 — validação de release
+
+Build: aprovado
+Sintaxe JavaScript: 60 arquivos válidos
+Testes: 299 total / 280 pass / 0 fail / 19 skip
+Offline local: reconstruído da árvore canônica
+Sandbox offline: reconstruído da árvore canônica
+VTT: grade 16 x 16 validada por teste de regressão
+Encruzilhada e Nexo de Fendas: contratos funcionais preservados

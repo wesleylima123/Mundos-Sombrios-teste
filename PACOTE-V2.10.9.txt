@@ -1,0 +1,21 @@
+SITE OFICIAL MS — V2.10.9
+
+Reestruturação integral do Editor de Matriz e nova arte da Encruzilhada dos Mundos.
+
+Principais mudanças:
+- Configuração de Grid deixa de ser modal central e vira uma paleta flutuante sobre a Mesa.
+- Paleta arrastável por mouse/toque e teclado, com posição lembrada localmente.
+- Paleta pode ser recolhida para uma barra compacta e reaberta no mesmo ponto do Grid.
+- Editor reorganizado em cinco áreas: Estrutura, Alinhamento, Visual, Escala e Totem.
+- Preview permanece não destrutivo; DESCARTAR restaura sem fechar a paleta.
+- APLICAR À CENA salva/sincroniza e mantém o editor aberto para ajustes iterativos.
+- Calibração O/X/Y continua disponível diretamente sobre o mapa com a paleta móvel.
+- Preview efêmero para jogadores, snap, formatos ortogonal/hexagonal/livre e escala preservados.
+- Encruzilhada dos Mundos recebe arte exclusiva, unificando visualmente Êxodo e Ocultatun.
+- Nova arte otimizada em WebP (~288 KB) para evitar regressão de performance.
+
+Validação:
+- 61 arquivos JavaScript válidos.
+- 312 testes: 293 aprovados, 0 falhas, 19 condicionais/ignorados.
+- Build de produção concluído.
+- offline-local e sandbox-offline reconstruídos a partir da árvore canônica.

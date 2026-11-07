@@ -1,0 +1,382 @@
+[
+  {
+    "id": 1,
+    "name": "Bairro Cultivado de Hekuré",
+    "universe": "exodo",
+    "kind": "vegetacao",
+    "scope": "Exterior",
+    "region": "Hekuré",
+    "tags": [
+      "vegetação",
+      "urbano",
+      "orgânico",
+      "artístico"
+    ],
+    "file": "assets/environments/01_bairro_cultivado_de_hekuré.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/01_bairro_cultivado_de_hekuré.webp"
+  },
+  {
+    "id": 2,
+    "name": "Ponte de Raízes sobre Rio Urbano",
+    "universe": "exodo",
+    "kind": "ponte",
+    "scope": "Exterior",
+    "region": "Hekuré",
+    "tags": [
+      "rio",
+      "ponte",
+      "vegetação",
+      "artístico"
+    ],
+    "file": "assets/environments/02_ponte_de_raízes_sobre_rio_urbano.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/02_ponte_de_raízes_sobre_rio_urbano.webp"
+  },
+  {
+    "id": 3,
+    "name": "Laboratório Biométrico Invadido",
+    "universe": "exodo",
+    "kind": "laboratorio",
+    "scope": "Interior",
+    "region": "Hekuré",
+    "tags": [
+      "laboratório",
+      "vegetação",
+      "biotech",
+      "artístico"
+    ],
+    "file": "assets/environments/03_laboratório_biométrico_invadido.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/03_laboratório_biométrico_invadido.webp"
+  },
+  {
+    "id": 4,
+    "name": "Santuário do Círculo das Anciãs",
+    "universe": "exodo",
+    "kind": "ritual",
+    "scope": "Interior",
+    "region": "Hekuré",
+    "tags": [
+      "santuário",
+      "orgânico",
+      "cerimonial",
+      "artístico"
+    ],
+    "file": "assets/environments/04_santuário_do_círculo_das_anciãs.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/04_santuário_do_círculo_das_anciãs.webp"
+  },
+  {
+    "id": 5,
+    "name": "Distrito em Rejeição",
+    "universe": "exodo",
+    "kind": "ruinas",
+    "scope": "Exterior",
+    "region": "Hekuré",
+    "tags": [
+      "ruínas",
+      "anomalia",
+      "urbano",
+      "artístico"
+    ],
+    "file": "assets/environments/05_distrito_em_rejeição.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/05_distrito_em_rejeição.webp"
+  },
+  {
+    "id": 6,
+    "name": "Avenida Atompunk de Zhonghão",
+    "universe": "exodo",
+    "kind": "urbano",
+    "scope": "Exterior",
+    "region": "Zhonghão",
+    "tags": [
+      "avenida",
+      "atompunk",
+      "urbano",
+      "artístico"
+    ],
+    "file": "assets/environments/06_avenida_atompunk_de_zhonghão.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/06_avenida_atompunk_de_zhonghão.webp"
+  },
+  {
+    "id": 7,
+    "name": "Centro de Registro Nexo",
+    "universe": "exodo",
+    "kind": "institucional",
+    "scope": "Interior",
+    "region": "Zhonghão",
+    "tags": [
+      "institucional",
+      "registro",
+      "segurança",
+      "artístico"
+    ],
+    "file": "assets/environments/07_centro_de_registro_nexo.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/07_centro_de_registro_nexo.webp"
+  },
+  {
+    "id": 8,
+    "name": "Complexo Nuclear Modular",
+    "universe": "exodo",
+    "kind": "industrial",
+    "scope": "Interior",
+    "region": "Zhonghão",
+    "tags": [
+      "industrial",
+      "reator",
+      "tecnologia",
+      "artístico"
+    ],
+    "file": "assets/environments/08_complexo_nuclear_modular.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/08_complexo_nuclear_modular.webp"
+  },
+  {
+    "id": 9,
+    "name": "Centro de Robótica e Vigilância",
+    "universe": "exodo",
+    "kind": "laboratorio",
+    "scope": "Interior",
+    "region": "Zhonghão",
+    "tags": [
+      "robótica",
+      "vigilância",
+      "tecnologia",
+      "artístico"
+    ],
+    "file": "assets/environments/09_centro_de_robótica_e_vigilância.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/09_centro_de_robótica_e_vigilância.webp"
+  },
+  {
+    "id": 10,
+    "name": "Subnível Esquecido da Megacidade",
+    "universe": "exodo",
+    "kind": "subterraneo",
+    "scope": "Interior",
+    "region": "Zhonghão",
+    "tags": [
+      "subnível",
+      "urbano",
+      "abandono",
+      "artístico"
+    ],
+    "file": "assets/environments/10_subnível_esquecido_da_megacidade.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/10_subnível_esquecido_da_megacidade.webp"
+  },
+  {
+    "id": 31,
+    "name": "Poço de Manutenção Inundado",
+    "universe": "ocultatun",
+    "kind": "subterraneo",
+    "scope": "Interior",
+    "region": "Ocultatun",
+    "tags": [
+      "água",
+      "subterrâneo",
+      "manutenção",
+      "artístico"
+    ],
+    "file": "assets/environments/31_poço_de_manutenção_inundado.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/31_poço_de_manutenção_inundado.webp"
+  },
+  {
+    "id": 32,
+    "name": "Hospital Interditado",
+    "universe": "ocultatun",
+    "kind": "hospital",
+    "scope": "Interior",
+    "region": "Ocultatun",
+    "tags": [
+      "hospital",
+      "quarentena",
+      "médico",
+      "artístico"
+    ],
+    "file": "assets/environments/32_hospital_interditado.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/32_hospital_interditado.webp"
+  },
+  {
+    "id": 33,
+    "name": "Prédio Administrativo Onde Chove no Interior",
+    "universe": "ocultatun",
+    "kind": "institucional",
+    "scope": "Interior",
+    "region": "Ocultatun",
+    "tags": [
+      "administrativo",
+      "chuva",
+      "arquivo",
+      "artístico"
+    ],
+    "file": "assets/environments/33_prédio_administrativo_onde_chove_no_interior.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/33_prédio_administrativo_onde_chove_no_interior.webp"
+  },
+  {
+    "id": 34,
+    "name": "Templo de Geometria Impossível",
+    "universe": "ocultatun",
+    "kind": "ritual",
+    "scope": "Interior",
+    "region": "Ocultatun",
+    "tags": [
+      "templo",
+      "geometria",
+      "anômalo",
+      "artístico"
+    ],
+    "file": "assets/environments/34_templo_de_geometria_impossível.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/34_templo_de_geometria_impossível.webp"
+  },
+  {
+    "id": 35,
+    "name": "Estação de Metrô Abandonada",
+    "universe": "ocultatun",
+    "kind": "transporte",
+    "scope": "Interior",
+    "region": "Ocultatun",
+    "tags": [
+      "metrô",
+      "abandono",
+      "urbano",
+      "artístico"
+    ],
+    "file": "assets/environments/35_estação_de_metrô_abandonada.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/35_estação_de_metrô_abandonada.webp"
+  },
+  {
+    "id": 36,
+    "name": "Casa de Bombas Subterrânea",
+    "universe": "ocultatun",
+    "kind": "industrial",
+    "scope": "Interior",
+    "region": "Ocultatun",
+    "tags": [
+      "bombas",
+      "água",
+      "industrial",
+      "artístico"
+    ],
+    "file": "assets/environments/36_casa_de_bombas_subterrânea.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/36_casa_de_bombas_subterrânea.webp"
+  },
+  {
+    "id": 37,
+    "name": "Quarto de Testemunha Contaminado",
+    "universe": "ocultatun",
+    "kind": "residencial",
+    "scope": "Interior",
+    "region": "Ocultatun",
+    "tags": [
+      "quarto",
+      "testemunha",
+      "contaminação",
+      "artístico"
+    ],
+    "file": "assets/environments/37_quarto_de_testemunha_contaminado.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/37_quarto_de_testemunha_contaminado.webp"
+  },
+  {
+    "id": 38,
+    "name": "Laboratório de Biopatologia",
+    "universe": "ocultatun",
+    "kind": "laboratorio",
+    "scope": "Interior",
+    "region": "Ocultatun",
+    "tags": [
+      "laboratório",
+      "biopatologia",
+      "pesquisa",
+      "artístico"
+    ],
+    "file": "assets/environments/38_laboratório_de_biopatologia.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/38_laboratório_de_biopatologia.webp"
+  },
+  {
+    "id": 39,
+    "name": "Apartamento Atingido por um Nexo",
+    "universe": "ocultatun",
+    "kind": "residencial",
+    "scope": "Interior",
+    "region": "Ocultatun",
+    "tags": [
+      "apartamento",
+      "nexo",
+      "anomalia",
+      "artístico"
+    ],
+    "file": "assets/environments/39_apartamento_atingido_por_um_nexo.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/39_apartamento_atingido_por_um_nexo.webp"
+  },
+  {
+    "id": 40,
+    "name": "Escola Vazia Presa em um Horário Impossível",
+    "universe": "ocultatun",
+    "kind": "institucional",
+    "scope": "Interior",
+    "region": "Ocultatun",
+    "tags": [
+      "escola",
+      "tempo",
+      "anomalia",
+      "artístico"
+    ],
+    "file": "assets/environments/40_escola_vazia_presa_em_um_horário_impossível.webp",
+    "artistic": true,
+    "width": 1254,
+    "height": 1254,
+    "thumbnail": "assets/thumbs/environments/40_escola_vazia_presa_em_um_horário_impossível.webp"
+  }
+]

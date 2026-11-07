@@ -1,0 +1,122 @@
+[
+  {
+    "file": "assets/art-direction/exodo-archive.png",
+    "before": null,
+    "after": "37eb196b73b2017dbb69629961a2cd173a0844c0b43cb8abf3caa534dd27889f"
+  },
+  {
+    "file": "assets/art-direction/ocultatun-library.png",
+    "before": null,
+    "after": "960836c7db6cc000fad689761cb1ebd752735676f82eb9e501cbd3a595a2d94b"
+  },
+  {
+    "file": "assets/art-direction/portal-threshold.png",
+    "before": null,
+    "after": "2c71b9c902344a00b633df909e7fcdc210d8489eddb539d2ef3bd1c2ee21515a"
+  },
+  {
+    "file": "css/master-command-center.css",
+    "before": "3a3a8e0be497b502785ddcf49601ba393c210c473228f5f4dcfaa5a17e4ffc97",
+    "after": "f875175b620caf0605bb10068d14dc1ff441000efd54a81c2f4e06cb7f378a46"
+  },
+  {
+    "file": "css/master-room.css",
+    "before": "877a1843d13f2a986421212b39b76466b9cfa3e42c9b0770c327b3cdd3dbf0bc",
+    "after": "307a65be929a6f1c2da8491bcf4bc33896d9f72842ae6946a3cbee3a52ab5f0e"
+  },
+  {
+    "file": "css/portal/portal-editorial-v2.2.css",
+    "before": "f8bbd3391b59ef5c8cc81a7f135dfbb904aed09bf557be17455c9842a14275a3",
+    "after": "47aac56567822981f6008ef31b3b744f763f9e4eabe5cf6965deec2a50a0de21"
+  },
+  {
+    "file": "css/portal/portal-visual-v0.62.css",
+    "before": "4b1aaaf2e81e3fcd9457c668a0d27266d88b291013093669406dc904eda7982d",
+    "after": "a0031c40cca30cfff087256867ac933b773452d99cff20fc3c088931a1926b76"
+  },
+  {
+    "file": "css/portal/portal.css",
+    "before": "8a1d7d715f8632cdca76c72c164134ef566c9d98675d5d94be29a673fc66a191",
+    "after": "99ec18eba8b1f1072ed3af26eb4d7048842c554716d505722502121736641f08"
+  },
+  {
+    "file": "css/progression-v2.8.9.css",
+    "before": "14036c17bf746a5b4a96d1c1e12b067f5364800fc2c43ff4554eac24e11caa06",
+    "after": "d483d46cd7f3df6c6eec974d689d0c171e6aa7de5e5c3bc2bf6a7a676c78befe"
+  },
+  {
+    "file": "css/table-sheets.css",
+    "before": null,
+    "after": "5edf8d4aa20a94002fbf435c9600ba7da58f1bf6ef679dad8f74406725dfd78d"
+  },
+  {
+    "file": "css/table-shell-v3.css",
+    "before": "9c5840128a6309b6c0ff253ff5cef8328a98e3d89f074c70e34b882fa93743ca",
+    "after": "37b924a8ab2cb14f308aeb0738dd3264a170d5ce8c3b0d7bda97490352c36e0b"
+  },
+  {
+    "file": "index.html",
+    "before": "918738da6b79468f6773a86616443501ac718f4c83fd3fcdaf786752186fe26d",
+    "after": "29d24c9294098e8d42a71ad6a51941401a589e377e7472c609f6f82468209021"
+  },
+  {
+    "file": "js/evolution-gradual-v2.10.1.js",
+    "before": "ff0f60ce27db685badcd15c6ab00f6c85264ba2cb33f2b1c80428033665e6e7b",
+    "after": "a53e32b7ceb7f50309f480405a0aa0d0a2e3f3440ff560dfafa23da7a992cafd"
+  },
+  {
+    "file": "js/offline-db.js",
+    "before": "d616f4cd0b12f12d067d881201071664305c0140cc72ed0fb296acbe306de460",
+    "after": "ffda10c424ffa5613dc406cdc96888c282e853c6b81ae16f574849cd8b41acc4"
+  },
+  {
+    "file": "js/operational-control-v2.10.1.js",
+    "before": "6b4834631201f728ad5d0a15dfac77dce2ab64238bc83c47146222b849c469b7",
+    "after": "312cfe35c001cbfe6ac82aca83d9927df26f5050a1cdcf33738a59fd78d4c727"
+  },
+  {
+    "file": "js/points-ui.js",
+    "before": null,
+    "after": "0a72935c980e906dc37a94a9cb8519a6b0415af249206ddd32b425bce7210552"
+  },
+  {
+    "file": "js/portal/portal-content.js",
+    "before": "648c954b656aee7dc4f781cec2b161814212be0e7de11abeb8ca23895eb5bd45",
+    "after": "98cdc37f3bd7d649082158eb309fc46906107728b9fc5818d5a222aecc7e675b"
+  },
+  {
+    "file": "js/portal/portal-core.js",
+    "before": "a8e30e67f8c98b2ef4d6c556090ace77b54178b8927d384d3aadc964bc268485",
+    "after": "b7bb202dcfe9c12638b406de46afe0d3bfb186b74ebaa0cf0e259136bd1a9aae"
+  },
+  {
+    "file": "js/progression-v2.8.9.js",
+    "before": "b61865d0526d606e643d7951e88d333f077a7613db8208f4101787ee51e7d18a",
+    "after": "47a7efd6b3ecccbc94316fbdaf613e711f8fce0490eb3e885968428db2ab4f1d"
+  },
+  {
+    "file": "js/table-sheets.js",
+    "before": null,
+    "after": "26426491ae89002b7763521c60a1e54d174ee4c808bc60b07da2d1c0538e0566"
+  },
+  {
+    "file": "js/table-shell-v3.js",
+    "before": "142776c4513cbe61eb33bf9b099d522168c2ea4676149a4daaef76bc4162ec83",
+    "after": "065bbafdf8c5d7746617996d26fa39fddc8311cc23a678df276a854b5d8a70e0"
+  },
+  {
+    "file": "tests/art-experience.test.js",
+    "before": null,
+    "after": "f2a1ac2cd93480bfae285ae31f95de8b7646812858a91df2a426924557242e8f"
+  },
+  {
+    "file": "tests/consolidation-v2.8.3.test.js",
+    "before": "2610eb0c23b93fcb2f0b9a0b30a343ec55674668c3458a8559793e5fa7486681",
+    "after": "07a82a44de53e09b7892bcd6009ca22eedc2e8ba937aa58c2a5b05a4f3fe9e39"
+  },
+  {
+    "file": "tests/operational-control-v2.9.0.test.js",
+    "before": "64ad18316c92609de64e691ebe5518008818b0a196e6750755e677ee6423f9b1",
+    "after": "c8862f9d4b49647acbb6433fc67f6f5f5fc897d95d6f819702ce7bf215d8fa6f"
+  }
+]

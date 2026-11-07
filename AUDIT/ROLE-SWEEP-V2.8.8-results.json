@@ -1,0 +1,28 @@
+{
+  "jogador": {
+    "createVisible": false,
+    "requestsText": "Disponível somente ao ADM.",
+    "deleteButtons": 0,
+    "adminAccept": 0,
+    "saveVisible": false
+  },
+  "mestre": {
+    "createVisible": true,
+    "requestsText": "Disponível somente ao ADM.",
+    "createdExactlyOne": 1,
+    "deleteButtons": 2,
+    "saveVisible": true
+  },
+  "admin": {
+    "createVisible": true,
+    "requestsText": "teste.mestre\npending\nAceitar\nRecusar\nExcluir",
+    "deleteButtons": 2,
+    "acceptButtons": 1,
+    "acceptedStatus": true
+  },
+  "mobile": {
+    "sw": 390,
+    "cw": 390
+  },
+  "errors": []
+}

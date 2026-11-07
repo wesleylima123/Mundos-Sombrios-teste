@@ -1,0 +1,19 @@
+/* Mundos Sombrios — Online UX / v0.65 */
+.ms-online-shell{display:grid;gap:16px;margin-top:18px}
+.ms-online-status{display:flex;align-items:center;gap:10px;min-height:32px;font-size:.78rem;letter-spacing:.04em;color:#9aa}
+.ms-online-status[data-status="loading"]{color:#d4af37}
+.ms-online-status[data-status="success"]{color:#a8ff00}
+.ms-online-status[data-status="error"]{color:#ff6b6b}
+.ms-online-dot{width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 10px currentColor}
+.ms-account-bar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px 16px;border:1px solid rgba(212,175,55,.18);background:linear-gradient(135deg,rgba(18,18,18,.95),rgba(7,7,7,.92));border-radius:14px}
+.ms-account-meta{display:flex;gap:10px;align-items:center;min-width:0}.ms-account-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(212,175,55,.4);color:#d4af37;font-family:Cinzel,serif}.ms-account-text{min-width:0}.ms-account-text strong,.ms-account-text span{display:block}.ms-account-text span{font-size:.75rem;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ms-account-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.ms-online-empty{padding:28px;text-align:center;border:1px dashed rgba(255,255,255,.12);border-radius:14px;color:#777}
+.ms-online-card{border:1px solid rgba(255,255,255,.08);background:rgba(10,10,10,.78);border-radius:14px;padding:15px}
+.ms-online-card h4{margin:0 0 6px;color:#e6e6e6}.ms-online-card p{margin:0;color:#888;font-size:.82rem}
+.ms-online-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.ms-presence{display:inline-flex;align-items:center;gap:7px;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:#7f8}.ms-presence i{width:7px;height:7px;border-radius:50%;background:#7f8;box-shadow:0 0 8px #7f8}
+.ms-online-form{display:grid;gap:12px}.ms-online-form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+@media(max-width:680px){.ms-account-bar{grid-template-columns:1fr}.ms-account-actions{justify-content:flex-start}}
+.ms-realtime-label{margin-left:8px;min-width:110px;text-align:right;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;opacity:.8}.ms-online-status[data-status="loading"] .ms-realtime-label::after{content:'Conectando...';}.ms-online-status[data-status="success"] .ms-realtime-label::after{content:'Tempo real';}.ms-online-status[data-status="error"] .ms-realtime-label::after{content:'Offline';}.ms-presence-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border:1px solid rgba(255,255,255,.1);border-radius:999px;font-size:.68rem;margin:3px}.ms-presence-chip i{width:6px;height:6px;border-radius:50%;background:#7f8;box-shadow:0 0 6px #7f8}.ms-presence-empty{font-size:.7rem;opacity:.65}
+
+.ms-vtt-presence{position:fixed;top:54px;right:14px;z-index:4000;max-width:min(55vw,520px);padding:8px 12px;border:1px solid rgba(212,175,55,.25);background:rgba(0,0,0,.72);backdrop-filter:blur(8px);border-radius:8px}.ms-vtt-presence [data-ms-table-presence]{display:flex;flex-wrap:wrap;justify-content:flex-end}.ms-vtt-presence .mr-kicker{display:block;text-align:right;font-size:.58rem;opacity:.7;margin-bottom:3px}@media(max-width:680px){.ms-vtt-presence{top:auto;bottom:12px;right:8px;left:8px;max-width:none}.ms-vtt-presence [data-ms-table-presence]{justify-content:flex-start}}

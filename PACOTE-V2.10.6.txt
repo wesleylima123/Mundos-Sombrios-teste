@@ -1,0 +1,11 @@
+SITE OFICIAL MS — V2.10.6
+
+Atualização principal: Grid Engine configurável por Cena.
+
+O Mestre agora controla formato da grade, linhas/colunas, dimensões das células e tabuleiro, offsets, rotação, snap, visibilidade, estilo, escala narrativa, calibração e tamanho relativo dos totens.
+
+Compatibilidade: Cenas anteriores usam automaticamente o fallback ortogonal 16×16.
+
+Validação: 304 testes / 285 aprovados / 0 falhas / 19 condicionais ou ignorados.
+
+Runtimes locais: Offline e SANDBOX são gerados da mesma árvore canônica por `npm run build`.

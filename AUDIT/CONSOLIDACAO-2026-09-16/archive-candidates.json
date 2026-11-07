@@ -1,0 +1,47 @@
+[
+  {
+    "file": "js/forja-overhaul-v2.8.8.js",
+    "runtime_test_build_explicit_consumers": [],
+    "bytes": 20067
+  },
+  {
+    "file": "css/forja-overhaul-v2.8.8.css",
+    "runtime_test_build_explicit_consumers": [],
+    "bytes": 9053
+  },
+  {
+    "file": "js/evolution-backend-v2.10.0.js",
+    "runtime_test_build_explicit_consumers": [],
+    "bytes": 32810
+  },
+  {
+    "file": "js/evolution-gradual-v2.10.0.js",
+    "runtime_test_build_explicit_consumers": [],
+    "bytes": 27473
+  },
+  {
+    "file": "css/evolution-gradual-v2.10.0.css",
+    "runtime_test_build_explicit_consumers": [],
+    "bytes": 12854
+  },
+  {
+    "file": "js/operational-control-v2.10.0.js",
+    "runtime_test_build_explicit_consumers": [],
+    "bytes": 34822
+  },
+  {
+    "file": "css/operational-control-v2.10.0.css",
+    "runtime_test_build_explicit_consumers": [],
+    "bytes": 8318
+  },
+  {
+    "file": "js/ms-consolidation-v2.9.0.js",
+    "runtime_test_build_explicit_consumers": [],
+    "bytes": 2018
+  },
+  {
+    "file": "js/ms-consolidation-v2.10.0.js",
+    "runtime_test_build_explicit_consumers": [],
+    "bytes": 2057
+  }
+]

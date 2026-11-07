@@ -1,0 +1,210 @@
+{
+  "date": "2026-09-17",
+  "version": "2.10.2",
+  "changes": [
+    {
+      "file": "assets/art-direction/mesa-salao.png",
+      "operation": "added",
+      "before_sha256": null,
+      "after_sha256": "ddf4b3b58e6ce10303be7e28fb221ab53102062b7a14c06d4a5d41f4c272befd"
+    },
+    {
+      "file": "css/forja-overhaul-v2.8.10.css",
+      "operation": "modified",
+      "before_sha256": "8b38f27171ac967eb325650f795c80bb948e00b80f295c99fc688acd62458381",
+      "after_sha256": "d45e59ed5eadc765f371da3957684a5ac0ccc0de9d7842157164cfccacaf2377"
+    },
+    {
+      "file": "css/ms-online.css",
+      "operation": "modified",
+      "before_sha256": "80b5cce01fcf0fafe58017d46009c0e17f2e5f65df348cdd64767469f00f6692",
+      "after_sha256": "a6c9b83179c7e57e3e0633a00ed49c1d328c51646bb17bfc58bd8cc80d16322a"
+    },
+    {
+      "file": "css/operational-control-v2.10.1.css",
+      "operation": "modified",
+      "before_sha256": "5e3e920e0e322be8a89e1f479e3b28af71edfcb0816f57ebde19c1b72a26dc98",
+      "after_sha256": "df48445e23638b38c5ca566e796b2f60f700879743dcb483ae88a9a79166660f"
+    },
+    {
+      "file": "css/progression-v2.8.9.css",
+      "operation": "modified",
+      "before_sha256": "d483d46cd7f3df6c6eec974d689d0c171e6aa7de5e5c3bc2bf6a7a676c78befe",
+      "after_sha256": "9daa592015b80246909b026f6b4acaf183225a24b5bdb682ee5934201d093ffc"
+    },
+    {
+      "file": "css/style.css",
+      "operation": "modified",
+      "before_sha256": "baa25006a0bf757bd2bbb0feb064cfa9d5a53d6065f65a8f0c66ff602c68bdb4",
+      "after_sha256": "d08da2c43fcf083bf392046d8e082a9aabe419bee3445b6b335a06ff1b7568c2"
+    },
+    {
+      "file": "css/table-room.css",
+      "operation": "added",
+      "before_sha256": null,
+      "after_sha256": "74c23c66ca1049c42ab6e89dd4e2f03c47f542c3c332e64c47d73ec7ac147a33"
+    },
+    {
+      "file": "css/table-sheets.css",
+      "operation": "modified",
+      "before_sha256": "e7fd03142107f2ba6111fe716b9f146166fd591a96d288ecba7bf9a315cc2051",
+      "after_sha256": "30782cf7a957b60b8358ef13ddbf019e6d8769f90f3d20a99015c476dc2d85a8"
+    },
+    {
+      "file": "css/table-shell-v3.css",
+      "operation": "removed",
+      "before_sha256": "044c74321d4e30ca5aa0d16c511cb527ba4ffdf413aa7742223fce05f6430235",
+      "after_sha256": null
+    },
+    {
+      "file": "css/table-studio-v2.8.6.css",
+      "operation": "modified",
+      "before_sha256": "2db94fbfb63cd6b8d769953f875e27e97c1756d76927700b102d5e316120bc8c",
+      "after_sha256": "8152db27738822fb5956e7cf52c4c4b174e46d2408d22628bc767ce8b604f703"
+    },
+    {
+      "file": "index.html",
+      "operation": "modified",
+      "before_sha256": "29d24c9294098e8d42a71ad6a51941401a589e377e7472c609f6f82468209021",
+      "after_sha256": "58403c1f54577d314dbb418df1f18f451f5761411ce77ef2e2f0805e05035efb"
+    },
+    {
+      "file": "js/operational-control-v2.10.1.js",
+      "operation": "modified",
+      "before_sha256": "600f0dc1c3e52e85eeaaf7c9260aa5cf2f6be9defd36ea5ce3e0d69dab4495e8",
+      "after_sha256": "024507fd4ab4fa1a7a54d3c547a900b0c1fcb5f4d164d3dc143f64092923f4e9"
+    },
+    {
+      "file": "js/progression-v2.8.9.js",
+      "operation": "modified",
+      "before_sha256": "47a7efd6b3ecccbc94316fbdaf613e711f8fce0490eb3e885968428db2ab4f1d",
+      "after_sha256": "1e58cf5fc1087e7b30caf7114b07bf50e29c06277a05e7a79c4d9f311cf86f60"
+    },
+    {
+      "file": "js/script.js",
+      "operation": "modified",
+      "before_sha256": "0318cf4e509de01f1ffb4572eb8676ca28c348145145d5d32fd1db15774fa3b8",
+      "after_sha256": "cda416c32164ef4897de9ed3ff81e23c5a138e8f5500edf93fc0364ea4b6b5fc"
+    },
+    {
+      "file": "js/table-room.js",
+      "operation": "added",
+      "before_sha256": null,
+      "after_sha256": "71766bf1bddf67209ad5c260a77b71d9c4a2f630ad1b55ca432cd5150bc32c6e"
+    },
+    {
+      "file": "js/table-sheets.js",
+      "operation": "modified",
+      "before_sha256": "66341948f36be6c8b73241ec172b1584141d892aaff14cbcee111ff72c34bcfc",
+      "after_sha256": "94372e0c4480a04088d4941453bcecdf4825a022fcf989b9fe85e9d2d7556cfa"
+    },
+    {
+      "file": "js/table-shell-v3.js",
+      "operation": "removed",
+      "before_sha256": "542159507683c74bb927add4244df5ed5b7678b4b8e188ecd3e1e73764e595ee",
+      "after_sha256": null
+    },
+    {
+      "file": "js/table-windows.js",
+      "operation": "added",
+      "before_sha256": null,
+      "after_sha256": "c23df51677ee8ab1194a4f5eb533e6d5164076a8f8fd6ad7d7806b564afd5c77"
+    },
+    {
+      "file": "scripts/browser-mobile-v2.10.1.py",
+      "operation": "modified",
+      "before_sha256": "86178ab5cf12ff80f38798d25cc1fb49b14465502bb10b14bc4247a3eb9e89dc",
+      "after_sha256": "245084e4fcd30eb0d234bd943254b173a4ce5057b9ae63ef4400d1ece6386582"
+    },
+    {
+      "file": "scripts/browser-mobile-v2.10.py",
+      "operation": "modified",
+      "before_sha256": "7fd248b743789df7b6defb47d8fbf486a8557745383b7ef29c7713da48fb1e84",
+      "after_sha256": "65bdcb7843c4b1b147e651e1b14fd4867b6b852d285da3a1636ef908cbdf4a83"
+    },
+    {
+      "file": "scripts/browser-mobile-v2.9.py",
+      "operation": "modified",
+      "before_sha256": "66439f06810e774c46ef63df99d25e78026f04a382e0ca38dae67e5454f58010",
+      "after_sha256": "ffa1b7bde55c1c8a6c7aef73386ca8d83e0df651ed729943a263be3a47c8e373"
+    },
+    {
+      "file": "tests/bugfix-v2.8.2.test.js",
+      "operation": "modified",
+      "before_sha256": "2935daca2530cba59cbc6db1bf3d1a7c2c669f5da1150608661f5f3bee4b6efc",
+      "after_sha256": "a0d02e896b108cae45c18ac0f91185aa4ba159a09d1c3b359e4025a4dd1555a1"
+    },
+    {
+      "file": "tests/consolidation-runtime.test.js",
+      "operation": "modified",
+      "before_sha256": "ad0ec225d113d56e79184bba9c36335a677c641a57a5193f7031781691f94fac",
+      "after_sha256": "213e9fb50b2739dd3ec389a20ae82eec2f608f16ec57aef7f5b92f2e66749eb9"
+    },
+    {
+      "file": "tests/consolidation-v2.8.3.test.js",
+      "operation": "modified",
+      "before_sha256": "07a82a44de53e09b7892bcd6009ca22eedc2e8ba937aa58c2a5b05a4f3fe9e39",
+      "after_sha256": "02175cc7f3219a16b6d5747da68d5c3d60e48c0ddd8f0e397aace6d3052b9758"
+    },
+    {
+      "file": "tests/consolidation-v2.9.0.test.js",
+      "operation": "modified",
+      "before_sha256": "b16f8c5a36b287887b994435eb4ae0bf211b98cdc8fe918669cbf6101cf68da1",
+      "after_sha256": "681060e920a6d3883db89d48c5a80aabd4064cdb79dc6a2201a7bf7783c878b8"
+    },
+    {
+      "file": "tests/experience-v2.10.2.test.js",
+      "operation": "modified",
+      "before_sha256": "28cfa3fdf5de272d65886c79dd759147b7a681cc241d1b9a7f16c8fb6014ff52",
+      "after_sha256": "edcdbef01ccf7c4b527eecdfb36dfc423b70d245f62c5f878c3930099c9a3059"
+    },
+    {
+      "file": "tests/fenda-studio-v2.8.6.test.js",
+      "operation": "modified",
+      "before_sha256": "4b1ca9a8babc382c3c585d9fe02fc6b45db8a129d420d32992b9d1383d3ecc10",
+      "after_sha256": "fa752497a3b865b3a38bbc8e3b1da5fe984341ae5d3f01b6e75af73bbc925212"
+    },
+    {
+      "file": "tests/forja-categories-v2.8.8.test.js",
+      "operation": "modified",
+      "before_sha256": "ba685e7b899b3c8c53d28204eb1e0a6721226293d547961e57b77fc2c68d480a",
+      "after_sha256": "0c7b8f55b23a92001b36d82b56c72bccfbb7af8dc7ac543942248f2cb1c91083"
+    },
+    {
+      "file": "tests/operational-control-v2.9.0.test.js",
+      "operation": "modified",
+      "before_sha256": "bd9399c3a7f962303f36547b84d001eb18423b6fafb5b653af13e955d075f891",
+      "after_sha256": "d4c247bda251f9b5067adf30807115c9af4441139a492d54b67886e61fcfdfcb"
+    },
+    {
+      "file": "tests/player-vtt-v2.8.test.js",
+      "operation": "modified",
+      "before_sha256": "56b1dce1794fa94fd3003f58c1defde071c9686f9c8ddf8ad5728ff975d8ffec",
+      "after_sha256": "3818046c672b8abaf4b5efb734c85c32c946fbfd8a101f155652337a25cbf41d"
+    },
+    {
+      "file": "tests/progression-v2.8.9.test.js",
+      "operation": "modified",
+      "before_sha256": "e61209401edb1948e3fb32bca6df5d91002ba5e42b4156c38ba7a1949ba07771",
+      "after_sha256": "3340e1ebbb26d6fb6118e160c0c057ff88677cb7d8a6e64728d007076b151c07"
+    },
+    {
+      "file": "tests/table-room.test.js",
+      "operation": "added",
+      "before_sha256": null,
+      "after_sha256": "5126a41630868a6c0cedd19fa3728582d427d5426fb968b0766b8ff0f1e557ee"
+    },
+    {
+      "file": "tests/table-session-v2.7.test.js",
+      "operation": "modified",
+      "before_sha256": "0aa1c035212540ed521473dd2a0696e2fdccc51a77893cee80362b0051f87d55",
+      "after_sha256": "5fefafb04a217222598329aae8abb5b360ea5d12fd92650c47a7d6becd3fb9bb"
+    }
+  ],
+  "tests": {
+    "total": 280,
+    "passed": 261,
+    "failed": 0,
+    "skipped": 19
+  }
+}

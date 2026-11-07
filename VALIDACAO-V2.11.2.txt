@@ -1,0 +1,6 @@
+Site-oficial-MS_2.11.2
+Build integral concluído com sucesso.
+Testes: 328 total; 309 aprovados; 0 falhas; 19 condicionais/ignorados.
+Sintaxe: 64 arquivos JavaScript válidos.
+QA isolado: linhas do grid visíveis com os dois motores presentes; prop e totem posicionados por clique; 22 soundscapes carregados; mix de duas camadas reproduzido sem erro.
+Pacotes validados por CRC, extração integral e SHA-256 arquivo a arquivo.

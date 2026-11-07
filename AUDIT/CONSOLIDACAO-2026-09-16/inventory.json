@@ -1,0 +1,238 @@
+{
+  "metrics": {
+    "before": {
+      "runtime_js_files": 60,
+      "runtime_js_bytes": 4540985,
+      "css_files": 28,
+      "css_bytes": 494667,
+      "important_count": 888,
+      "boot_js_bytes": 784732,
+      "table_shell_css_bytes": 9868,
+      "dist_bytes": 25371234
+    },
+    "after": {
+      "runtime_js_files": 55,
+      "runtime_js_bytes": 4418961,
+      "css_files": 25,
+      "css_bytes": 461141,
+      "important_count": 810,
+      "boot_js_bytes": 784585,
+      "table_shell_css_bytes": 6567,
+      "dist_bytes": 25215731
+    }
+  },
+  "changed_source_files": [
+    "index.html",
+    "css/table-shell-v3.css",
+    "js/operational-control-v2.10.1.js",
+    "js/ms-realtime.js",
+    "js/forja-overhaul-v2.8.10.js",
+    "js/master-shield-loader.js",
+    "js/progression-v2.8.9.js",
+    "js/feature-loader.js",
+    "js/script.js",
+    "js/evolution-gradual-v2.10.1.js",
+    "js/vendor-loader.js",
+    "tests/player-vtt-v2.8.test.js",
+    "tests/forja-categories-v2.8.8.test.js"
+  ],
+  "screens": [
+    "screen-ancoragem",
+    "screen-builder",
+    "screen-char-select",
+    "screen-codex",
+    "screen-login",
+    "screen-master-shield",
+    "screen-mode-select",
+    "screen-portal",
+    "screen-vtt"
+  ],
+  "literal_screen_calls": [
+    {
+      "file": "index.html",
+      "line": 135,
+      "screen": "screen-ancoragem",
+      "exists": true
+    },
+    {
+      "file": "index.html",
+      "line": 156,
+      "screen": "screen-mode-select",
+      "exists": true
+    },
+    {
+      "file": "index.html",
+      "line": 178,
+      "screen": "screen-mode-select",
+      "exists": true
+    },
+    {
+      "file": "js/master-shield.js",
+      "line": 12,
+      "screen": "screen-master-shield",
+      "exists": true
+    },
+    {
+      "file": "js/offline-sandbox-ui.js",
+      "line": 32,
+      "screen": "screen-login",
+      "exists": true
+    },
+    {
+      "file": "js/master-shield-loader.js",
+      "line": 11,
+      "screen": "screen-master-shield",
+      "exists": true
+    },
+    {
+      "file": "js/script.js",
+      "line": 310,
+      "screen": "screen-portal",
+      "exists": true
+    },
+    {
+      "file": "js/script.js",
+      "line": 427,
+      "screen": "screen-portal",
+      "exists": true
+    },
+    {
+      "file": "js/script.js",
+      "line": 1234,
+      "screen": "screen-vtt",
+      "exists": true
+    },
+    {
+      "file": "js/script.js",
+      "line": 1274,
+      "screen": "screen-char-select",
+      "exists": true
+    },
+    {
+      "file": "js/script.js",
+      "line": 1371,
+      "screen": "screen-codex",
+      "exists": true
+    },
+    {
+      "file": "js/script.js",
+      "line": 1537,
+      "screen": "screen-builder",
+      "exists": true
+    },
+    {
+      "file": "js/script.js",
+      "line": 1785,
+      "screen": "screen-char-select",
+      "exists": true
+    },
+    {
+      "file": "js/script.js",
+      "line": 2251,
+      "screen": "screen-ancoragem",
+      "exists": true
+    },
+    {
+      "file": "js/script.js",
+      "line": 4412,
+      "screen": "screen-vtt",
+      "exists": true
+    },
+    {
+      "file": "js/script.js",
+      "line": 4732,
+      "screen": "screen-login",
+      "exists": true
+    },
+    {
+      "file": "js/script.js",
+      "line": 4741,
+      "screen": "screen-mode-select",
+      "exists": true
+    },
+    {
+      "file": "js/script.js",
+      "line": 4857,
+      "screen": "screen-login",
+      "exists": true
+    },
+    {
+      "file": "js/script.js",
+      "line": 4867,
+      "screen": "screen-mode-select",
+      "exists": true
+    },
+    {
+      "file": "js/world-codices.js",
+      "line": 90,
+      "screen": "screen-mode-select",
+      "exists": true
+    },
+    {
+      "file": "js/world-codices.js",
+      "line": 124,
+      "screen": "screen-mode-select",
+      "exists": true
+    },
+    {
+      "file": "js/portal/portal-core.js",
+      "line": 17,
+      "screen": "screen-login",
+      "exists": true
+    },
+    {
+      "file": "js/portal/portal-core.js",
+      "line": 18,
+      "screen": "screen-portal",
+      "exists": true
+    },
+    {
+      "file": "js/portal/portal-core.js",
+      "line": 126,
+      "screen": "screen-mode-select",
+      "exists": true
+    },
+    {
+      "file": "js/portal/portal-core.js",
+      "line": 131,
+      "screen": "screen-mode-select",
+      "exists": true
+    },
+    {
+      "file": "js/portal/portal-core.js",
+      "line": 131,
+      "screen": "screen-mode-select",
+      "exists": true
+    },
+    {
+      "file": "js/portal/portal-core.js",
+      "line": 131,
+      "screen": "screen-codex",
+      "exists": true
+    },
+    {
+      "file": "js/portal/portal-core.js",
+      "line": 131,
+      "screen": "screen-ancoragem",
+      "exists": true
+    },
+    {
+      "file": "js/portal/portal-core.js",
+      "line": 131,
+      "screen": "screen-ancoragem",
+      "exists": true
+    },
+    {
+      "file": "js/portal/portal-core.js",
+      "line": 138,
+      "screen": "screen-portal",
+      "exists": true
+    }
+  ],
+  "missing_screens": [],
+  "generated_runtime_equality": {
+    "comparisons": 161,
+    "all_equal": true
+  },
+  "deprecated_marker_files": []
+}

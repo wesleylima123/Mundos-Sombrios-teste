@@ -1,0 +1,75 @@
+/* Layout da Mesa pertence a css/table-room.css. */
+.ms-op-hidden{display:none!important}
+.ms-op-lock{overflow:hidden!important}
+.ms-quick-sheets,.ms-crew-center{position:fixed;inset:0;z-index:14550;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.78);backdrop-filter:blur(8px)}
+.ms-quick-sheets.open,.ms-crew-center.open{display:flex}
+.ms-op-shell{width:min(980px,calc(100vw - 32px));max-height:min(780px,calc(100dvh - 40px));overflow:hidden;display:grid;grid-template-rows:auto auto minmax(0,1fr);background:linear-gradient(145deg,#141414,#08090a 70%);border:1px solid rgba(212,175,55,.42);box-shadow:0 28px 90px rgba(0,0,0,.75),0 0 40px rgba(212,175,55,.08);color:#ddd}
+.ms-op-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px;border-bottom:1px solid rgba(212,175,55,.16)}
+.ms-op-head small{display:block;color:#998a6c;font:700 .8125rem Cinzel,serif;letter-spacing:.18em}
+.ms-op-head h2{margin:3px 0 0;color:#f1e7d1;font:700 1.18rem Cinzel,serif;letter-spacing:.06em}
+.ms-op-close{width:38px;height:38px;border:1px solid #554b39;background:#0a0a0a;color:#d8c69f;font-size:1.2rem;cursor:pointer}
+.ms-op-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:1px solid rgba(212,175,55,.16)}
+.ms-op-tabs button{min-width:0;border:0;border-right:1px solid #222;background:#0b0c0d;color:#8f887b;padding:12px 8px;font:700 .8125rem Cinzel,serif;letter-spacing:.08em;cursor:pointer}
+.ms-op-tabs button.active{color:#e4c878;background:#19160f}
+.ms-op-badge{display:inline-flex;min-width:20px;height:20px;padding:0 6px;margin-left:5px;align-items:center;justify-content:center;border-radius:20px;background:#7a1f1f;color:#fff;font:700 .8125rem Roboto,sans-serif}
+.ms-op-body{min-height:0;overflow:auto;padding:18px}
+.ms-op-summary{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.ms-op-chip{padding:8px 10px;border:1px solid #312e28;background:#0b0b0c;color:#9d978d;font-size:.8125rem}
+.ms-op-chip b{color:#e5d29f}
+.ms-op-list{display:grid;gap:10px}
+.ms-op-card{min-width:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;padding:13px 14px;border:1px solid #2a2824;background:rgba(15,15,16,.92)}
+.ms-op-card strong{display:block;color:#eee4cf;font:700 .8rem Cinzel,serif;overflow-wrap:anywhere}
+.ms-op-card small{display:block;margin-top:4px;color:#888;line-height:1.35;overflow-wrap:anywhere}
+.ms-op-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}
+.ms-op-actions button,.ms-op-primary{border:1px solid #665b42;background:#101010;color:#d6c18e;padding:8px 10px;font:700 .8125rem Cinzel,serif;letter-spacing:.04em;cursor:pointer}
+.ms-op-actions button.danger{border-color:#6d2929;color:#e88686}
+.ms-op-actions button.approve,.ms-op-primary{border-color:#31624f;color:#83ddb8}
+.ms-op-empty{padding:30px 14px;text-align:center;border:1px dashed #302d27;color:#777;font-size:.78rem}
+.ms-op-evolution{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.7fr);gap:14px}
+.ms-op-panel{border:1px solid #2c2922;background:#0c0d0e;padding:14px}
+.ms-op-panel h3{margin:0 0 10px;color:#d4af37;font:700 .76rem Cinzel,serif}
+.ms-op-form{display:flex;gap:7px;align-items:end;flex-wrap:wrap}
+.ms-op-form label{display:grid;gap:5px;color:#777;font-size:.8125rem;flex:1;min-width:110px}
+.ms-op-form input{min-width:0;width:100%;box-sizing:border-box;background:#070707;color:#eee;border:1px solid #3d3931;padding:9px}
+.ms-op-error{padding:12px;border:1px solid #5a2626;color:#e08d8d;background:#180b0b}
+.ms-quick-sheets .ms-op-tabs{grid-template-columns:1fr}
+.ms-quick-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.ms-quick-card{min-width:0;padding:14px;border:1px solid #2f2b25;background:#0d0e0f}
+.ms-quick-card h3{margin:0 0 5px;color:#eee4cf;font:700 .86rem Cinzel,serif;overflow-wrap:anywhere}
+.ms-quick-card p{margin:0 0 12px;color:#777;font-size:.8125rem}
+.ms-quick-card button{width:100%;border:1px solid #655d4b;background:#12110e;color:#e1c977;padding:9px;font:700 .8125rem Cinzel,serif;cursor:pointer}
+#ms-crew-center{z-index:15050}
+#ms-character-viewer{z-index:15100!important}
+@media(max-width:600px){.ms-quick-sheets,.ms-crew-center{padding:0;align-items:flex-end;background:rgba(0,0,0,.56)}
+.ms-op-shell{width:100vw;max-width:100vw;max-height:84dvh;border-left:0;border-right:0;border-bottom:0;border-radius:18px 18px 0 0;box-sizing:border-box}
+.ms-op-head{padding:14px 15px}
+.ms-op-head h2{font-size:1rem}
+.ms-op-tabs{overflow-x:auto;grid-template-columns:repeat(3,minmax(112px,1fr));scrollbar-width:thin}
+.ms-op-tabs button{font-size:.8125rem;padding:11px 5px;white-space:nowrap}
+.ms-op-body{padding:12px;overflow-x:hidden}
+.ms-op-card{grid-template-columns:minmax(0,1fr);gap:10px}
+.ms-op-actions{justify-content:flex-start}
+.ms-op-actions button{flex:1 1 auto;min-width:92px}
+.ms-op-evolution{grid-template-columns:minmax(0,1fr)}
+.ms-quick-grid{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:390px){.ms-op-shell{max-height:86dvh}
+.ms-op-tabs{grid-template-columns:repeat(3,minmax(106px,1fr))}
+.ms-op-body{padding:10px}
+.ms-op-form{display:grid;grid-template-columns:minmax(0,1fr)}
+.ms-op-form label{min-width:0}
+.ms-op-actions button{min-width:0}
+}
+.ms-op-subtabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0 0 14px;border:1px solid #2d2a24;background:#08090a}
+.ms-op-subtabs button{min-width:0;border:0;border-right:1px solid #29261f;background:#0c0d0e;color:#7f786d;padding:9px 6px;font:700 .8125rem Cinzel,serif;letter-spacing:.05em;cursor:pointer}
+.ms-op-subtabs button:last-child{border-right:0}
+.ms-op-subtabs button.active{background:#19160f;color:#e0c56f}
+.ms-op-note{display:block;margin:8px 0 10px;color:#777;font-size:.8125rem;line-height:1.45}
+.ms-op-card .ms-op-badge{vertical-align:middle}
+@media(max-width:600px){.ms-op-subtabs{overflow-x:auto;grid-template-columns:repeat(4,minmax(108px,1fr));scrollbar-width:thin}
+.ms-op-subtabs button{white-space:nowrap;font-size:.8125rem}
+}
+@media(max-width:390px){.ms-op-subtabs{grid-template-columns:repeat(4,minmax(102px,1fr))}
+}
+
+.ms-op-shell button{min-height:44px}.ms-op-shell :is(input,select,textarea){font-size:1rem}.ms-op-close{min-width:44px;min-height:44px}

@@ -1,0 +1,6 @@
+Site-oficial-MS_2.11.1
+Build concluído com sucesso.
+Testes: 323 total; 304 aprovados; 0 falhas; 19 condicionais/ignorados.
+Sintaxe: 63 arquivos JavaScript válidos.
+Catálogos Grid Architect presentes em dist, Offline e SANDBOX.
+Pacotes validados por CRC, extração integral e SHA-256 arquivo a arquivo.

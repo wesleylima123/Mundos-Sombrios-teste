@@ -1,0 +1,18 @@
+SITE OFICIAL MUNDOS SOMBRIOS — V2.10.5
+
+Atualização visual e tática:
+- Encruzilhada: hub diegético para escolha de Êxodo e Ocultatun.
+- Nexo de Fendas: acesso artístico à Ancoragem e campanhas vinculadas.
+- Cards de mesas do jogador com identidade visual por modo.
+- VTT com matriz fixa 16 × 16 células e snap X/Y por célula.
+- CSS legado das antigas esferas removido.
+
+Validação:
+- npm run build: APROVADO
+- 299 testes
+- 280 aprovados
+- 0 falhas
+- 19 condicionais/ignorados
+
+Nomenclatura de distribuição:
+Site-oficial-MS_2.10.5

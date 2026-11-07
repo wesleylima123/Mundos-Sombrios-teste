@@ -1,0 +1,27 @@
+SITE OFICIAL MS — RELEASE VALIDATION V2.10.8
+
+[OK] Versão canônica: 2.10.8
+[OK] Syntax check: 61 arquivos JavaScript válidos
+[OK] Testes automatizados: 310 total / 291 pass / 0 fail / 19 skip
+[OK] Build de produção concluído
+[OK] offline-local reconstruído
+[OK] sandbox-offline reconstruído
+[OK] dist preparado pelo build e excluído dos ZIPs de fonte
+[OK] QA renderizado nos papéis Jogador, Mestre e ADM
+[OK] QA responsivo: 12/12 combinações aprovadas em 1440x1000, 1024x768, 768x900 e 390x844
+[OK] Canvas/overlay possuem dimensão válida e Grid ocupa o workspace
+[OK] Jogador não abre Configuração de Matriz
+[OK] Mestre e ADM abrem Configuração de Matriz
+[OK] Preview em tempo real permanece separado da configuração oficial
+[OK] Formatos ortogonal, hexagonal horizontal, hexagonal vertical e livre validados
+[OK] Calibração visual inicia/encerra sem erro
+[OK] DESCARTAR restaura o estado oficial
+[OK] APLICAR À CENA persiste a configuração por Cena
+[OK] Snap e visibilidade alternam e persistem pela autoridade do Mestre
+[OK] Régua, cone, linha, raio e limpeza de medidas validados
+[OK] Totem NPC e preview de tamanho em células validados
+[OK] Broadcast efêmero grid_preview validado no canal da Mesa
+[OK] Runtime da Mesa inclui master-tools.js para persistência mesmo em entrada fria
+[OK] Editor da Matriz fica acima de fichas/overlays e o footer móvel permanece acessível
+[OK] Medalhões de ficha respeitam o cabeçalho da janela ativa e não cobrem Voltar ao Salão
+[OK] Nenhum erro de console/pageerror observado na bateria de navegador

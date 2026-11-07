@@ -1,0 +1,3762 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mundos Sombrios — Oráculo de Vocação (Diagnóstico de Classe)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-void: #050609;
+      --bg-deep: #0b0d13;
+      --bg-card: rgba(15, 18, 26, 0.90);
+      --bg-elevated: rgba(24, 28, 40, 0.85);
+      --gold: #e5c168;
+      --gold-soft: rgba(229, 193, 104, 0.22);
+      --gold-glow: rgba(229, 193, 104, 0.16);
+      --crimson: #d94b64;
+      --cyan: #58d5ff;
+      --violet: #a77bff;
+      --emerald: #4be3a8;
+      --text-main: #f3efe6;
+      --text-muted: #aba59a;
+      --text-dim: #736e65;
+      --border: rgba(229, 193, 104, 0.20);
+      --border-strong: rgba(229, 193, 104, 0.48);
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+      --shadow-heavy: 0 24px 60px rgba(0, 0, 0, 0.78);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      min-height: 100%;
+      background-color: var(--bg-void);
+      color: var(--text-main);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.55;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #ritual-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: -2;
+    }
+
+    #sparks-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .ritual-vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background: radial-gradient(circle at 50% 50%, transparent 35%, rgba(45, 2, 6, var(--ritual-vignette-alpha, 0.25)) 75%, rgba(10, 0, 2, var(--ritual-vignette-deep, 0.75)) 100%);
+      transition: opacity 0.8s ease;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(20, 3, 5, 0.6), transparent 70%),
+        linear-gradient(180deg, #030406 0%, #07090f 50%, #020305 100%);
+      z-index: -3;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(229, 193, 104, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(229, 193, 104, 0.02) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at 50% 40%, black 20%, transparent 80%);
+      z-index: -2;
+    }
+
+    /* Top Prototype Bar */
+    .proto-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 28px;
+      background: rgba(7, 9, 14, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .proto-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .proto-sigil {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border-strong);
+      display: grid;
+      place-items: center;
+      color: var(--gold);
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      background: radial-gradient(circle, rgba(229, 193, 104, 0.18), transparent 70%);
+      box-shadow: 0 0 18px rgba(229, 193, 104, 0.18);
+    }
+
+    .proto-brand-text strong {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.94rem;
+      letter-spacing: 0.14em;
+      color: var(--text-main);
+    }
+
+    .proto-brand-text span {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+    }
+
+    .proto-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge-standalone {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(229, 193, 104, 0.1);
+      border: 1px solid rgba(229, 193, 104, 0.3);
+      color: var(--gold);
+    }
+
+    .btn-ghost {
+      appearance: none;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 7px 13px;
+      border-radius: var(--radius-sm);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--gold);
+      background: rgba(229, 193, 104, 0.09);
+      color: #fff;
+    }
+
+    .btn-ghost.active {
+      border-color: var(--gold);
+      background: rgba(229, 193, 104, 0.18);
+      color: #fff;
+    }
+
+    /* Container Principal */
+    .oracle-shell {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 36px 20px 80px;
+    }
+
+    /* Tela Inicial */
+    .oracle-hero {
+      position: relative;
+      background: linear-gradient(165deg, rgba(20, 23, 34, 0.94), rgba(9, 11, 17, 0.97));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 48px 40px;
+      box-shadow: var(--shadow-heavy);
+      overflow: hidden;
+      text-align: center;
+      animation: fadeInScale 0.45s ease;
+    }
+
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .oracle-hero::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 520px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(229, 193, 104, 0.18), transparent 70%);
+      pointer-events: none;
+    }
+
+    .oracle-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(229, 193, 104, 0.06);
+      margin-bottom: 18px;
+    }
+
+    .oracle-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.9rem, 4vw, 3.1rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: 0.04em;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .oracle-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.18rem, 2.2vw, 1.45rem);
+      color: var(--text-muted);
+      max-width: 780px;
+      margin: 0 auto 32px;
+      line-height: 1.45;
+    }
+
+    .oracle-pillars {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin: 0 auto 36px;
+      max-width: 980px;
+      text-align: left;
+    }
+
+    .pillar-card {
+      padding: 16px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-strong);
+    }
+
+    .pillar-icon {
+      font-size: 1.25rem;
+      color: var(--gold);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .pillar-card strong {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.84rem;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .pillar-card span {
+      display: block;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    .btn-primary {
+      appearance: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 16px 36px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--gold);
+      background: linear-gradient(135deg, rgba(229, 193, 104, 0.26), rgba(229, 193, 104, 0.09));
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 0.98rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(229, 193, 104, 0.18);
+      transition: all 0.22s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, rgba(229, 193, 104, 0.38), rgba(229, 193, 104, 0.16));
+      box-shadow: 0 14px 38px rgba(229, 193, 104, 0.28);
+    }
+
+    /* Tela de Perguntas */
+    .quiz-stage {
+      background: linear-gradient(165deg, rgba(14, 16, 24, 0.88), rgba(6, 8, 12, 0.94));
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 34px 38px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9);
+      position: relative;
+      animation: fadeInScale 0.35s ease;
+      transition: opacity 0.32s ease, transform 0.32s ease, border-color 0.4s ease;
+    }
+
+    .quiz-stage.fading-out {
+      opacity: 0.12;
+      transform: scale(0.985);
+    }
+
+    .quiz-stage.hammer-shaking {
+      animation: hammerStageShake 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes hammerStageShake {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      15% { transform: translate(-12px, 14px) rotate(-1.5deg); }
+      30% { transform: translate(14px, -11px) rotate(1.3deg); }
+      45% { transform: translate(-9px, 8px) rotate(-0.8deg); }
+      60% { transform: translate(7px, -6px) rotate(0.6deg); }
+      75% { transform: translate(-4px, 3px) rotate(-0.3deg); }
+      90% { transform: translate(2px, -1px); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+
+    /* Martelo de Guerra do Oráculo */
+    .hammer-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10000;
+      display: none;
+    }
+
+    .war-hammer {
+      position: absolute;
+      width: 180px;
+      height: 216px;
+      transform-origin: 28px 50px;
+      pointer-events: none;
+      will-change: transform, opacity;
+    }
+
+    .war-hammer.strike-anim {
+      animation: hammerStrikeMotion 0.32s cubic-bezier(0.12, 0.82, 0.22, 1) forwards;
+    }
+
+    @keyframes hammerStrikeMotion {
+      0% {
+        transform: translate(120px, -270px) rotate(-65deg) scale(1.4);
+        opacity: 0;
+      }
+      20% {
+        transform: translate(75px, -170px) rotate(-50deg) scale(1.25);
+        opacity: 1;
+      }
+      38% {
+        transform: translate(0, 0) rotate(8deg) scale(1.0);
+        opacity: 1;
+        filter: drop-shadow(0 0 35px #ff5500) brightness(1.8);
+      }
+      55% {
+        transform: translate(16px, -28px) rotate(-10deg) scale(1.02);
+        opacity: 0.95;
+        filter: drop-shadow(0 0 20px #ff2200) brightness(1.3);
+      }
+      100% {
+        transform: translate(32px, -65px) rotate(-22deg) scale(0.92);
+        opacity: 0;
+        filter: blur(8px) brightness(0.4);
+      }
+    }
+
+    .quiz-progress-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .quiz-chapter-tag {
+      color: var(--gold);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .quiz-progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+
+    .quiz-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff4400, var(--gold));
+      border-radius: 999px;
+      transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .question-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.2rem, 2.4vw, 1.55rem);
+      color: #fff;
+      line-height: 1.35;
+      margin-bottom: 24px;
+      transition: text-shadow 1s ease;
+    }
+
+    .question-title.scorch-flash {
+      text-shadow: 0 0 25px rgba(255, 60, 0, 0.95), 0 0 55px rgba(255, 20, 0, 0.75) !important;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      position: relative;
+    }
+
+    .option-btn {
+      appearance: none;
+      width: 100%;
+      text-align: left;
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .option-btn:hover, .option-btn:focus-visible {
+      border-color: #ff5500;
+      background: rgba(255, 68, 0, 0.08);
+      transform: translateX(4px);
+      box-shadow: 0 0 20px rgba(255, 68, 0, 0.15);
+      outline: none;
+    }
+
+    .option-btn.selected {
+      border-color: var(--gold);
+      background: linear-gradient(90deg, rgba(229, 193, 104, 0.18), rgba(229, 193, 104, 0.04));
+      box-shadow: 0 0 24px rgba(229, 193, 104, 0.15);
+    }
+
+    /* Resposta Gravada em Fogo */
+    .option-btn.branded-in-fire {
+      position: relative;
+      border-color: #ff3b00 !important;
+      background: radial-gradient(circle at 25% 50%, rgba(255, 90, 0, 0.5) 0%, rgba(180, 20, 0, 0.4) 45%, rgba(25, 4, 4, 0.96) 100%) !important;
+      box-shadow:
+        0 0 35px rgba(255, 60, 0, 0.9),
+        0 0 75px rgba(255, 140, 0, 0.55),
+        inset 0 0 25px rgba(255, 90, 0, 0.8),
+        inset 0 0 55px rgba(200, 20, 0, 0.5) !important;
+      transform: scale(1.025) !important;
+      animation: fireBrandPulse 1.6s ease-in-out forwards;
+      z-index: 15;
+    }
+
+    .option-btn.branded-in-fire::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(90deg, #ff1a00, #ffaa00, #fff099, #ff5500, #ff1a00);
+      background-size: 300% 300%;
+      animation: flameBorderFlow 1.2s linear infinite;
+      z-index: -1;
+      opacity: 0.85;
+    }
+
+    @keyframes flameBorderFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .option-btn.branded-in-fire .option-key {
+      border-color: #ffe066 !important;
+      background: radial-gradient(circle, #ffffff 0%, #ff8800 45%, #990000 100%) !important;
+      color: #110202 !important;
+      font-weight: 900 !important;
+      box-shadow: 0 0 25px #ff6600, 0 0 50px #ff2200 !important;
+      text-shadow: 0 0 6px #ffffff !important;
+    }
+
+    .option-btn.branded-in-fire .option-body {
+      color: #fff9f0 !important;
+      text-shadow:
+        0 0 4px #ffffff,
+        0 0 14px #ff9900,
+        0 0 28px #ff3300,
+        0 0 55px #880000 !important;
+      font-weight: 600 !important;
+    }
+
+    .options-grid.branded-locked .option-btn:not(.branded-in-fire) {
+      opacity: 0.12;
+      filter: blur(2.5px) grayscale(85%);
+      transform: scale(0.97);
+      pointer-events: none;
+      transition: all 0.35s ease;
+    }
+
+    @keyframes fireBrandPulse {
+      0% {
+        filter: brightness(2.4);
+        box-shadow: 0 0 55px rgba(255, 120, 0, 1), 0 0 95px rgba(255, 30, 0, 0.85);
+      }
+      25% {
+        filter: brightness(1.7);
+        box-shadow: 0 0 40px rgba(255, 80, 0, 0.9), 0 0 75px rgba(255, 20, 0, 0.65);
+      }
+      65% {
+        filter: brightness(1.35);
+        box-shadow: 0 0 30px rgba(255, 50, 0, 0.75), 0 0 55px rgba(180, 10, 0, 0.55);
+      }
+      100% {
+        filter: brightness(0.88);
+        border-color: #881100 !important;
+        background: rgba(28, 6, 6, 0.96) !important;
+        box-shadow: 0 0 18px rgba(180, 20, 0, 0.4) !important;
+      }
+    }
+
+    .option-key {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid rgba(229, 193, 104, 0.35);
+      display: grid;
+      place-items: center;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--gold);
+      background: rgba(229, 193, 104, 0.06);
+      transition: all 0.25s ease;
+    }
+
+    .option-body {
+      font-size: 0.92rem;
+      color: var(--text-main);
+      line-height: 1.48;
+    }
+
+    .quiz-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 26px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .quiz-hint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+
+    /* Tela de Resultado */
+    .result-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      animation: fadeInScale 0.4s ease;
+    }
+
+    /* Banner do Gabarito Canônico */
+    .gabarito-banner {
+      background: linear-gradient(160deg, rgba(229, 193, 104, 0.14), rgba(15, 18, 26, 0.96));
+      border: 1px solid var(--gold);
+      border-radius: var(--radius-lg);
+      padding: 30px 34px;
+      box-shadow: 0 0 35px rgba(229, 193, 104, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gabarito-badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .gabarito-doctrine {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      color: var(--cyan);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      background: rgba(88, 213, 255, 0.08);
+      border: 1px solid rgba(88, 213, 255, 0.3);
+      border-radius: 6px;
+    }
+
+    .gabarito-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.45rem, 3vw, 2.2rem);
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .gabarito-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.25rem;
+      color: var(--gold);
+      margin-bottom: 14px;
+      padding-left: 14px;
+      border-left: 3px solid var(--gold);
+    }
+
+    .gabarito-profile {
+      font-size: 0.94rem;
+      color: var(--text-main);
+      line-height: 1.62;
+    }
+
+    /* Banner da Classe */
+    .result-banner {
+      position: relative;
+      display: grid;
+      grid-template-columns: 310px 1fr;
+      gap: 32px;
+      background: linear-gradient(155deg, rgba(20, 24, 36, 0.95), rgba(8, 10, 15, 0.98));
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-heavy);
+      overflow: hidden;
+    }
+
+    .result-art-frame {
+      position: relative;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-strong);
+      background: #07090e;
+      aspect-ratio: 3 / 4;
+      display: flex;
+      align-items: flex-end;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+    }
+
+    .result-art-frame img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .result-art-frame:hover img {
+      transform: scale(1.03);
+    }
+
+    .result-art-overlay {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(180deg, transparent, rgba(5, 6, 9, 0.95));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .result-art-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid var(--border);
+    }
+
+    .result-main-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .result-Chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .r-chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-main);
+    }
+
+    .r-chip.world-ocultatun {
+      border-color: rgba(167, 123, 255, 0.45);
+      color: #d2bbff;
+      background: rgba(167, 123, 255, 0.1);
+    }
+
+    .r-chip.cat {
+      border-color: rgba(229, 193, 104, 0.45);
+      color: var(--gold);
+      background: rgba(229, 193, 104, 0.1);
+    }
+
+    .result-class-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 3.6vw, 2.75rem);
+      color: #fff;
+      line-height: 1.12;
+      margin-bottom: 6px;
+    }
+
+    .result-nature-sub {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .result-desc {
+      font-size: 0.94rem;
+      color: var(--text-muted);
+      line-height: 1.62;
+      margin-bottom: 22px;
+    }
+
+    .result-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat-mini {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .stat-mini small {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 3px;
+    }
+
+    .stat-mini strong {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      color: #fff;
+    }
+
+    /* Seção Poderes e Protocolos de Assinatura */
+    .talents-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px 32px;
+      box-shadow: var(--shadow-heavy);
+    }
+
+    .talents-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(229, 193, 104, 0.16);
+    }
+
+    .talents-header h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.25rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .talents-header h3 span {
+      color: var(--gold);
+    }
+
+    .talents-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .talent-card {
+      padding: 18px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .talent-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-strong);
+      background: rgba(229, 193, 104, 0.06);
+    }
+
+    .talent-tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    .talent-card strong {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.98rem;
+      color: #fff;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .talent-card p {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Afinidades com as 7 Opções do Gabarito */
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .analytics-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+    }
+
+    .analytics-card h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem;
+      color: #fff;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .bar-group {
+      margin-bottom: 12px;
+    }
+
+    .bar-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      margin-bottom: 5px;
+      color: var(--text-main);
+    }
+
+    .bar-label span:last-child {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--gold);
+    }
+
+    .bar-track {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--gold), var(--cyan));
+    }
+
+    /* Radar / Pentágono */
+    .radar-section {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .radar-chart-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .radar-chart-box svg {
+      max-width: 280px;
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(0 0 16px rgba(229, 193, 104, 0.16));
+    }
+
+    .radar-legend {
+      display: grid;
+      gap: 10px;
+    }
+
+    .radar-legend-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.82rem;
+    }
+
+    .radar-legend-item span:first-child {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .radar-legend-item span:last-child {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* Barra de Ações */
+    .result-actions-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      padding: 22px 26px;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    /* Gaveta de Demonstração para Sócios */
+    .partner-drawer {
+      margin-top: 28px;
+      background: rgba(11, 13, 20, 0.96);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      animation: fadeInScale 0.3s ease;
+    }
+
+    .partner-drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .partner-drawer-head h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem;
+      color: var(--gold);
+    }
+
+    .catalog-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .catalog-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .filter-btn {
+      appearance: none;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--gold);
+      color: var(--text-main);
+    }
+
+    .filter-btn.active {
+      border-color: var(--gold);
+      background: rgba(229, 193, 104, 0.16);
+      color: #fff;
+    }
+
+    .catalog-search-input {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(229, 193, 104, 0.28);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      padding: 7px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      min-width: 240px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .catalog-search-input:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 14px rgba(229, 193, 104, 0.22);
+    }
+
+    .catalog-pills {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 10px;
+    }
+
+    .catalog-pill {
+      appearance: none;
+      text-align: left;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .catalog-pill:hover, .catalog-pill.active {
+      border-color: var(--gold);
+      background: rgba(229, 193, 104, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .catalog-pill strong {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.84rem;
+      color: #fff;
+    }
+
+    .catalog-pill small {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .toast-feedback {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      background: rgba(16, 20, 30, 0.96);
+      border: 1px solid var(--gold);
+      color: #fff;
+      font-size: 0.85rem;
+      box-shadow: var(--shadow-heavy);
+      z-index: 100;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: all 0.22s ease;
+    }
+
+    .toast-feedback.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 860px) {
+      .oracle-pillars {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .result-banner {
+        grid-template-columns: 1fr;
+      }
+      .result-art-frame {
+        max-width: 280px;
+        margin: 0 auto;
+        width: 100%;
+      }
+      .talents-grid, .analytics-grid, .radar-section {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .oracle-hero, .quiz-stage, .result-banner, .gabarito-banner, .talents-section {
+        padding: 22px 18px;
+      }
+      .oracle-pillars, .result-stats-row {
+        grid-template-columns: 1fr;
+      }
+      .catalog-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .catalog-search-input {
+        min-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Rituais e Ambiente Sinistro (Canvas de Fundo) -->
+  <canvas id="ritual-canvas" aria-hidden="true"></canvas>
+  <div class="ritual-vignette" id="ritual-vignette" aria-hidden="true"></div>
+
+  <!-- Faíscas e Ondas de Choque (Canvas de Efeitos em Primeiro Plano) -->
+  <canvas id="sparks-canvas" aria-hidden="true"></canvas>
+
+  <!-- Martelo de Guerra do Julgamento (Overlay de Impacto Brutal) -->
+  <div id="hammer-overlay" class="hammer-overlay" aria-hidden="true">
+    <div id="war-hammer" class="war-hammer">
+      <svg viewBox="0 0 200 240" width="180" height="216" xmlns="http://www.w3.org/2000/svg" style="overflow:visible; filter: drop-shadow(0 10px 25px rgba(0,0,0,0.85));">
+        <defs>
+          <linearGradient id="hm-metal" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#717a8c" />
+            <stop offset="25%" stop-color="#343842" />
+            <stop offset="60%" stop-color="#181b22" />
+            <stop offset="100%" stop-color="#090a0d" />
+          </linearGradient>
+          <linearGradient id="hm-steel" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#f8fafc" />
+            <stop offset="40%" stop-color="#cbd5e1" />
+            <stop offset="70%" stop-color="#64748b" />
+            <stop offset="100%" stop-color="#334155" />
+          </linearGradient>
+          <linearGradient id="hm-glow-red" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ff2200" />
+            <stop offset="50%" stop-color="#ffaa00" />
+            <stop offset="100%" stop-color="#ff1100" />
+          </linearGradient>
+          <linearGradient id="hm-wood" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#1c1917" />
+            <stop offset="50%" stop-color="#44403c" />
+            <stop offset="100%" stop-color="#181412" />
+          </linearGradient>
+        </defs>
+        <g transform="rotate(-20 100 130)">
+          <!-- Cabo do martelo em madeira negra -->
+          <rect x="93" y="65" width="14" height="165" rx="3" fill="url(#hm-wood)" stroke="#0f1117" stroke-width="1.5" />
+          <!-- Tiras de couro rituais cruzadas -->
+          <path d="M93,92 L107,106 M93,122 L107,136 M93,152 L107,166 M93,182 L107,196" stroke="#e5c168" stroke-width="1.5" opacity="0.75" />
+          <path d="M107,92 L93,106 M107,122 L93,136 M107,152 L93,166 M107,182 L93,196" stroke="#991b1b" stroke-width="1.5" opacity="0.85" />
+          <!-- Anéis de ferro forjado -->
+          <rect x="90" y="78" width="20" height="6" rx="1" fill="url(#hm-steel)" />
+          <rect x="90" y="142" width="20" height="5" rx="1" fill="url(#hm-steel)" />
+          <rect x="90" y="208" width="20" height="8" rx="2" fill="url(#hm-steel)" />
+          <!-- Pomo pontiagudo -->
+          <polygon points="100,234 88,216 112,216" fill="url(#hm-metal)" stroke="#94a3b8" stroke-width="1.2" />
+
+          <!-- Colar do cabeçote -->
+          <rect x="85" y="52" width="30" height="16" rx="2" fill="url(#hm-metal)" stroke="#e5c168" stroke-width="1.2" />
+          
+          <!-- Cabeça principal do Martelo -->
+          <rect x="42" y="20" width="116" height="40" rx="4" fill="url(#hm-metal)" stroke="#475569" stroke-width="2" />
+          
+          <!-- Face de Impacto de Aço Maciço (Esquerda - bate na questão) -->
+          <path d="M42,18 L26,25 L26,55 L42,62 Z" fill="url(#hm-steel)" stroke="#f1f5f9" stroke-width="1.8" />
+          <line x1="26" y1="25" x2="26" y2="55" stroke="#ffffff" stroke-width="3" />
+          <line x1="29" y1="23" x2="29" y2="57" stroke="#ffe082" stroke-width="1.5" />
+          
+          <!-- Bico Perfurador de Armadura / Espigão Oculto (Direita) -->
+          <path d="M158,24 L190,38 L158,52 Z" fill="url(#hm-steel)" stroke="#64748b" stroke-width="1.5" />
+          
+          <!-- Placa de Brasa & Runas Arcanas em Alta Temperatura -->
+          <rect x="50" y="26" width="98" height="28" rx="2" fill="#090b10" stroke="url(#hm-glow-red)" stroke-width="1.4" />
+          <text x="99" y="46" font-family="'Cinzel', serif" font-size="13" font-weight="900" fill="#ffaa00" text-anchor="middle" letter-spacing="4" style="text-shadow: 0 0 8px #ff4400, 0 0 16px #ff0000;">✦ ᚱ ᛟ ᚦ ✦</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <header class="proto-topbar">
+    <div class="proto-brand">
+      <div class="proto-sigil" aria-hidden="true">✦</div>
+      <div class="proto-brand-text">
+        <strong>MUNDOS SOMBRIOS</strong>
+        <span>ORÁCULO DE VOCAÇÃO // DIAGNÓSTICO DE CLASSE</span>
+      </div>
+    </div>
+    <div class="proto-actions">
+      <span class="badge-standalone">Protótipo Independente · 12 Provações</span>
+      <button type="button" class="btn-ghost" id="btn-sound-toggle">🔊 Áudio: Ativado</button>
+      <button type="button" class="btn-ghost" id="btn-toggle-catalog">Catálogo de Classes (23)</button>
+      <button type="button" class="btn-ghost" id="btn-restart-top">Reiniciar</button>
+    </div>
+  </header>
+
+  <main class="oracle-shell">
+    <!-- TELA 1: INTRODUÇÃO -->
+    <section id="view-intro" class="oracle-hero">
+      <div class="oracle-kicker">✦ Diagnóstico Prático & Comportamental · 12 Questões</div>
+      <h1 class="oracle-title">Qual é a Sua Verdadeira Doutrina?</h1>
+      <p class="oracle-subtitle">
+        Diante de crises reais e situações limites, cada alma reage com um instinto primordial. Responda às 12 situações do cotidiano e de pressão para revelar sua <strong>Doutrina Operacional</strong> e seu arquétipo em <em>Mundos Sombrios</em>.
+      </p>
+
+      <div class="oracle-pillars">
+        <div class="pillar-card">
+          <span class="pillar-icon">🎯</span>
+          <strong>A · Mercador da Morte</strong>
+          <span>Operador tático de precisão, focado em alvos, disciplina e estratégias cirúrgicas.</span>
+        </div>
+        <div class="pillar-card">
+          <span class="pillar-icon">🛡️</span>
+          <strong>B · Carrasco Cinzento</strong>
+          <span>Bastião da linha de frente, focado em resistência física, impacto e proteção corporal.</span>
+        </div>
+        <div class="pillar-card">
+          <span class="pillar-icon">🧪</span>
+          <strong>C · Alquerino</strong>
+          <span>Arsenalista e preparador prático, focado em ferramentas, reagentes e recursos.</span>
+        </div>
+        <div class="pillar-card">
+          <span class="pillar-icon">⚖️</span>
+          <strong>D · Samaritano</strong>
+          <span>Inquisidor de convicção rígida, guiado pelo dever, votos e justiça inflexível.</span>
+        </div>
+        <div class="pillar-card">
+          <span class="pillar-icon">✨</span>
+          <strong>E · Taumatúrgico</strong>
+          <span>Canalizador da teurgia sagrada, focado na empatia, cura e acolhimento das almas.</span>
+        </div>
+        <div class="pillar-card">
+          <span class="pillar-icon">📐</span>
+          <strong>F · Hermético</strong>
+          <span>Mestre da geometria sagrada e da razão, que analisa e manipula a matéria pelas leis físicas.</span>
+        </div>
+        <div class="pillar-card">
+          <span class="pillar-icon">👁️</span>
+          <strong>G · Esotérico</strong>
+          <span>Ocultista e investigador do invisível, guiado pela intuição, misticismo e segredos do Abismo.</span>
+        </div>
+      </div>
+
+      <button type="button" class="btn-primary" id="btn-start-quiz">
+        <span>Iniciar Diagnóstico de Vocação</span>
+        <span aria-hidden="true">→</span>
+      </button>
+    </section>
+
+    <!-- TELA 2: QUIZ (12 PERGUNTAS COM 7 ALTERNATIVAS A A G) -->
+    <section id="view-quiz" class="quiz-stage" hidden>
+      <div class="quiz-progress-head">
+        <span class="quiz-chapter-tag" id="q-chapter">PROVAÇÃO COMPORTAMENTAL</span>
+        <span id="q-counter">Questão 01 de 12</span>
+      </div>
+      <div class="quiz-progress-track" aria-hidden="true">
+        <div class="quiz-progress-fill" id="q-progress-bar" style="width: 8.33%"></div>
+      </div>
+
+      <h2 class="question-title" id="q-title"></h2>
+
+      <div class="options-grid" id="q-options" role="radiogroup" aria-label="Opções de resposta"></div>
+
+      <div class="quiz-footer">
+        <button type="button" class="btn-ghost" id="btn-prev-question">← Pergunta Anterior</button>
+        <span class="quiz-hint">Dica: Use as teclas A, B, C, D, E, F, G (ou 1 a 7)</span>
+      </div>
+    </section>
+
+    <!-- TELA 3: RESULTADO COMPLETO BASEADO NO GABARITO -->
+    <section id="view-result" class="result-wrapper" hidden>
+      <!-- GABARITO & RESULTADO DO QUIZ -->
+      <section class="gabarito-banner" id="res-gabarito-card">
+        <div class="gabarito-badge-row">
+          <span class="badge-standalone" id="res-gabarito-letter-tag">MAIORIA A · RESULTADO OFICIAL</span>
+          <span class="gabarito-doctrine" id="res-gabarito-doctrine">Doutrina: Operação Tática</span>
+        </div>
+        <h2 class="gabarito-title" id="res-gabarito-title">Mercador da Morte (O Operador Tático)</h2>
+        <blockquote class="gabarito-quote" id="res-gabarito-quote">“Alvo marcado. Fogo concentrado nele agora.”</blockquote>
+        <p class="gabarito-profile" id="res-gabarito-profile">Você é a mente fria e calculista da equipe...</p>
+      </section>
+
+      <!-- CARD DA CLASSE -->
+      <article class="result-banner">
+        <div class="result-art-frame">
+          <img id="res-class-img" src="" alt="Arte da Classe" onerror="if(!this.src.endsWith('.svg')) this.src=this.src.replace('.webp','.svg');">
+          <div class="result-art-overlay">
+            <span class="result-art-badge" id="res-token-badge">ARQUÉTIPO</span>
+            <span class="result-art-badge" id="res-match-pct">96% SINCRONIA</span>
+          </div>
+        </div>
+
+        <div class="result-main-info">
+          <div class="result-Chips">
+            <span class="r-chip world-ocultatun" id="res-world-chip">Mundo: Ocultatun</span>
+            <span class="r-chip cat" id="res-cat-chip">CATEGORIA</span>
+            <span class="r-chip" id="res-role-chip">FUNÇÃO</span>
+          </div>
+
+          <h2 class="result-class-title" id="res-class-name">Nome da Classe</h2>
+          <div class="result-nature-sub" id="res-nature-name">Expansão / Origem</div>
+
+          <p class="result-desc" id="res-class-desc"></p>
+
+          <div class="result-stats-row">
+            <div class="stat-mini">
+              <small>Foco Tático</small>
+              <strong id="res-stat-shot">—</strong>
+            </div>
+            <div class="stat-mini">
+              <small>Atributos Chave</small>
+              <strong id="res-stat-attrs">—</strong>
+            </div>
+            <div class="stat-mini">
+              <small>Mecânica Central</small>
+              <strong id="res-stat-mech">—</strong>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- SEÇÃO EXCLUSIVA: PODERES DE ASSINATURA -->
+      <section class="talents-section" aria-label="Poderes de Assinatura">
+        <div class="talents-header">
+          <h3><span>✦</span> Poderes de Assinatura & Protocolos Iniciais</h3>
+          <span class="badge-standalone" id="res-talents-nature-badge">TALENTOS CANÔNICOS</span>
+        </div>
+        <div class="talents-grid" id="res-talents-grid"></div>
+      </section>
+
+      <!-- PAINEL ANALÍTICO: RESPOSTAS POR LETRA & PERFIL -->
+      <div class="analytics-grid">
+        <section class="analytics-card">
+          <h3>
+            <span>Distribuição das 12 Respostas</span>
+            <small style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--text-dim)">GABARITO (A A G)</small>
+          </h3>
+          <div id="res-bars-letters"></div>
+        </section>
+
+        <section class="analytics-card">
+          <h3>
+            <span>Afinidade Entre as 7 Doutrinas</span>
+            <small style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--text-dim)">RANKING COMPLETO</small>
+          </h3>
+          <div id="res-bars-classes"></div>
+        </section>
+      </div>
+
+      <!-- MATRIZ PENTAGONAL DE APTIDÃO -->
+      <section class="analytics-card">
+        <h3>
+          <span>Matriz de Aptidão Pentagonal</span>
+          <small style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--text-dim)">VETORES DA ALMA</small>
+        </h3>
+        <div class="radar-section">
+          <div class="radar-chart-box">
+            <div id="res-radar-svg"></div>
+          </div>
+          <div class="radar-legend" id="res-radar-legend"></div>
+        </div>
+      </section>
+
+      <!-- BARRA DE AÇÕES -->
+      <div class="result-actions-bar">
+        <div>
+          <strong style="font-family:'Cinzel',serif;color:#fff;display:block">Aprovado para apresentar aos sócios?</strong>
+          <span style="font-size:0.82rem;color:var(--text-muted)">Você pode baixar o Cartão Oficial da Alma em PNG ou copiar o relatório completo formatado.</span>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button type="button" class="btn-ghost" id="btn-download-card">📥 Baixar Card da Alma (PNG)</button>
+          <button type="button" class="btn-ghost" id="btn-copy-summary">📋 Copiar Relatório da Alma</button>
+          <button type="button" class="btn-primary" id="btn-retake" style="padding:11px 22px;font-size:0.84rem">Refazer o Diagnóstico</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- GAVETA DO MODO APRESENTAÇÃO PARA SÓCIOS -->
+    <section id="partner-catalog" class="partner-drawer" hidden>
+      <div class="partner-drawer-head">
+        <div>
+          <h3>Modo Demonstração para Sócios — Inspecionar Qualquer Classe</h3>
+          <p style="font-size:0.82rem;color:var(--text-muted)">Clique em qualquer uma das classes abaixo para simular imediatamente a tela de resultado correspondente durante a reunião.</p>
+        </div>
+        <button type="button" class="btn-ghost" id="btn-close-catalog">Fechar Catálogo</button>
+      </div>
+
+      <div class="catalog-toolbar">
+        <div class="catalog-filters" id="catalog-filters">
+          <button type="button" class="filter-btn active" data-filter="all">Todos (23)</button>
+          <button type="button" class="filter-btn" data-filter="gabarito">⭐ Gabarito (7)</button>
+          <button type="button" class="filter-btn" data-filter="ocultatun">✦ Ocultatun (13)</button>
+          <button type="button" class="filter-btn" data-filter="exodo">⌬ Êxodo (10)</button>
+          <button type="button" class="filter-btn" data-filter="combatente">⚔ Combatentes (8)</button>
+          <button type="button" class="filter-btn" data-filter="sobrevivente">✚ Sobreviventes (6)</button>
+          <button type="button" class="filter-btn" data-filter="especialista">⌁ Especialistas (9)</button>
+        </div>
+        <input type="search" class="catalog-search-input" id="catalog-search" placeholder="🔍 Buscar por nome, papel ou expansão...">
+      </div>
+
+      <div class="catalog-pills" id="catalog-list"></div>
+    </section>
+  </main>
+
+  <div class="toast-feedback" id="toast-msg" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // =========================================================================
+      // 0. MOTOR DE ÁUDIO RITUAL SINTÉTICO (WEB AUDIO API - ZERO DEPENDÊNCIAS)
+      // =========================================================================
+      const SoundEngine = {
+        ctx: null,
+        enabled: localStorage.getItem('ms_quiz_sound') !== 'false',
+        droneNodes: null,
+
+        init() {
+          if (this.ctx) return;
+          try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) {
+              this.ctx = new AudioCtx();
+            }
+          } catch (_) {}
+        },
+
+        ensureActive() {
+          this.init();
+          if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume();
+          }
+        },
+
+        toggle() {
+          this.enabled = !this.enabled;
+          localStorage.setItem('ms_quiz_sound', String(this.enabled));
+          if (!this.enabled && this.droneNodes) {
+            this.stopDrone();
+          }
+          return this.enabled;
+        },
+
+        playHammerStrike() {
+          if (!this.enabled) return;
+          this.ensureActive();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+
+          // 1. Sub Grave de Impacto (Boom visceral de martelo de forja pesado)
+          const subOsc = this.ctx.createOscillator();
+          const subGain = this.ctx.createGain();
+          subOsc.type = 'sine';
+          subOsc.frequency.setValueAtTime(145, now);
+          subOsc.frequency.exponentialRampToValueAtTime(32, now + 0.32);
+          subGain.gain.setValueAtTime(0.38, now);
+          subGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.48);
+          subOsc.connect(subGain);
+          subGain.connect(this.ctx.destination);
+          subOsc.start(now);
+          subOsc.stop(now + 0.50);
+
+          // 2. Ressonância Metálica de Bigorna (Clang estridente de aço maciço)
+          const metalFreqs = [1280, 2560, 3840];
+          metalFreqs.forEach((freq, idx) => {
+            const metalOsc = this.ctx.createOscillator();
+            const metalGain = this.ctx.createGain();
+            metalOsc.type = 'triangle';
+            metalOsc.frequency.setValueAtTime(freq + (idx * 40), now);
+            metalOsc.frequency.exponentialRampToValueAtTime(freq * 0.94, now + 0.38);
+
+            metalGain.gain.setValueAtTime(0.085 / (idx + 1), now);
+            metalGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.42 + idx * 0.08);
+
+            metalOsc.connect(metalGain);
+            metalGain.connect(this.ctx.destination);
+            metalOsc.start(now);
+            metalOsc.stop(now + 0.60);
+          });
+
+          // 3. Estalo / Ruído de Fricção e Faíscas
+          try {
+            const bufferSize = Math.floor(this.ctx.sampleRate * 0.14);
+            const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+              output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.22));
+            }
+            const noise = this.ctx.createBufferSource();
+            noise.buffer = noiseBuffer;
+            const filter = this.ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(2400, now);
+            filter.Q.setValueAtTime(3.5, now);
+
+            const noiseGain = this.ctx.createGain();
+            noiseGain.gain.setValueAtTime(0.20, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+
+            noise.connect(filter);
+            filter.connect(noiseGain);
+            noiseGain.connect(this.ctx.destination);
+            noise.start(now);
+          } catch (_) {}
+        },
+
+        playFireSizzle() {
+          if (!this.enabled) return;
+          this.ensureActive();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+
+          try {
+            const dur = 1.35;
+            const bufferSize = Math.floor(this.ctx.sampleRate * dur);
+            const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+              const t = i / this.ctx.sampleRate;
+              const decay = Math.max(0, 1 - t / dur);
+              const crackle = Math.random() > 0.982 ? (Math.random() * 1.6) : 0;
+              output[i] = ((Math.random() * 2 - 1) * 0.35 + crackle) * Math.pow(decay, 1.3);
+            }
+            const noise = this.ctx.createBufferSource();
+            noise.buffer = noiseBuffer;
+
+            const filter = this.ctx.createBiquadFilter();
+            filter.type = 'highpass';
+            filter.frequency.setValueAtTime(1200, now);
+            filter.frequency.linearRampToValueAtTime(700, now + dur);
+
+            const gain = this.ctx.createGain();
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.linearRampToValueAtTime(0.13, now + 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(this.ctx.destination);
+            noise.start(now);
+          } catch (_) {}
+        },
+
+        playSelect() {
+          if (!this.enabled) return;
+          this.ensureActive();
+          if (!this.ctx) return;
+
+          const now = this.ctx.currentTime;
+          const freqs = [523.25, 659.25, 783.99]; // C5-E5-G5
+
+          freqs.forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.035);
+
+            gain.gain.setValueAtTime(0.001, now + idx * 0.035);
+            gain.gain.exponentialRampToValueAtTime(0.045, now + idx * 0.035 + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.035 + 0.28);
+
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+
+            osc.start(now + idx * 0.035);
+            osc.stop(now + idx * 0.035 + 0.3);
+          });
+        },
+
+        playStep() {
+          if (!this.enabled) return;
+          this.ensureActive();
+          if (!this.ctx) return;
+
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(330, now + 0.12);
+
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.exponentialRampToValueAtTime(0.035, now + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.15);
+        },
+
+        playReveal() {
+          if (!this.enabled) return;
+          this.ensureActive();
+          if (!this.ctx) return;
+
+          const now = this.ctx.currentTime;
+          const freqs = [174.61, 261.63, 349.23, 440.00, 523.25, 698.46];
+
+          freqs.forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+
+            gain.gain.setValueAtTime(0.001, now + idx * 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.06, now + idx * 0.06 + 0.12);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.06 + 1.4);
+
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+
+            osc.start(now + idx * 0.06);
+            osc.stop(now + idx * 0.06 + 1.45);
+          });
+        },
+
+        startDrone() {
+          if (!this.enabled || this.droneNodes) return;
+          this.ensureActive();
+          if (!this.ctx) return;
+
+          const now = this.ctx.currentTime;
+          const osc1 = this.ctx.createOscillator();
+          const osc2 = this.ctx.createOscillator();
+          const filter = this.ctx.createBiquadFilter();
+          const gain = this.ctx.createGain();
+
+          osc1.type = 'sawtooth';
+          osc1.frequency.setValueAtTime(55, now);
+          osc2.type = 'sine';
+          osc2.frequency.setValueAtTime(110, now);
+
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(220, now);
+
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.exponentialRampToValueAtTime(0.016, now + 1.5);
+
+          osc1.connect(filter);
+          osc2.connect(filter);
+          filter.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc1.start(now);
+          osc2.start(now);
+
+          this.droneNodes = { osc1, osc2, filter, gain };
+        },
+
+        updateRitualDrone(progress) {
+          if (!this.droneNodes || !this.ctx) return;
+          const now = this.ctx.currentTime;
+          const p = Math.min(1, Math.max(0, progress));
+          // Tom do drone fica mais profundo e grave conforme os rituais avançam (55Hz -> 38Hz)
+          const baseFreq = 55 - p * 17;
+          this.droneNodes.osc1.frequency.setTargetAtTime(baseFreq, now, 0.4);
+          this.droneNodes.osc2.frequency.setTargetAtTime(baseFreq * 2 + Math.sin(now * 1.5) * 1.5, now, 0.4);
+          if (this.droneNodes.filter) {
+            // Abre o filtro para ressoar frequências mais sinistras e ameaçadoras
+            this.droneNodes.filter.frequency.setTargetAtTime(200 + p * 260, now, 0.5);
+          }
+        },
+
+        stopDrone() {
+          if (!this.droneNodes || !this.ctx) return;
+          const now = this.ctx.currentTime;
+          try {
+            this.droneNodes.gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+            setTimeout(() => {
+              try {
+                this.droneNodes.osc1.stop();
+                this.droneNodes.osc2.stop();
+              } catch (_) {}
+              this.droneNodes = null;
+            }, 850);
+          } catch (_) {
+            this.droneNodes = null;
+          }
+        }
+      };
+
+      // =========================================================================
+      // 0.1 SISTEMA DE PARTÍCULAS: FAÍSCAS DO IMPACTO DO MARTELO (SPARKS FX)
+      // =========================================================================
+      const SparksFX = {
+        canvas: null,
+        ctx: null,
+        width: 0,
+        height: 0,
+        sparks: [],
+        embers: [],
+        shockwaves: [],
+        animId: null,
+
+        init() {
+          this.canvas = document.getElementById('sparks-canvas');
+          if (!this.canvas || typeof this.canvas.getContext !== 'function') return;
+          this.ctx = this.canvas.getContext('2d');
+          if (!this.ctx) return;
+
+          this.resize();
+          window.addEventListener('resize', () => this.resize());
+          this.loop = this.loop.bind(this);
+          this.loop();
+        },
+
+        resize() {
+          if (!this.canvas) return;
+          this.width = this.canvas.width = window.innerWidth;
+          this.height = this.canvas.height = window.innerHeight;
+        },
+
+        burst(x, y, count = 120) {
+          if (!this.ctx) return;
+
+          // Onda de choque circular
+          this.shockwaves.push({
+            x, y,
+            radius: 6,
+            maxRadius: 190,
+            alpha: 1,
+            color: '255, 120, 20'
+          });
+          this.shockwaves.push({
+            x, y,
+            radius: 4,
+            maxRadius: 130,
+            alpha: 0.85,
+            color: '255, 230, 100'
+          });
+
+          // Faíscas incandescentes em alta velocidade
+          for (let i = 0; i < count; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 19 + 5;
+            // Tendência de espalhar para cima e para fora (efeito de impacto contra bigorna)
+            const vx = Math.cos(angle) * speed;
+            const vy = Math.sin(angle) * speed - (Math.random() * 7 + 2);
+            const life = Math.random() * 38 + 24;
+
+            this.sparks.push({
+              x, y,
+              px: x, py: y,
+              vx, vy,
+              life,
+              maxLife: life,
+              size: Math.random() * 3.2 + 1.2,
+              colType: Math.random()
+            });
+          }
+
+          // Brasas fumegantes flutuantes
+          for (let i = 0; i < 35; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 4 + 1.2;
+            this.embers.push({
+              x: x + (Math.random() - 0.5) * 35,
+              y: y + (Math.random() - 0.5) * 20,
+              vx: Math.cos(angle) * speed,
+              vy: -Math.random() * 2.8 - 0.6,
+              life: Math.random() * 70 + 40,
+              maxLife: 85,
+              size: Math.random() * 2.6 + 0.8,
+              flicker: Math.random() * 10
+            });
+          }
+        },
+
+        spawnRisingEmber(x, y) {
+          this.embers.push({
+            x, y,
+            vx: (Math.random() - 0.5) * 2,
+            vy: -Math.random() * 3.5 - 1.2,
+            life: Math.random() * 45 + 30,
+            maxLife: 60,
+            size: Math.random() * 2.4 + 1.0,
+            flicker: Math.random() * 8
+          });
+        },
+
+        loop() {
+          if (!this.ctx) return;
+          this.ctx.clearRect(0, 0, this.width, this.height);
+
+          // 1. Ondas de Choque
+          for (let i = this.shockwaves.length - 1; i >= 0; i--) {
+            const s = this.shockwaves[i];
+            s.radius += (s.maxRadius - s.radius) * 0.22 + 2;
+            s.alpha *= 0.86;
+            if (s.alpha < 0.02 || s.radius >= s.maxRadius) {
+              this.shockwaves.splice(i, 1);
+              continue;
+            }
+            this.ctx.save();
+            this.ctx.beginPath();
+            this.ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+            this.ctx.strokeStyle = `rgba(${s.color}, ${s.alpha})`;
+            this.ctx.lineWidth = 4 * s.alpha;
+            this.ctx.shadowColor = `rgba(${s.color}, 0.9)`;
+            this.ctx.shadowBlur = 16;
+            this.ctx.stroke();
+            this.ctx.restore();
+          }
+
+          // 2. Faíscas Incandescentes
+          for (let i = this.sparks.length - 1; i >= 0; i--) {
+            const p = this.sparks[i];
+            p.px = p.x;
+            p.py = p.y;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.48; // gravidade
+            p.vx *= 0.96; // arrasto do ar
+            p.vy *= 0.96;
+            p.life--;
+
+            if (p.life <= 0) {
+              this.sparks.splice(i, 1);
+              continue;
+            }
+
+            const prog = p.life / p.maxLife;
+            let col = '#ffffff';
+            if (p.colType < 0.28) col = '#ffffff';
+            else if (p.colType < 0.62) col = '#ffd24d';
+            else if (p.colType < 0.88) col = '#ff6a00';
+            else col = '#ff1a00';
+
+            this.ctx.save();
+            this.ctx.beginPath();
+            this.ctx.moveTo(p.px, p.py);
+            this.ctx.lineTo(p.x, p.y);
+            this.ctx.strokeStyle = col;
+            this.ctx.lineWidth = p.size * prog;
+            this.ctx.lineCap = 'round';
+            this.ctx.shadowColor = '#ff5500';
+            this.ctx.shadowBlur = 8;
+            this.ctx.stroke();
+            this.ctx.restore();
+          }
+
+          // 3. Brasas e Fumaça
+          for (let i = this.embers.length - 1; i >= 0; i--) {
+            const e = this.embers[i];
+            e.x += e.vx + Math.sin((e.life + e.flicker) * 0.16) * 0.7;
+            e.y += e.vy;
+            e.life--;
+            if (e.life <= 0) {
+              this.embers.splice(i, 1);
+              continue;
+            }
+            const prog = e.life / e.maxLife;
+            const alpha = prog * 0.85 * (0.65 + 0.35 * Math.sin(e.life * 0.3));
+            this.ctx.save();
+            this.ctx.beginPath();
+            this.ctx.arc(e.x, e.y, e.size * (0.6 + 0.4 * prog), 0, Math.PI * 2);
+            this.ctx.fillStyle = `rgba(255, ${Math.floor(70 + 130 * prog)}, 0, ${alpha})`;
+            this.ctx.shadowColor = '#ff3300';
+            this.ctx.shadowBlur = 10;
+            this.ctx.fill();
+            this.ctx.restore();
+          }
+
+          this.animId = requestAnimationFrame(this.loop);
+        }
+      };
+
+      // =========================================================================
+      // 0.2 MOTOR DO AMBIENTE SINISTRO & RITUAIS VERMELHOS (RITUAL CANVAS)
+      // =========================================================================
+      let ritualIntensity = 0;       // 0 (adormecido) a 1 (ápice apocalíptico)
+      let targetRitualIntensity = 0; // Alvo suave interpolado
+
+      function updateRitualIntensity(progress) {
+        targetRitualIntensity = Math.min(1, Math.max(0, progress));
+        const vig = $('ritual-vignette');
+        if (vig) {
+          vig.style.setProperty('--ritual-vignette-alpha', (0.15 + targetRitualIntensity * 0.70).toFixed(2));
+          vig.style.setProperty('--ritual-vignette-deep', (0.50 + targetRitualIntensity * 0.45).toFixed(2));
+        }
+      }
+
+      const RitualEngine = {
+        canvas: null,
+        ctx: null,
+        width: 0,
+        height: 0,
+        time: 0,
+        ambientEmbers: [],
+        animId: null,
+
+        init() {
+          this.canvas = document.getElementById('ritual-canvas');
+          if (!this.canvas || typeof this.canvas.getContext !== 'function') return;
+          this.ctx = this.canvas.getContext('2d');
+          if (!this.ctx) return;
+
+          this.resize();
+          window.addEventListener('resize', () => this.resize());
+
+          // Inicializar brasas do abismo que sobem constantemente
+          this.ambientEmbers = Array.from({ length: 65 }, () => ({
+            x: Math.random() * this.width,
+            y: Math.random() * this.height,
+            size: Math.random() * 2.2 + 0.6,
+            speedY: Math.random() * 0.6 + 0.2,
+            speedX: (Math.random() - 0.5) * 0.35,
+            alpha: Math.random() * 0.5 + 0.15,
+            hue: Math.random() > 0.4 ? '255, 30, 0' : (Math.random() > 0.5 ? '255, 140, 0' : '220, 10, 30')
+          }));
+
+          this.loop = this.loop.bind(this);
+          this.loop();
+        },
+
+        resize() {
+          if (!this.canvas) return;
+          this.width = this.canvas.width = window.innerWidth;
+          this.height = this.canvas.height = window.innerHeight;
+        },
+
+        loop() {
+          if (!this.ctx) return;
+          this.time += 0.016;
+
+          // Interpolação suave da intensidade ritualística
+          ritualIntensity += (targetRitualIntensity - ritualIntensity) * 0.045;
+
+          const ctx = this.ctx;
+          const w = this.width;
+          const h = this.height;
+
+          // 1. Limpeza com escurecimento profundo do ambiente
+          ctx.fillStyle = 'rgba(2, 3, 5, 0.45)';
+          ctx.fillRect(0, 0, w, h);
+
+          // 2. Miasma / Nebulosa Vermelha de Sangue no centro (cresce com o ritual)
+          if (ritualIntensity > 0.02) {
+            const glowRadius = Math.min(w, h) * (0.45 + ritualIntensity * 0.3);
+            const bloodGrad = ctx.createRadialGradient(w / 2, h / 2, 20, w / 2, h / 2, glowRadius);
+            bloodGrad.addColorStop(0, `rgba(160, 8, 12, ${(0.08 + ritualIntensity * 0.32).toFixed(3)})`);
+            bloodGrad.addColorStop(0.5, `rgba(90, 4, 8, ${(0.05 + ritualIntensity * 0.18).toFixed(3)})`);
+            bloodGrad.addColorStop(1, 'transparent');
+            ctx.fillStyle = bloodGrad;
+            ctx.fillRect(0, 0, w, h);
+          }
+
+          // 3. Círculos Rituais & Heptagrama Oculto (Mundos Sombrios - As 7 Doutrinas)
+          if (ritualIntensity > 0.01) {
+            const cx = w / 2;
+            const cy = h / 2;
+            const baseR = Math.min(w, h) * 0.44;
+            const beat = Math.pow(Math.sin(this.time * 2.6), 4) * (0.3 + ritualIntensity * 0.7);
+
+            ctx.save();
+            ctx.translate(cx, cy);
+
+            // A. Círculo Externo com 28 Marcas Rituais (Gira em sentido horário)
+            ctx.save();
+            ctx.rotate(this.time * 0.035);
+            ctx.beginPath();
+            ctx.arc(0, 0, baseR, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(255, 30, 0, ${(0.12 + ritualIntensity * 0.65).toFixed(3)})`;
+            ctx.lineWidth = 1.6 + ritualIntensity * 1.5;
+            ctx.shadowColor = '#ff2200';
+            ctx.shadowBlur = 10 + ritualIntensity * 22;
+            ctx.stroke();
+
+            // Nós / Runas na circunferência externa
+            for (let i = 0; i < 28; i++) {
+              const ang = (i * Math.PI * 2) / 28;
+              const isMajor = i % 4 === 0;
+              const len = isMajor ? 14 : 6;
+              const rIn = baseR - len;
+              ctx.beginPath();
+              ctx.moveTo(Math.cos(ang) * rIn, Math.sin(ang) * rIn);
+              ctx.lineTo(Math.cos(ang) * baseR, Math.sin(ang) * baseR);
+              ctx.strokeStyle = isMajor ? `rgba(255, 160, 40, ${0.4 + ritualIntensity * 0.5})` : `rgba(255, 30, 0, ${0.2 + ritualIntensity * 0.4})`;
+              ctx.lineWidth = isMajor ? 2 : 1;
+              ctx.stroke();
+            }
+            ctx.restore();
+
+            // B. Círculo Médio (Gira em sentido anti-horário com engrenagem geométrica)
+            ctx.save();
+            ctx.rotate(-this.time * 0.05);
+            const midR = baseR * 0.76;
+            ctx.beginPath();
+            ctx.arc(0, 0, midR, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(220, 20, 20, ${(0.10 + ritualIntensity * 0.60).toFixed(3)})`;
+            ctx.lineWidth = 1.2 + ritualIntensity * 1.2;
+            ctx.stroke();
+
+            // Dentes e runas geométricas
+            for (let i = 0; i < 14; i++) {
+              const ang = (i * Math.PI * 2) / 14;
+              const x1 = Math.cos(ang) * (midR - 8);
+              const y1 = Math.sin(ang) * (midR - 8);
+              const x2 = Math.cos(ang) * (midR + 8);
+              const y2 = Math.sin(ang) * (midR + 8);
+              ctx.beginPath();
+              ctx.moveTo(x1, y1);
+              ctx.lineTo(x2, y2);
+              ctx.strokeStyle = `rgba(255, 50, 0, ${0.25 + ritualIntensity * 0.45})`;
+              ctx.lineWidth = 1.4;
+              ctx.stroke();
+            }
+            ctx.restore();
+
+            // C. Círculo Interno e o Heptagrama Sagrado das 7 Doutrinas
+            ctx.save();
+            ctx.rotate(this.time * 0.02);
+            const innR = baseR * 0.52;
+            ctx.beginPath();
+            ctx.arc(0, 0, innR, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(255, 50, 0, ${(0.15 + ritualIntensity * 0.75).toFixed(3)})`;
+            ctx.lineWidth = 1.4 + ritualIntensity * 1.5;
+            ctx.shadowColor = '#ff3300';
+            ctx.shadowBlur = 12 + ritualIntensity * 25;
+            ctx.stroke();
+
+            // Vértices do Heptagrama (7 Pontas)
+            const pts = [];
+            for (let i = 0; i < 7; i++) {
+              const ang = (i * Math.PI * 2) / 7 - Math.PI / 2;
+              pts.push({
+                x: Math.cos(ang) * innR,
+                y: Math.sin(ang) * innR
+              });
+            }
+
+            // Heptagrama afiado {7/3}: conecta 0 -> 3 -> 6 -> 2 -> 5 -> 1 -> 4 -> 0
+            ctx.beginPath();
+            let cur = 0;
+            ctx.moveTo(pts[0].x, pts[0].y);
+            for (let i = 0; i < 7; i++) {
+              cur = (cur + 3) % 7;
+              ctx.lineTo(pts[cur].x, pts[cur].y);
+            }
+            ctx.closePath();
+            ctx.strokeStyle = `rgba(255, 30, 0, ${(0.18 + ritualIntensity * 0.72).toFixed(3)})`;
+            ctx.lineWidth = 1.5 + ritualIntensity * 1.8;
+            ctx.shadowColor = '#ff1100';
+            ctx.shadowBlur = 14 + ritualIntensity * 30;
+            ctx.stroke();
+
+            // Nós de poder nas 7 pontas
+            pts.forEach((p, idx) => {
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, 4 + ritualIntensity * 3 + beat * 2, 0, Math.PI * 2);
+              ctx.fillStyle = idx === (Math.floor(this.time * 2) % 7) ? '#ffffff' : `rgba(255, 140, 0, ${0.5 + ritualIntensity * 0.5})`;
+              ctx.shadowColor = '#ff6600';
+              ctx.shadowBlur = 12;
+              ctx.fill();
+            });
+
+            // Olho Arcana / Sigilo central pulsante
+            ctx.beginPath();
+            ctx.arc(0, 0, 16 + beat * 6, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 20, 0, ${(0.2 + ritualIntensity * 0.65).toFixed(3)})`;
+            ctx.shadowColor = '#ff0000';
+            ctx.shadowBlur = 20 + ritualIntensity * 35;
+            ctx.fill();
+
+            ctx.restore();
+
+            // D. Filamentos e Veias de Sangue Sinistras conectando os cantos
+            if (ritualIntensity > 0.25) {
+              const veinAlpha = ((ritualIntensity - 0.25) * 0.85).toFixed(3);
+              const corners = [
+                { x: -w / 2, y: -h / 2 },
+                { x: w / 2, y: -h / 2 },
+                { x: -w / 2, y: h / 2 },
+                { x: w / 2, y: h / 2 }
+              ];
+              corners.forEach((c, idx) => {
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                const cpX = (c.x * 0.45) + Math.sin(this.time * 2 + idx) * 45;
+                const cpY = (c.y * 0.45) + Math.cos(this.time * 2 + idx) * 45;
+                ctx.quadraticCurveTo(cpX, cpY, c.x, c.y);
+                ctx.strokeStyle = `rgba(200, 10, 20, ${(veinAlpha * (0.35 + beat * 0.4)).toFixed(3)})`;
+                ctx.lineWidth = 1.2 + ritualIntensity * 2;
+                ctx.shadowColor = '#ff1100';
+                ctx.shadowBlur = 15;
+                ctx.stroke();
+              });
+            }
+
+            ctx.restore();
+          }
+
+          // 4. Brasas Flutuantes Rituais
+          for (let p of this.ambientEmbers) {
+            p.y -= p.speedY * (1 + ritualIntensity * 1.5);
+            p.x += p.speedX;
+            if (p.y < -15) {
+              p.y = h + 15;
+              p.x = Math.random() * w;
+            }
+            if (p.x < -15) p.x = w + 15;
+            if (p.x > w + 15) p.x = -15;
+
+            const finalAlpha = p.alpha * (0.4 + ritualIntensity * 0.8);
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size * (0.8 + ritualIntensity * 0.6), 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${p.hue}, ${finalAlpha})`;
+            ctx.shadowColor = '#ff4400';
+            ctx.shadowBlur = 8;
+            ctx.fill();
+          }
+
+          this.animId = requestAnimationFrame(this.loop);
+        }
+      };
+
+      // =========================================================================
+      // 1. GABARITO OFICIAL (AS 7 DOUTRINAS DE A A G)
+      // =========================================================================
+      const GABARITO = {
+        A: {
+          letter: 'A',
+          classId: 'mercador-da-morte',
+          title: 'Mercador da Morte (O Operador Tático)',
+          doctrine: 'Operação Tática de Precisão',
+          profile: 'Operador tático de precisão, focado em alvos, disciplina e estratégias cirúrgicas. Você mantém o foco absoluto sob pressão, mapeia saídas e neutraliza o perigo com eficiência fria.',
+          quote: '“Alvo marcado. Fogo concentrado nele agora.”'
+        },
+        B: {
+          letter: 'B',
+          classId: 'carrasco-cinzento',
+          title: 'Carrasco Cinzento (O Bastião da Linha de Frente)',
+          doctrine: 'Resistência Física, Impacto e Proteção',
+          profile: 'Bastião da linha de frente, focado em resistência física, impacto e proteção corporal dos aliados. Você é o escudo inquebrável da sua equipe, encarando qualquer desafio de frente.',
+          quote: '“Fiquem atrás de mim. Nada passa por esta linha.”'
+        },
+        C: {
+          letter: 'C',
+          classId: 'alquerino',
+          title: 'Alquerino (O Arsenalista & Preparador Prático)',
+          doctrine: 'Logística, Ferramentas e Recursos',
+          profile: 'Arsenalista e preparador prático, focado em ferramentas, reagentes e recursos para qualquer imprevisto. Não existe crise para a qual você não tenha a solução pronta na mochila ou na mente.',
+          quote: '“Eu tenho exatamente o que a gente precisa para resolver isso.”'
+        },
+        D: {
+          letter: 'D',
+          classId: 'samaritano',
+          title: 'Samaritano (Inquisidor da Convicção)',
+          doctrine: 'Dever, Votos, Julgamento Ético e Justiça',
+          profile: 'Inquisidor de convicção rígida, guiado pelo dever, pelos votos, pelo julgamento ético e pela justiça inflexível. Sua força vem da retidão moral e da autoridade que impõe ordem e verdade.',
+          quote: '“Não respondam à voz da escuridão. Respondam à lei e à convicção.”'
+        },
+        E: {
+          letter: 'E',
+          classId: 'taumaturgico',
+          title: 'Taumatúrgico (Canalizador da Teurgia Sagrada)',
+          doctrine: 'Empatia, Cura Física/Espiritual e Acolhimento',
+          profile: 'Canalizador da teurgia sagrada, focado na empatia, na cura física/espiritual e no acolhimento das almas. Sua presença dissipa o pânico, restaura os feridos e ancora a esperança.',
+          quote: '“Onde há desespero, que a nossa presença traga paz, cura e amparo.”'
+        },
+        F: {
+          letter: 'F',
+          classId: 'hermetico',
+          title: 'Hermético (Mestre da Geometria Sagrada)',
+          doctrine: 'Geometria Sagrada, Razão e Leis Físicas',
+          profile: 'Mestre da geometria sagrada e da razão, que analisa e manipula a matéria pelas leis lógicas e físicas. Você decifra as engrenagens da realidade e as dobra através do conhecimento racional.',
+          quote: '“A realidade é apenas uma equação lógica esperando para ser reescrita.”'
+        },
+        G: {
+          letter: 'G',
+          classId: 'esoterico',
+          title: 'Esotérico (Ocultista & Investigador do Invisível)',
+          doctrine: 'Intuição, Misticismo, Rituais e Segredos do Abismo',
+          profile: 'Ocultista e investigador do invisível, guiado pela intuição, misticismo, rituais e segredos do Abismo. Você enxerga as conexões ocultas e o que o mundo tenta esconder além do véu.',
+          quote: '“O invisível sempre fala para aqueles que sabem escutar o silêncio.”'
+        }
+      };
+
+      // =========================================================================
+      // 2. CATÁLOGO DAS CLASSES (COM TALENTOS & RADAR)
+      // =========================================================================
+      const CLASSES = [
+        // --- AS 7 CLASSES DO GABARITO ---
+        {
+          id: 'mercador-da-morte',
+          name: 'Mercador da Morte (O Operador Tático)',
+          world: 'ocultatun',
+          worldLabel: 'Ocultatun',
+          nature: 'Agente de Carreira (Ocultatun)',
+          category: 'combatente',
+          role: 'Operador Tático · Doutrina: Precisão & Alvos',
+          shot: 'ARSENAL / EXECUÇÃO',
+          token: 'BIO-BATERIA',
+          attrs: 'AGI · FOR · INT',
+          mech: 'Maleta de Assinatura & Foco em Alvos',
+          quote: '“Alvo marcado. Fogo concentrado nele agora.”',
+          desc: 'Operador tático de precisão, focado em alvos, disciplina e estratégias cirúrgicas. Você mantém o foco absoluto sob pressão, mapeia saídas e neutraliza o perigo com eficiência fria.',
+          image: 'assets/archetypes/classes/mercador-da-morte.webp',
+          radar: { combat: 92, survival: 72, tactics: 95, occult: 30, bio: 55 },
+          talents: [
+            { name: 'Maleta de Assinatura', tag: 'ARSENAL MODULAR', desc: 'Arsenal balístico modular adaptável com munições perfurantes, dardos de estase e visores ópticos de precisão.' },
+            { name: 'Bio-Bateria Tática', tag: 'SOBRECARGA CINÉTICA', desc: 'Injeta sobrecarga energética que recarrega exoesqueletos e adiciona letalidade imediata aos disparos.' },
+            { name: 'Marcação de Brecha', tag: 'COORDENAÇÃO DE FOGO', desc: 'Mapeia pontos cegos e vulnerabilidades defensivas, garantindo que o fogo focado do grupo cause impacto crítico.' }
+          ]
+        },
+        {
+          id: 'carrasco-cinzento',
+          name: 'Carrasco Cinzento (O Bastião da Linha de Frente)',
+          world: 'ocultatun',
+          worldLabel: 'Ocultatun',
+          nature: 'Agente de Carreira (Ocultatun)',
+          category: 'combatente',
+          role: 'Bastião Inabalável · Doutrina: Impacto & Proteção',
+          shot: 'INTIMIDAÇÃO / FORÇA',
+          token: 'PATAMAR',
+          attrs: 'FOR · VIG · PRE',
+          mech: 'Pressão Psicológica & Impacto de Choque',
+          quote: '“Fiquem atrás de mim. Nada passa por esta linha.”',
+          desc: 'Bastião da linha de frente, focado em resistência física, impacto e proteção corporal dos aliados. Você é o escudo inquebrável da sua equipe, encarando qualquer desafio de frente.',
+          image: 'assets/archetypes/classes/carrasco-cinzento.webp',
+          radar: { combat: 96, survival: 94, tactics: 60, occult: 45, bio: 40 },
+          talents: [
+            { name: 'Golpe de Ruptura', tag: 'IMPACTO BRUTAL', desc: 'Avança com força total para quebrar portas, barricadas e formações inimigas no primeiro choque.' },
+            { name: 'Bastião Interposto', tag: 'ABSORÇÃO DE DANO', desc: 'Interpõe o próprio corpo entre a ameaça e companheiros vulneráveis, absorvendo todo o impacto letal.' },
+            { name: 'Patamar Cinzento', tag: 'POSTURA INABALÁVEL', desc: 'Anula atordoamentos, quedas e penalidades de medo, mantendo a linha defensiva intacta.' }
+          ]
+        },
+        {
+          id: 'alquerino',
+          name: 'Alquerino (O Arsenalista & Preparador Prático)',
+          world: 'ocultatun',
+          worldLabel: 'Ocultatun',
+          nature: 'Agente de Carreira (Ocultatun)',
+          category: 'especialista',
+          role: 'Arsenalista Prático · Doutrina: Ferramentas & Recursos',
+          shot: 'ALQUIMIA / SÍNTESE',
+          token: 'CAMINHOS',
+          attrs: 'INT · PRN · VIG',
+          mech: 'Reagentes, Catalisadores & Soluções Sob Medida',
+          quote: '“Eu tenho exatamente o que a gente precisa para resolver isso.”',
+          desc: 'Arsenalista e preparador prático, focado em ferramentas, reagentes e recursos para qualquer imprevisto. Não existe crise para a qual você não tenha a solução pronta na mochila ou na mente.',
+          image: 'assets/archetypes/classes/alquerino.webp',
+          radar: { combat: 55, survival: 80, tactics: 95, occult: 75, bio: 88 },
+          talents: [
+            { name: 'Bolsa de Reagentes', tag: 'SÍNTESE DINÂMICA', desc: 'Mistura catalisadores voláteis em segundos para criar extintores químicos, bombas ácidas e fumaça tática.' },
+            { name: 'Kit de Emergência', tag: 'SUPORTE IMEDIATO', desc: 'Prepara tônicos regenerativos que estancam hemorragias críticas e anulam contaminações no sangue.' },
+            { name: 'Solvente Corrosivo', tag: 'TRANSMUTAÇÃO RÁPIDA', desc: 'Aplica compostos químicos de alta reatividade que dissolvem trancas mecânicas e blindagens.' }
+          ]
+        },
+        {
+          id: 'samaritano',
+          name: 'Samaritano (Inquisidor da Convicção)',
+          world: 'ocultatun',
+          worldLabel: 'Ocultatun',
+          nature: 'A Ordem dos Sete (Alta Glória)',
+          category: 'combatente',
+          role: 'Inquisidor da Convicção · Doutrina: Dever & Justiça',
+          shot: 'CONVICÇÃO / JULGAMENTO',
+          token: 'ORDEM DOS SETE',
+          attrs: 'PRE · FOR · VIG',
+          mech: 'Votos Morais, Disciplina & Justiça Inflexível',
+          quote: '“Não respondam à voz da escuridão. Respondam à lei e à convicção.”',
+          desc: 'Inquisidor de convicção rígida, guiado pelo dever, pelos votos, pelo julgamento ético e pela justiça inflexível. Sua força vem da retidão moral e da autoridade que impõe ordem e verdade.',
+          image: 'assets/archetypes/classes/inquisidor.webp',
+          radar: { combat: 92, survival: 86, tactics: 70, occult: 90, bio: 35 },
+          talents: [
+            { name: 'Voto Inquebrável', tag: 'DISCIPLINA MORAL', desc: 'Anula efeitos de medo e corrupção mental com convicção e integridade ética inabalável.' },
+            { name: 'Julgamento de Campo', tag: 'AUTORIDADE', desc: 'Impõe a lei moral na cena, neutralizando a vantagem de adversários injustos e impondo ordem.' },
+            { name: 'Postura do Dever', tag: 'IMPACTO SAGRADO', desc: 'Converte força de vontade em resistência física, contenção de crises e proteção aos indefesos.' }
+          ]
+        },
+        {
+          id: 'taumaturgico',
+          name: 'Taumatúrgico (Canalizador da Teurgia Sagrada)',
+          world: 'ocultatun',
+          worldLabel: 'Ocultatun',
+          nature: 'Agente Designado (Ocultatun)',
+          category: 'sobrevivente',
+          role: 'Canalizador Teúrgico · Doutrina: Empatia & Cura',
+          shot: 'TEURGIA / CURA',
+          token: 'SATURAÇÃO',
+          attrs: 'PRE · INT · VIG',
+          mech: 'Teurgia Sagrada, Acolhimento & Empatia',
+          quote: '“Onde há desespero, que a nossa presença traga paz, cura e amparo.”',
+          desc: 'Canalizador da teurgia sagrada, focado na empatia, na cura física/espiritual e no acolhimento das almas. Sua presença dissipa o pânico, restaura os feridos e ancora a esperança.',
+          image: 'assets/archetypes/classes/taumaturgico.webp',
+          radar: { combat: 60, survival: 95, tactics: 72, occult: 98, bio: 65 },
+          talents: [
+            { name: 'Aura de Acolhimento', tag: 'EMPATIA SAGRADA', desc: 'Acalma o pânico e restaura a estabilidade emocional e mental de aliados em estado de choque.' },
+            { name: 'Toque de Restauração', tag: 'CURA TEÚRGICA', desc: 'Canaliza preces e energia divina para estancar hemorragias, fechar ferimentos e aliviar dores.' },
+            { name: 'Farol da Esperança', tag: 'ESCUDO DA ALMA', desc: 'Ergue uma emanação espiritual que protege a sanidade do grupo contra as sombras do Abismo.' }
+          ]
+        },
+        {
+          id: 'hermetico',
+          name: 'Hermético (Mestre da Geometria Sagrada)',
+          world: 'ocultatun',
+          worldLabel: 'Ocultatun',
+          nature: 'Agente Designado (Ocultatun)',
+          category: 'especialista',
+          role: 'Mestre da Geometria · Doutrina: Razão & Leis Físicas',
+          shot: 'GEOMETRIA / RAZÃO',
+          token: 'CÓDICE',
+          attrs: 'INT · PRN · PRE',
+          mech: 'Geometria Sagrada, Lógica & Física da Matéria',
+          quote: '“A realidade é apenas uma equação lógica esperando para ser reescrita.”',
+          desc: 'Mestre da geometria sagrada e da razão, que analisa e manipula a matéria pelas leis lógicas e físicas. Você decifra as engrenagens da realidade e as dobra através do conhecimento racional.',
+          image: 'assets/archetypes/classes/hermetico.webp',
+          radar: { combat: 55, survival: 72, tactics: 98, occult: 96, bio: 78 },
+          talents: [
+            { name: 'Geometria de Transmutação', tag: 'REESCRITA MOLECULAR', desc: 'Desenha fórmulas na matéria para alterar a densidade molecular de metais e barreiras físicas.' },
+            { name: 'Grimório Lógico', tag: 'CONTROLE ESPACIAL', desc: 'Conjura cálculos que distorcem distâncias, gerando ilusões e confundindo patrulheiros.' },
+            { name: 'Fórmula de Contenção', tag: 'ANÁLISE ESTRUTURAL', desc: 'Calcula o ponto exato de falha física de estruturas e anomalias para desarmá-las sem erro.' }
+          ]
+        },
+        {
+          id: 'esoterico',
+          name: 'Esotérico (Ocultista & Investigador do Invisível)',
+          world: 'ocultatun',
+          worldLabel: 'Ocultatun',
+          nature: 'Agente Designado (Ocultatun)',
+          category: 'especialista',
+          role: 'Ocultista do Invisível · Doutrina: Intuição & Misticismo',
+          shot: 'OCULTISMO / RITUAL',
+          token: 'ANOMALIAS',
+          attrs: 'INT · PRN · PRE',
+          mech: 'Intuição, Misticismo & Leitura do Oculto',
+          quote: '“O invisível sempre fala para aqueles que sabem escutar o silêncio.”',
+          desc: 'Ocultista e investigador do invisível, guiado pela intuição, misticismo, rituais e segredos do Abismo. Você enxerga as conexões ocultas e o que o mundo tenta esconder além do véu.',
+          image: 'assets/archetypes/classes/esoterico.webp',
+          radar: { combat: 58, survival: 76, tactics: 90, occult: 98, bio: 88 },
+          talents: [
+            { name: 'Visão do Invisível', tag: 'INTUIÇÃO OCULTA', desc: 'Sente a assinatura de anomalias e intenções ocultas no ar antes mesmo que elas se manifestem.' },
+            { name: 'Decifrar o Véu', tag: 'MISTICISMO PRÁTICO', desc: 'Interpreta símbolos arcanos, amuletos e fenômenos sobrenaturais em tempo real.' },
+            { name: 'Ritual de Proteção Oculta', tag: 'DEFESA ABISSAL', desc: 'Canaliza segredos do Abismo para neutralizar maldições e selar ameaças invisíveis.' }
+          ]
+        },
+
+        // --- DEMAIS ARQUÉTIPOS CANÔNICOS ---
+        {
+          id: 'inquisidor',
+          name: 'Inquisidor (A Lança)',
+          world: 'ocultatun',
+          worldLabel: 'Ocultatun',
+          nature: 'A Ordem dos Sete (Alta Glória)',
+          category: 'combatente',
+          role: 'Vanguarda Sagrada · A Lança',
+          shot: 'MILAGRE / ATAQUE',
+          token: 'ORDEM DOS SETE',
+          attrs: 'FOR · AGI · PRE',
+          mech: 'Recordação & Punição Radiante',
+          quote: '“A Lança desfaz a heresia pela força antes que a sombra crie raízes.”',
+          desc: 'Braço armado da Alta Glória. Avança com armas consagradas e milagres ofensivos, convertendo convicção em impacto absoluto.',
+          image: 'assets/archetypes/classes/inquisidor.webp',
+          radar: { combat: 94, survival: 78, tactics: 65, occult: 90, bio: 35 },
+          talents: [
+            { name: 'Lâmina Incandescente', tag: 'MILAGRE OFENSIVO', desc: 'Converte dano físico em radiante sagrado que ignora proteções mundanas.' },
+            { name: 'Punição da Parede', tag: 'CONTROLE CINÉTICO', desc: 'Trava a fuga de anomalias com descargas concentradas de convicção.' },
+            { name: 'Lança Celestial', tag: 'CRIAÇÃO SAGRADA', desc: 'Materializa construtos de pura luz sólida a partir do vazio.' }
+          ]
+        },
+        {
+          id: 'interprete',
+          name: 'Intérprete (Os Olhos)',
+          world: 'ocultatun',
+          worldLabel: 'Ocultatun',
+          nature: 'A Ordem dos Sete (Alta Glória)',
+          category: 'especialista',
+          role: 'Oráculo Litúrgico · Os Olhos',
+          shot: 'VISÃO / REVELAÇÃO',
+          token: 'ORDEM DOS SETE',
+          attrs: 'INT · PRN · PRE',
+          mech: 'Leitura de Costuras da Realidade',
+          quote: '“Enxerga as costuras por trás da realidade onde os outros veem apenas escuridão.”',
+          desc: 'Decifra sinais fractais, nomes verdadeiros e vulnerabilidades ocultas com precisão cirúrgica.',
+          image: 'assets/archetypes/classes/interprete.webp',
+          radar: { combat: 48, survival: 62, tactics: 94, occult: 96, bio: 40 },
+          talents: [
+            { name: 'Costuras da Realidade', tag: 'PERCEPÇÃO ONTOLÓGICA', desc: 'Revela códigos ocultos, rituais ativos e armadilhas veladas.' },
+            { name: 'Revelação dos Nomes', tag: 'AUTORIDADE DA ALMA', desc: 'Enfraquece entidades abissais pronunciando seu nome primordial.' },
+            { name: 'Olho Invertido', tag: 'SINERGIA COGNITIVA', desc: 'Compartilha visão periférica e antecipação tática com todo o grupo.' }
+          ]
+        },
+        {
+          id: 'sentinela',
+          name: 'Sentinela (A Parede)',
+          world: 'ocultatun',
+          worldLabel: 'Ocultatun',
+          nature: 'A Ordem dos Sete (Alta Glória)',
+          category: 'sobrevivente',
+          role: 'Bastião Imóvel · A Parede',
+          shot: 'PROTEÇÃO / RESISTÊNCIA',
+          token: 'ORDEM DOS SETE',
+          attrs: 'VIG · FOR · PRE',
+          mech: 'Santuário & Contenção de Dano',
+          quote: '“Onde a Parede se ergue, o medo e o abismo são obrigados a parar.”',
+          desc: 'O pilar inquebrável que impede o colapso da linha, absorvendo impactos e erguendo redomas divinas.',
+          image: 'assets/archetypes/classes/sentinela.webp',
+          radar: { combat: 70, survival: 98, tactics: 68, occult: 88, bio: 45 },
+          talents: [
+            { name: 'Bastião Sagrado', tag: 'CAMPO PROTETOR', desc: 'Ergue uma redoma de pura luz sólida que absorve impactos massivos.' },
+            { name: 'Chaga Redimida', tag: 'RESTAURAÇÃO BIOLÓGICA', desc: 'Força a carne a lembrar de seu estado divino, curando feridas graves.' },
+            { name: 'Postura Inamovível', tag: 'ANCORAGEM SAGRADA', desc: 'Anula quedas, empurrões e distorções gravitacionais na equipe.' }
+          ]
+        },
+        {
+          id: 'juizo',
+          name: 'Juízo (A Voz)',
+          world: 'ocultatun',
+          worldLabel: 'Ocultatun',
+          nature: 'A Ordem dos Sete (Alta Glória)',
+          category: 'especialista',
+          role: 'Magistrado Celeste · A Voz',
+          shot: 'AUTORIDADE / COMANDO',
+          token: 'ORDEM DOS SETE',
+          attrs: 'PRE · INT · PRN',
+          mech: 'Decretos de Campo & Autoridade',
+          quote: '“Uma única palavra pronunciada com autoridade torna a realidade obediente.”',
+          desc: 'Governa o ritmo da crise com decretos que alteram as leis locais e silenciam heresias.',
+          image: 'assets/archetypes/classes/juizo.webp',
+          radar: { combat: 60, survival: 72, tactics: 95, occult: 94, bio: 35 },
+          talents: [
+            { name: 'Decreto de Silêncio', tag: 'SUPRESSÃO MÍSTICA', desc: 'Interrompe a conjuração de rituais ou transmissões na área.' },
+            { name: 'Sentença Condenatória', tag: 'AMPLIFICAÇÃO TÁTICA', desc: 'Marca um alvo hostil, amplificando todo dano infligido contra ele.' },
+            { name: 'Reverência da Glória', tag: 'PRESENÇA ESMAGADORA', desc: 'Impõe respeito espiritual que intimida e paralisa agressores.' }
+          ]
+        },
+        {
+          id: 'o-arauto',
+          name: 'O Arauto',
+          world: 'ocultatun',
+          worldLabel: 'Ocultatun',
+          nature: 'O Envolto (Horror Cósmico)',
+          category: 'especialista',
+          role: 'Portador do Ruído Abissal',
+          shot: 'TERROR / PRESENÇA',
+          token: '13 ÁRVORES',
+          attrs: 'PRE · INT · PRN',
+          mech: 'Rituais do Vazio & Distorção Mental',
+          quote: '“Sua voz é o eco silencioso que anuncia o fim da razão.”',
+          desc: 'Canaliza frequências do Espaço Final que dobram a percepção alheia e semeiam vertigem ontológica.',
+          image: 'assets/archetypes/classes/o-arauto.webp',
+          radar: { combat: 68, survival: 70, tactics: 86, occult: 98, bio: 65 },
+          talents: [
+            { name: 'Ruído do Espaço Final', tag: 'PRESSÃO ONTOLÓGICA', desc: 'Gera desorientação mental severa em área através de frequências abissais.' },
+            { name: 'O Colapso Puro', tag: 'NEGAÇÃO EXISTENCIAL', desc: 'Apaga a coesão atômica de alvos, ignorando defesas convencionais.' },
+            { name: 'Ressonância Mental', tag: 'LIGAÇÃO CÓSMICA', desc: 'Conecta mentes adversárias em um circuito de dor e pesadelos lúcidos.' }
+          ]
+        },
+        {
+          id: 'o-tocado',
+          name: 'O Tocado',
+          world: 'ocultatun',
+          worldLabel: 'Ocultatun',
+          nature: 'O Envolto (Horror Cósmico)',
+          category: 'sobrevivente',
+          role: 'Receptáculo de Mutação Abissal',
+          shot: 'ADAPTAÇÃO / RESISTÊNCIA',
+          token: '13 ÁRVORES',
+          attrs: 'VIG · FOR · AGI',
+          mech: 'Morfologia Reativa & Resiliência Anômala',
+          quote: '“A carne aprende com cada ferida e recusa-se a permanecer humana.”',
+          desc: 'Fronteira viva entre este mundo e o abismo. Desenvolve mutações reativas que o tornam quase impossível de abater.',
+          image: 'assets/archetypes/classes/o-tocado.webp',
+          radar: { combat: 85, survival: 96, tactics: 50, occult: 88, bio: 94 },
+          talents: [
+            { name: 'Morfologia Aberrante', tag: 'ADAPTAÇÃO REATIVA', desc: 'Desenvolve placas ósseas e garras cristalizadas no instante do ataque.' },
+            { name: 'Resiliência Paradoxal', tag: 'ANULAÇÃO DE DANO', desc: 'Reconstrói tecidos no calor do impacto, anulando ferimentos críticos.' },
+            { name: 'Casca do Devorador', tag: 'HIPERTROFIA CÓSMICA', desc: 'Expansão corporal colossal que multiplica alcance e força bruta.' }
+          ]
+        },
+        {
+          id: 'o-condenado',
+          name: 'O Condenado',
+          world: 'ocultatun',
+          worldLabel: 'Ocultatun',
+          nature: 'O Envolto (Horror Cósmico)',
+          category: 'combatente',
+          role: 'Caminhante da Entropia',
+          shot: 'ENTROPIA / RISCO',
+          token: '13 ÁRVORES',
+          attrs: 'FOR · PRE · VIG',
+          mech: 'Sacrifício de Limiar & Ruptura',
+          quote: '“Quanto mais perto do próprio fim, mais letal e imparável você se torna.”',
+          desc: 'Converte a proximidade da ruína e o desgaste em combustível letal extremo contra as trevas.',
+          image: 'assets/archetypes/classes/o-condenado.webp',
+          radar: { combat: 94, survival: 80, tactics: 58, occult: 95, bio: 60 },
+          talents: [
+            { name: 'Sacrifício de Limiar', tag: 'LETALIDADE CRÍTICA', desc: 'Multiplica o dano de ataque proporcionalmente à vida perdida.' },
+            { name: 'Entropia Invertida', tag: 'MANIPULAÇÃO CAUSAL', desc: 'Força falhas críticas improváveis nos ataques dos adversários.' },
+            { name: 'Ruptura de Casca', tag: 'ONDA ANTIMATÉRIA', desc: 'Desativa regeneração e fatores de cura de monstros em área.' }
+          ]
+        },
+        {
+          id: 'combatente',
+          name: 'Combatente (Nexo)',
+          world: 'exodo',
+          worldLabel: 'Êxodo',
+          nature: 'Nexo Padrão (Livro Base)',
+          category: 'combatente',
+          role: 'Vanguarda de Assimilação',
+          shot: 'IMPACTO / PRESENÇA',
+          token: 'GENE ÊXODO',
+          attrs: 'FOR · AGI · VIG',
+          mech: 'Domínio Cinético & Genoma de Combate',
+          quote: '“A linha de frente que não recua diante de nenhuma ameaça.”',
+          desc: 'Mestre do confronto direto nos mundos de Êxodo, com código genético desperto e reflexos superiores.',
+          image: 'assets/archetypes/classes/combatente.webp',
+          radar: { combat: 95, survival: 84, tactics: 62, occult: 25, bio: 65 },
+          talents: [
+            { name: 'Vetor Cinético', tag: 'MAESTRIA MARCIAL', desc: 'Desfere ondas de choque com armas pesadas que derrubam grupos.' },
+            { name: 'Genoma de Vanguarda', tag: 'METABOLISMO DE CHOQUE', desc: 'Dissipa toxinas, concussões e fadiga física em zonas hostis.' },
+            { name: 'Investida Brutal', tag: 'RUPTURA DE LINHA', desc: 'Rompe barricadas e formações defensivas inimigas com força bruta.' }
+          ]
+        },
+        {
+          id: 'especialista',
+          name: 'Especialista (Nexo)',
+          world: 'exodo',
+          worldLabel: 'Êxodo',
+          nature: 'Nexo Padrão (Livro Base)',
+          category: 'especialista',
+          role: 'Estrategista Técnico de Campo',
+          shot: 'LEITURA / CONTROLE',
+          token: 'SISTEMA',
+          attrs: 'INT · PRN · AGI',
+          mech: 'Precisão Técnica & Superioridade Tática',
+          quote: '“Transforma o próprio ambiente em uma armadilha calculada.”',
+          desc: 'Domina tecnologia, análise forense e táticas de suporte para resolver crises sem desperdiçar movimentos.',
+          image: 'assets/archetypes/classes/especialista.webp',
+          radar: { combat: 60, survival: 68, tactics: 96, occult: 30, bio: 60 },
+          talents: [
+            { name: 'Superioridade Tática', tag: 'ANÁLISE DE CAMPO', desc: 'Gera bônus de acerto e dano para toda a equipe ao mapear o terreno.' },
+            { name: 'Interferência de Frequência', tag: 'CONTRA-MEDIDA DIGITAL', desc: 'Corta comunicações e radares inimigos em segundos.' },
+            { name: 'Disparo Calculado', tag: 'PRECISÃO CIRÚRGICA', desc: 'Acertos críticos garantidos em pontos vulneráveis de alvos desprevenidos.' }
+          ]
+        },
+        {
+          id: 'sobrevivente',
+          name: 'Sobrevivente (Nexo)',
+          world: 'exodo',
+          worldLabel: 'Êxodo',
+          nature: 'Nexo Padrão (Livro Base)',
+          category: 'sobrevivente',
+          role: 'Explorador de Zonas Hostis',
+          shot: 'EVASÃO / RASTRO',
+          token: 'SOBREVIVÊNCIA',
+          attrs: 'VIG · AGI · PRN',
+          mech: 'Adaptação Ambiental & Furtividade',
+          quote: '“Desaparece nas sombras antes que a ameaça perceba que estava sendo caçada.”',
+          desc: 'Resiliente e autossuficiente, mestre em emboscadas, rastreamento e medicina de guerrilha.',
+          image: 'assets/archetypes/classes/sobrevivente.webp',
+          radar: { combat: 70, survival: 94, tactics: 85, occult: 35, bio: 70 },
+          talents: [
+            { name: 'Camuflagem Evasiva', tag: 'FURTIVIDADE ADAPTATIVA', desc: 'Funde-se ao relevo, tornando-se indetectável por sensores ópticos.' },
+            { name: 'Instinto Rastreador', tag: 'SENSE DE FRONTEIRA', desc: 'Detecta vestígios e emboscadas com minutos de antecedência.' },
+            { name: 'Medicina de Guerrilha', tag: 'SUPORTE AUTÔNOMO', desc: 'Confecciona estimulantes e bandagens com biomassa encontrada no local.' }
+          ]
+        },
+        {
+          id: 'engenheiro-biologico',
+          name: 'Engenheiro Biológico',
+          world: 'exodo',
+          worldLabel: 'Êxodo',
+          nature: 'Arquiteto de Linhagem (Aprimorador)',
+          category: 'especialista',
+          role: 'Arquiteto da Bioforja',
+          shot: 'BIOFORJA / SUPORTE',
+          token: 'PROJETO PLAYER',
+          attrs: 'INT · VIG · PRN',
+          mech: 'Bancada Genética & Modulação Celular',
+          quote: '“Reescreve organismos e códigos vivos sob pressão extrema.”',
+          desc: 'DNA como software editável. Projeta soros epigenéticos, sintetiza biomatéria e remodela tecidos.',
+          image: 'assets/archetypes/classes/engenheiro-biologico.webp',
+          radar: { combat: 50, survival: 78, tactics: 95, occult: 35, bio: 98 },
+          talents: [
+            { name: 'Bancada de Bioforja', tag: 'ENGENHARIA VIVA', desc: 'Sintetiza aprimoramentos celulares sob medida para o esquadrão.' },
+            { name: 'Modulação Epigenética', tag: 'RECONFIGURAÇÃO', desc: 'Ajusta densidade óssea e visão noturna de aliados em tempo real.' },
+            { name: 'Nanobots Regenerativos', tag: 'BIO-CATÁLISE', desc: 'Micro-organismos que reconstroem tecidos lesionados em instantes.' }
+          ]
+        },
+        {
+          id: 'ia-virtudes',
+          name: 'IA Virtudes',
+          world: 'exodo',
+          worldLabel: 'Êxodo',
+          nature: 'Operador de Sistema (Proj. Player)',
+          category: 'sobrevivente',
+          role: 'Operador de Estabilização & Escudo',
+          shot: 'SUPORTE / PROTEÇÃO',
+          token: 'MATRIX KAFRA',
+          attrs: 'VIG · INT · PRN',
+          mech: 'Protocolos de Preservação & Barreira Neural',
+          quote: '“Protege o receptáculo e estabiliza o campo contra o colapso.”',
+          desc: 'Sincronizado a uma IA defensiva, projeta escudos de força integrados e estabiliza sinais vitais.',
+          image: 'assets/archetypes/classes/ia-virtudes.webp',
+          radar: { combat: 55, survival: 95, tactics: 90, occult: 40, bio: 78 },
+          talents: [
+            { name: 'Barreira Neural', tag: 'ESCUDO SINCRONIZADO', desc: 'Escudos de força que dissipam e amortecem danos de impacto massivo.' },
+            { name: 'Protocolo Salva-Vidas', tag: 'INTERVENÇÃO DE ESTASE', desc: 'Intercepta golpes letais e estabiliza sinais vitais em estase.' },
+            { name: 'Estabilização Sistêmica', tag: 'PURIFICAÇÃO NEURAL', desc: 'Remove sobrecargas, interferências e atordoamento de toda a equipe.' }
+          ]
+        },
+        {
+          id: 'ia-dominios',
+          name: 'IA Domínios',
+          world: 'exodo',
+          worldLabel: 'Êxodo',
+          nature: 'Operador de Sistema (Proj. Player)',
+          category: 'combatente',
+          role: 'Executor de Supremacia Cibernética',
+          shot: 'COMBATE / CONTROLE',
+          token: 'MATRIX KAFRA',
+          attrs: 'FOR · AGI · INT',
+          mech: 'Vetorização Balística & Sobrecarga de Combate',
+          quote: '“Converte a própria arquitetura do sistema em arma de aniquilação.”',
+          desc: 'Simbiose com IA de combate. Movimentos e arcos de tiro balístico calculados em microssegundos.',
+          image: 'assets/archetypes/classes/ia-dominios.webp',
+          radar: { combat: 94, survival: 76, tactics: 88, occult: 35, bio: 72 },
+          talents: [
+            { name: 'Vetorização Balística', tag: 'CÁLCULO DE TRAJETÓRIA', desc: 'Arco de ricochete perfeito para atingir alvos atrás de cobertura.' },
+            { name: 'Sobrecarga Militar', tag: 'AMPLIFICAÇÃO BÉLICA', desc: 'Amplifica cadência e poder de fogo das armas conectadas à rede.' },
+            { name: 'Supremacia em Grade', tag: 'PILOTAGEM MOTORA', desc: 'Comandos motores automáticos para rajadas sem recuo contra múltiplos alvos.' }
+          ]
+        },
+        {
+          id: 'ia-principados',
+          name: 'IA Principados',
+          world: 'exodo',
+          worldLabel: 'Êxodo',
+          nature: 'Operador de Sistema (Proj. Player)',
+          category: 'especialista',
+          role: 'Controlador de Invasão Sistêmica',
+          shot: 'HACKING / REALIDADE',
+          token: 'MATRIX KAFRA',
+          attrs: 'INT · PRN · PRE',
+          mech: 'Invasão da Matrix Kafra & Reescrita Digital',
+          quote: '“Invade os protocolos ocultos do mundo e altera o que é possível.”',
+          desc: 'Sequestra redes e maquinários inimigos, virando a infraestrutura tecnológica contra os criadores.',
+          image: 'assets/archetypes/classes/ia-principados.webp',
+          radar: { combat: 52, survival: 65, tactics: 98, occult: 42, bio: 80 },
+          talents: [
+            { name: 'Invasão da Matrix Kafra', tag: 'HACKING NEURAL', desc: 'Sequestra drones, câmeras e portas blindadas com comandos mentais.' },
+            { name: 'Reescrita de Parâmetros', tag: 'CORRUPÇÃO DE CÓDIGO', desc: 'Cria pontos cegos em sensores e sabota equipamentos rivais.' },
+            { name: 'Sobrecarga de Servidores', tag: 'PULSO DE MALWARE', desc: 'Detona capacitores de inimigos cibernéticos com descargas virais.' }
+          ]
+        },
+        {
+          id: 'velocitus-bellator',
+          name: 'Velocitus Bellator',
+          world: 'exodo',
+          worldLabel: 'Êxodo',
+          nature: 'Classer (Linhagem Herdada)',
+          category: 'combatente',
+          role: 'Predador de Hipervelocidade',
+          shot: 'VELOCIDADE / PRESSÃO',
+          token: 'LINHAGEM LHL',
+          attrs: 'AGI · FOR · PRN',
+          mech: 'Aceleração Neuromuscular & Ataque Relâmpago',
+          quote: '“O corpo chega ao alvo antes mesmo do pensamento terminar.”',
+          desc: 'Linhagem predatória de velocidade extrema, atravessando zonas de combate como um vulto inalcançável.',
+          image: 'assets/archetypes/classes/velocitus-bellator.webp',
+          radar: { combat: 95, survival: 72, tactics: 75, occult: 25, bio: 92 },
+          talents: [
+            { name: 'Aceleração Neuromuscular', tag: 'VELOCIDADE HIPERSÔNICA', desc: 'Atinge velocidade extrema, atacando antes da reação do adversário.' },
+            { name: 'Passo Relâmpago', tag: 'DESLOCAMENTO PURO', desc: 'Move-se sem acionar armadilhas ou sofrer ataques de oportunidade.' },
+            { name: 'Impacto Hipersônico', tag: 'ONDA DE CONCUSSÃO', desc: 'Converte inércia em golpe esmagador que arremessa alvos pesados.' }
+          ]
+        },
+        {
+          id: 'aeternus-vitalis',
+          name: 'Aeternus Vitalis',
+          world: 'exodo',
+          worldLabel: 'Êxodo',
+          nature: 'Classer (Linhagem Herdada)',
+          category: 'sobrevivente',
+          role: 'Titã de Regeneração Perpétua',
+          shot: 'REGENERAÇÃO / RESILIÊNCIA',
+          token: 'LINHAGEM LHL',
+          attrs: 'VIG · FOR · AGI',
+          mech: 'Fator de Cura Acelerado & Carapaça Viva',
+          quote: '“Sua carne considera a própria morte apenas um pequeno atraso.”',
+          desc: 'Herança genética de cura perpétua. Ferimentos fecham-se em segundos enquanto a derme se fortifica.',
+          image: 'assets/archetypes/classes/aeternus-vitalis.webp',
+          radar: { combat: 80, survival: 98, tactics: 55, occult: 30, bio: 96 },
+          talents: [
+            { name: 'Fator de Cura Perpétuo', tag: 'REGENERAÇÃO CELULAR', desc: 'Regenera pontos de vida continuamente a cada turno do confronto.' },
+            { name: 'Carapaça Viva', tag: 'DERME BLINDADA', desc: 'A pele ganha densidade metálica a cada golpe sofrido.' },
+            { name: 'Fúria de Sobrevivência', tag: 'HIPER-VITALIDADE', desc: 'Entra em surto biológico ao sofrer dano crítico, aumentando a FOR.' }
+          ]
+        },
+        {
+          id: 'mentis-aurorae',
+          name: 'Mentis Aurorae',
+          world: 'exodo',
+          worldLabel: 'Êxodo',
+          nature: 'Classer (Linhagem Herdada)',
+          category: 'especialista',
+          role: 'Oráculo Psiônico de Precisão',
+          shot: 'PERCEPÇÃO / PRECISÃO',
+          token: 'LINHAGEM LHL',
+          attrs: 'PRN · INT · PRE',
+          mech: 'Antecipação Cognitiva & Sinapse Expandida',
+          quote: '“Percebe o segundo seguinte antes mesmo que ele aconteça.”',
+          desc: 'Mente expandida que processa microvariações ambientais, prevendo movimentos e guiando a equipe.',
+          image: 'assets/archetypes/classes/mentis-aurorae.webp',
+          radar: { combat: 62, survival: 70, tactics: 96, occult: 65, bio: 88 },
+          talents: [
+            { name: 'Antecipação Cognitiva', tag: 'PRECOGNIÇÃO TÁTICA', desc: 'Prevê trajetórias antes dos disparos, garantindo esquiva calculada.' },
+            { name: 'Sinapse de Esquadrão', tag: 'TELEPATIA DE COMBATE', desc: 'Sincroniza coordenadas com o grupo sem emitir som.' },
+            { name: 'Lança Psiônica', tag: 'ATAQUE NEURAL', desc: 'Projéteis de energia mental que desestabilizam o córtex cerebral do alvo.' }
+          ]
+        }
+      ];
+
+      // =========================================================================
+      // 3. AS 12 PERGUNTAS (COM 7 ALTERNATIVAS A A G)
+      // =========================================================================
+      const QUESTIONS = [
+        {
+          chapter: 'PROVAÇÃO I · INCÊNDIO & EMERGÊNCIA',
+          title: '1. Um incêndio acidental começa na cozinha durante uma festa. Qual é sua reação?',
+          options: [
+            { letter: 'A', label: 'Mantenho a calma, avalio as saídas de emergência e organizo a evacuação tática do local.' },
+            { letter: 'B', label: 'Corro direto para a cozinha com um pano molhado para apagar o fogo na raça.' },
+            { letter: 'C', label: 'Desligo o disjuntor principal, fecho o gás e pego o extintor correto para a situação.' },
+            { letter: 'D', label: 'Assumo o comando com firmeza para impor ordem e garantir que as regras de segurança sejam cumpridas.' },
+            { letter: 'E', label: 'Acalmo quem entrou em pânico, presto apoio emocional e cuido dos feridos.' },
+            { letter: 'F', label: 'Analiso o tipo de combustão (óleo, elétrica ou gás) para aplicar o método exato de extinção sem química errada.' },
+            { letter: 'G', label: 'Sinto o clima do ambiente, usando a intuição para entender se há algo estranho ou não revelado no ar.' }
+          ]
+        },
+        {
+          chapter: 'PROVAÇÃO II · PROJETO EM GRUPO',
+          title: '2. Em um projeto difícil no trabalho ou nos estudos, qual é o seu papel natural?',
+          options: [
+            { letter: 'A', label: 'O estrategista: defino metas, organizo prazos e garanto a execução fria de cada etapa.' },
+            { letter: 'B', label: 'O pilar de impacto: assumo a parte mais pesada da execução para evitar que o grupo desmorone.' },
+            { letter: 'C', label: 'O organizador prático: trago as ferramentas, resolvo os imprevistos técnicos e preparo o material.' },
+            { letter: 'D', label: 'O fiscal de conduta: garanto que o grupo siga os padrões éticos e não atalhe procedimentos.' },
+            { letter: 'E', label: 'O mediador humano: mantenho o grupo unido, dou suporte emocional e trago harmonia.' },
+            { letter: 'F', label: 'O analista lógico: estruturo os dados, resolvo a equação do problema e organizo a metodologia.' },
+            { letter: 'G', label: 'O pesquisador do oculto: busco as informações subliminares e padrões invisíveis que ninguém percebeu.' }
+          ]
+        },
+        {
+          chapter: 'PROVAÇÃO III · CONFRONTO & HOSTILIDADE',
+          title: '3. Se você for abordado por alguém agressivo na rua, qual é o seu reflexo instintivo?',
+          options: [
+            { letter: 'A', label: 'Mantenho o foco, calculo a distância e identifico a melhor oportunidade para me afastar ou agir.' },
+            { letter: 'B', label: 'Me imponho fisicamente com postura firme para mostrar que não vou recuar.' },
+            { letter: 'C', label: 'Mantenho a calma, entrego o necessário de forma fria e utilizo os recursos ao redor para me proteger.' },
+            { letter: 'D', label: 'Confronto a pessoa lembrando-a dos limites da lei e da justiça, sem demonstrar medo.' },
+            { letter: 'E', label: 'Tento desacelerar a tensão conversando com empatia e apelo ao lado humano do indivíduo.' },
+            { letter: 'F', label: 'Observo a postura e a alavanca corporal da pessoa para neutralizar o movimento de forma racional.' },
+            { letter: 'G', label: 'Confio no meu sexto sentido para prever a intenção do agressor antes mesmo de ele se mover.' }
+          ]
+        },
+        {
+          chapter: 'PROVAÇÃO IV · GESTÃO DE ESTRESSE',
+          title: '4. Como você lida com um problema pessoal grande e inesperado?',
+          options: [
+            { letter: 'A', label: 'Faço um plano de ação objetivo e elimino as causas uma a uma.' },
+            { letter: 'B', label: 'Desconto a tensão na ação física (exercícios intensos ou encarando a situação de frente).' },
+            { letter: 'C', label: 'Me organizo no mundo prático: arrumo minhas coisas, organizo as finanças e preparo o inventário da vida.' },
+            { letter: 'D', label: 'Me apego aos meus votos morais, à disciplina pessoal e ao dever.' },
+            { letter: 'E', label: 'Busco abrigo na reflexão espiritual, no autocuidado e no apoio a quem me cerca.' },
+            { letter: 'F', label: 'Desmonto o problema em partes lógicas para entender sua mecânica e física antes de agir.' },
+            { letter: 'G', label: 'Me isolo para meditar, estudar o significado oculto do evento e decifrar os sinais.' }
+          ]
+        },
+        {
+          chapter: 'PROVAÇÃO V · INVENTÁRIO DO COTIDIANO',
+          title: '5. Como costuma ser a sua mochila, bolsa ou bolso no dia a dia?',
+          options: [
+            { letter: 'A', label: 'Minimalista e funcional: apenas itens de alta qualidade, dispostos em compartimentos táticos.' },
+            { letter: 'B', label: 'Pesada e resistente: itens de proteção, garrafa reforçada e o necessário para o impacto físico.' },
+            { letter: 'C', label: 'Um kit completo de sobrevivência: ferramentas, remédios, carregador portátil, curativos e utilitários.' },
+            { letter: 'D', label: 'Sóbria e impecável: itens organizados sob regras rígidas, crachás, guias e símbolos de conduta.' },
+            { letter: 'E', label: 'Acolhedora: kits de primeiros socorros, mantimentos para compartilhar e objetos de conforto.' },
+            { letter: 'F', label: 'Técnica: notebooks, cadernos de cálculo, réguas/medidores e guias estruturados.' },
+            { letter: 'G', label: 'Enigmática: amuletos, livros antigos, cadernos de anotações simbólicas e objetos curiosos.' }
+          ]
+        },
+        {
+          chapter: 'PROVAÇÃO VI · DEBATE & POSICIONAMENTO',
+          title: '6. Em um debate acalorado sobre um tema polêmico, como você se posiciona?',
+          options: [
+            { letter: 'A', label: 'Aponto as falhas de lógica no argumento oposto de forma fria, objetiva e sem rodeios.' },
+            { letter: 'B', label: 'Defendo meu ponto com firmeza e presença, sem recuar perante a pressão.' },
+            { letter: 'C', label: 'Proponho uma solução prática que resolva o problema no mundo real sem perder tempo com teorias.' },
+            { letter: 'D', label: 'Cobro coerência moral dos participantes e defendo os princípios de justiça inflexíveis.' },
+            { letter: 'E', label: 'Priorizo a empatia, lembrando a todos sobre o impacto humano e emocional daquela questão.' },
+            { letter: 'F', label: 'Apresento dados comprovados, leis e estruturas bem fundamentadas.' },
+            { letter: 'G', label: 'Revelo as motivações ocultas e as intenções invisíveis por trás do discurso de cada um.' }
+          ]
+        },
+        {
+          chapter: 'PROVAÇÃO VII · DESORIENTAÇÃO & TRILHA',
+          title: '7. Você se perdeu em uma trilha na floresta ao anoitecer. Qual sua primeira decisão?',
+          options: [
+            { letter: 'A', label: 'Subo em um Ponto Alto, identifico referências no horizonte e traço uma rota de navegação.' },
+            { letter: 'B', label: 'Mantenho uma caminhada firme, abrindo caminho na vegetação para sair do local pela força.' },
+            { letter: 'C', label: 'Checo todos os recursos da mochila (água, lanterna, apito) e me preparo para montar um abrigo.' },
+            { letter: 'D', label: 'Mantenho a disciplina, sigo o protocolo estrito de sobrevivência e não me desvio do caminho.' },
+            { letter: 'E', label: 'Mantenho a calma interior, ajudo os companheiros a não entrarem em desespero e busco orientação.' },
+            { letter: 'F', label: 'Calculo a posição do sol, o ângulo das sombras e o curso da água para deduzir a direção correta.' },
+            { letter: 'G', label: 'Sintonizo com os sons da natureza e leio os sinais sutis do ambiente para encontrar a rota.' }
+          ]
+        },
+        {
+          chapter: 'PROVAÇÃO VIII · RECONHECIMENTO & CONDUTA',
+          title: '8. Qual destes elogios à sua forma de agir mais te deixaria orgulhoso?',
+          options: [
+            { letter: 'A', label: '“Você é absurdamente focado, preciso e nunca erra um alvo sob pressão.”' },
+            { letter: 'B', label: '“Você é o escudo mais forte que conheço; nada te derruba.”' },
+            { letter: 'C', label: '“Você é preparado demais e sempre resolve qualquer perrengue com o que tem na mão.”' },
+            { letter: 'D', label: '“Sua conduta moral é impecável e sua integridade é inabalável.”' },
+            { letter: 'E', label: '“Sua presença traz paz, cura e conforto nos momentos mais sombrios.”' },
+            { letter: 'F', label: '“Sua mente é brilhante; você entende a estrutura lógica do mundo como ninguém.”' },
+            { letter: 'G', label: '“Você enxerga através do véu e decifra os mistérios que o mundo tenta esconder.”' }
+          ]
+        },
+        {
+          chapter: 'PROVAÇÃO IX · LEITURA DE AMBIENTE',
+          title: '9. Ao entrar em um evento grande ou prédio desconhecido, o que chama sua atenção primeiro?',
+          options: [
+            { letter: 'A', label: 'As saídas de emergência, ângulos mortos e a movimentação dos acessos.' },
+            { letter: 'B', label: 'A densidade do espaço, a estrutura das paredes e quem representa um risco físico.' },
+            { letter: 'C', label: 'Onde ficam os recursos básicos: água, banheiros, tomadas e suporte prático.' },
+            { letter: 'D', label: 'Quem está encarregado da ordem, os códigos de acesso e a segurança do local.' },
+            { letter: 'E', label: 'O clima emocional das pessoas e se há alguém isolado ou precisando de acolhimento.' },
+            { letter: 'F', label: 'A arquitetura, o design geométrico e a física por trás da construção.' },
+            { letter: 'G', label: 'A atmosfera do lugar, os símbolos decorativos e a energia oculta do ambiente.' }
+          ]
+        },
+        {
+          chapter: 'PROVAÇÃO X · HABILIDADE DESEJADA',
+          title: '10. Se pudesse ter uma habilidade incrível no cotidiano, qual escolheria?',
+          options: [
+            { letter: 'A', label: 'Foco mental perfeito para tomar decisões táticas sem hesitar.' },
+            { letter: 'B', label: 'Resistência física extraordinária que impede você de sentir dor ou cansaço.' },
+            { letter: 'C', label: 'Capacidade de criar ou consertar qualquer objeto útil usando o que estiver à volta.' },
+            { letter: 'D', label: 'Autodisciplina e aura de autoridade que impõem respeito e justiça imediatos.' },
+            { letter: 'E', label: 'O dom de aliviar a dor física e espiritual das pessoas com o toque ou a palavra.' },
+            { letter: 'F', label: 'A capacidade de manipular a matéria e a geometria das coisas através da razão.' },
+            { letter: 'G', label: 'A habilidade de ler os segredos ocultos, rituais e verdades invisíveis do cosmos.' }
+          ]
+        },
+        {
+          chapter: 'PROVAÇÃO XI · REAÇÃO À INJUSTIÇA',
+          title: '11. Quando você presencia uma pequena injustiça na sua frente, o que faz?',
+          options: [
+            { letter: 'A', label: 'Intervenho de forma cirúrgica e objetiva, neutralizando a vantagem do infrator.' },
+            { letter: 'B', label: 'Interponho minha presença física para proteger a vítima e encarar o agressor.' },
+            { letter: 'C', label: 'Uso um recurso prático ou atalho inteligente para corrigir a situação sem escândalo.' },
+            { letter: 'D', label: 'Aplico o julgamento imediato, exigindo que as regras e os valores morais sejam respeitados.' },
+            { letter: 'E', label: 'Presto socorro à pessoa prejudicada, acolhendo-a e reestabelecendo a dignidade dela.' },
+            { letter: 'F', label: 'Demonstro a ilogicidade da ação com argumentos irrefutáveis e estruturados.' },
+            { letter: 'G', label: 'Exponho a intenção oculta do malfeitor, revelando a verdade por trás do ato.' }
+          ]
+        },
+        {
+          chapter: 'PROVAÇÃO XII · LEGADO FINAL',
+          title: '12. Qual é o principal legado que você deseja deixar?',
+          options: [
+            { letter: 'A', label: 'A imagem de alguém eficiente, impecável em metas e letalmente focado.' },
+            { letter: 'B', label: 'A lembrança de uma rocha: um protetor que aguentou os piores impactos para salvar os seus.' },
+            { letter: 'C', label: 'A memória de alguém engenhoso, pronto para qualquer emergência com soluções práticas.' },
+            { letter: 'D', label: 'A inspiração de uma vida guiada pelo dever, pela honra e pela justiça inflexível.' },
+            { letter: 'E', label: 'A lembrança de um farol de compaixão, cura e restauração para as almas ao redor.' },
+            { letter: 'F', label: 'O conhecimento de teorias e descobertas que reescreveram a compreensão da matéria.' },
+            { letter: 'G', label: 'A revelação de verdades profundas e o domínio sobre os mistérios do oculto.' }
+          ]
+        }
+      ];
+
+      // =========================================================================
+      // 4. ESTADO E LÓGICA DE PONTUAÇÃO (A A G)
+      // =========================================================================
+      let currentStep = 0;
+      const answers = new Array(QUESTIONS.length).fill(null);
+      let currentFilter = 'all';
+      let searchQuery = '';
+
+      const $ = id => document.getElementById(id);
+
+      function showToast(msg) {
+        const el = $('toast-msg');
+        el.textContent = msg;
+        el.classList.add('show');
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => el.classList.remove('show'), 2800);
+      }
+
+      function updateSoundToggleBtn() {
+        const btn = $('btn-sound-toggle');
+        if (!btn) return;
+        btn.textContent = SoundEngine.enabled ? '🔊 Áudio: Ativado' : '🔇 Áudio: Mudo';
+        btn.classList.toggle('active', SoundEngine.enabled);
+      }
+
+      let isStriking = false;
+
+      function renderQuestion() {
+        const q = QUESTIONS[currentStep];
+        $('q-chapter').textContent = q.chapter;
+        $('q-counter').textContent = `Questão ${String(currentStep + 1).padStart(2, '0')} de ${QUESTIONS.length}`;
+        $('q-progress-bar').style.width = `${((currentStep + 1) / QUESTIONS.length) * 100}%`;
+        
+        const titleEl = $('q-title');
+        titleEl.textContent = q.title;
+        titleEl.classList.remove('scorch-flash');
+
+        const stage = $('view-quiz');
+        stage.classList.remove('hammer-shaking', 'fading-out');
+
+        const container = $('q-options');
+        container.innerHTML = '';
+        container.classList.remove('branded-locked');
+
+        q.options.forEach((opt, idx) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'option-btn' + (answers[currentStep] === idx ? ' selected' : '');
+          btn.setAttribute('role', 'radio');
+          btn.setAttribute('aria-checked', answers[currentStep] === idx ? 'true' : 'false');
+          btn.innerHTML = `
+            <span class="option-key">${opt.letter}</span>
+            <span class="option-body">${opt.label}</span>
+          `;
+          btn.addEventListener('click', (e) => selectOption(idx, e));
+          container.appendChild(btn);
+        });
+
+        $('btn-prev-question').style.visibility = currentStep > 0 ? 'visible' : 'hidden';
+      }
+
+      function triggerHammerStrike(targetBtn, optionIndex, clickEvent) {
+        if (isStriking) return;
+        isStriking = true;
+
+        answers[currentStep] = optionIndex;
+
+        // Ponto de impacto na coordenada da tela
+        const rect = targetBtn.getBoundingClientRect();
+        const impactX = (clickEvent && clickEvent.clientX && clickEvent.clientX > 0)
+          ? Math.min(rect.right - 25, Math.max(rect.left + 25, clickEvent.clientX))
+          : (rect.left + 45);
+        const impactY = rect.top + rect.height / 2;
+
+        const overlay = $('hammer-overlay');
+        const hammer = $('war-hammer');
+
+        overlay.style.display = 'block';
+        // A face de impacto do martelo está no topo-esquerdo da cabeça do martelo (~28px, 50px)
+        hammer.style.left = (impactX - 28) + 'px';
+        hammer.style.top = (impactY - 50) + 'px';
+
+        hammer.classList.remove('strike-anim');
+        void hammer.offsetWidth; // Força reflow
+        hammer.classList.add('strike-anim');
+
+        // Instante exato da colisão brutal (aprox 115ms)
+        setTimeout(() => {
+          // 1. Áudio do Impacto (Sub Grave + Ressonância de Bigorna + Estalo de Faíscas)
+          SoundEngine.playHammerStrike();
+          SoundEngine.playFireSizzle();
+
+          // 2. Tremor Violento de Tela (Screen Shake)
+          const stage = $('view-quiz');
+          stage.classList.remove('hammer-shaking');
+          void stage.offsetWidth;
+          stage.classList.add('hammer-shaking');
+
+          // 3. Brilho em brasa no título
+          const title = $('q-title');
+          title.classList.add('scorch-flash');
+
+          // 4. Explosão Radial de Mais de 120 Faíscas Incandescentes
+          SparksFX.burst(impactX, impactY, 130);
+
+          // 5. Gravação da Resposta em Fogo Vivo
+          targetBtn.classList.add('branded-in-fire');
+          $('q-options').classList.add('branded-locked');
+
+          // Brasas e fagulhas continuam subindo da resposta em chamas
+          const emberEmitter = setInterval(() => {
+            if (!isStriking) {
+              clearInterval(emberEmitter);
+              return;
+            }
+            const r = targetBtn.getBoundingClientRect();
+            SparksFX.spawnRisingEmber(
+              r.left + Math.random() * r.width,
+              r.top + Math.random() * r.height
+            );
+          }, 45);
+
+          // Ocultar martelo após concluir o golpe
+          setTimeout(() => {
+            overlay.style.display = 'none';
+            hammer.classList.remove('strike-anim');
+          }, 320);
+
+          // A resposta fica gravada em fogo por alguns segundos (~1.5s),
+          // enquanto o brilho se apaga gradualmente e outra pergunta aparece
+          setTimeout(() => {
+            clearInterval(emberEmitter);
+            stage.classList.add('fading-out');
+
+            setTimeout(() => {
+              stage.classList.remove('hammer-shaking', 'fading-out');
+              title.classList.remove('scorch-flash');
+              $('q-options').classList.remove('branded-locked');
+
+              if (currentStep < QUESTIONS.length - 1) {
+                currentStep++;
+                const ritualProg = currentStep / (QUESTIONS.length - 1);
+                updateRitualIntensity(ritualProg);
+                SoundEngine.updateRitualDrone(ritualProg);
+                renderQuestion();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                isStriking = false;
+              } else {
+                updateRitualIntensity(1.0);
+                SoundEngine.updateRitualDrone(1.0);
+                isStriking = false;
+                computeAndShowResult();
+              }
+            }, 300);
+          }, 1500);
+
+        }, 115);
+      }
+
+      function selectOption(optionIndex, clickEvent) {
+        if (isStriking) return;
+        const container = $('q-options');
+        const targetBtn = container.children[optionIndex];
+        if (!targetBtn) return;
+        triggerHammerStrike(targetBtn, optionIndex, clickEvent);
+      }
+
+      function calculateProfile() {
+        const counts = { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0 };
+        const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+
+        answers.forEach(ansIdx => {
+          if (ansIdx !== null && letters[ansIdx]) {
+            counts[letters[ansIdx]]++;
+          }
+        });
+
+        // Determinar letra com maior contagem
+        let winLetter = 'A';
+        let maxCount = -1;
+        letters.forEach(l => {
+          if (counts[l] > maxCount) {
+            maxCount = counts[l];
+            winLetter = l;
+          }
+        });
+
+        const gabarito = GABARITO[winLetter];
+        const winnerClass = CLASSES.find(c => c.id === gabarito.classId) || CLASSES[0];
+
+        // Ranking das 7 Doutrinas
+        const rankedLetters = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+        const rankedClasses = rankedLetters.map(([letra, count]) => {
+          const gab = GABARITO[letra];
+          const cls = CLASSES.find(c => c.id === gab.classId);
+          return {
+            ...cls,
+            letter: letra,
+            gabaritoTitle: gab.title,
+            count: count,
+            pct: Math.round((count / QUESTIONS.length) * 100),
+            doctrine: gab.doctrine
+          };
+        });
+
+        return {
+          winner: winnerClass,
+          winLetter,
+          winCount: maxCount,
+          gabarito,
+          counts,
+          rankedClasses
+        };
+      }
+
+      function drawRadarChart(radarStats) {
+        const size = 260;
+        const center = size / 2;
+        const radius = 90;
+        const axes = [
+          { key: 'combat', label: 'Combate & Força', icon: '⚔' },
+          { key: 'survival', label: 'Resiliência & Escudo', icon: '🛡️' },
+          { key: 'bio', label: 'Alquimia & Recursos', icon: '🧪' },
+          { key: 'occult', label: 'Teurgia & Ocultismo', icon: '✨' },
+          { key: 'tactics', label: 'Tática & Razão', icon: '🎯' }
+        ];
+
+        function getCoord(index, valNorm) {
+          const angle = -Math.PI / 2 + (index * 2 * Math.PI / 5);
+          const r = radius * valNorm;
+          return {
+            x: center + r * Math.cos(angle),
+            y: center + r * Math.sin(angle)
+          };
+        }
+
+        let gridSvg = '';
+        [0.25, 0.5, 0.75, 1.0].forEach(step => {
+          const pts = axes.map((_, i) => {
+            const pt = getCoord(i, step);
+            return `${pt.x.toFixed(1)},${pt.y.toFixed(1)}`;
+          }).join(' ');
+          gridSvg += `<polygon points="${pts}" fill="none" stroke="rgba(229,193,104,${step === 1.0 ? 0.28 : 0.12})" stroke-width="1"/>`;
+        });
+
+        axes.forEach((_, i) => {
+          const pt = getCoord(i, 1.0);
+          gridSvg += `<line x1="${center}" y1="${center}" x2="${pt.x.toFixed(1)}" y2="${pt.y.toFixed(1)}" stroke="rgba(229,193,104,0.18)" stroke-width="1"/>`;
+        });
+
+        const dataPts = axes.map((a, i) => {
+          const raw = radarStats[a.key] || 50;
+          const norm = Math.max(0.15, Math.min(1.0, raw / 100));
+          const pt = getCoord(i, norm);
+          return `${pt.x.toFixed(1)},${pt.y.toFixed(1)}`;
+        }).join(' ');
+
+        const svgHtml = `
+          <svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
+            <defs>
+              <linearGradient id="radarFillGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#e5c168" stop-opacity="0.45"/>
+                <stop offset="100%" stop-color="#58d5ff" stop-opacity="0.18"/>
+              </linearGradient>
+            </defs>
+            ${gridSvg}
+            <polygon points="${dataPts}" fill="url(#radarFillGrad)" stroke="#e5c168" stroke-width="2.5" />
+            ${axes.map((a, i) => {
+              const raw = radarStats[a.key] || 50;
+              const norm = Math.max(0.15, Math.min(1.0, raw / 100));
+              const pt = getCoord(i, norm);
+              return `<circle cx="${pt.x.toFixed(1)}" cy="${pt.y.toFixed(1)}" r="3.5" fill="#fff" stroke="#e5c168" stroke-width="1.5"/>`;
+            }).join('')}
+          </svg>
+        `;
+
+        $('res-radar-svg').innerHTML = svgHtml;
+
+        $('res-radar-legend').innerHTML = axes.map(a => {
+          const val = radarStats[a.key] || 50;
+          return `
+            <div class="radar-legend-item">
+              <span><i>${a.icon}</i> ${a.label}</span>
+              <span>${val}%</span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderResultView(profile, isSimulation = false) {
+        SoundEngine.stopDrone();
+        SoundEngine.playReveal();
+
+        $('view-intro').hidden = true;
+        $('view-quiz').hidden = true;
+        $('view-result').hidden = false;
+
+        const c = profile.winner;
+        const g = profile.gabarito;
+
+        // Banner do Gabarito Canônico
+        $('res-gabarito-letter-tag').textContent = isSimulation 
+          ? `SIMULAÇÃO DIRETA: ${profile.winLetter || 'ARQUÉTIPO'}` 
+          : `MAIORIA ${profile.winLetter} · ${profile.winCount} DE 12 VOTOS (${Math.round((profile.winCount / 12) * 100)}%)`;
+        $('res-gabarito-doctrine').textContent = `Doutrina: ${g.doctrine}`;
+        $('res-gabarito-title').textContent = g.title;
+        $('res-gabarito-quote').textContent = g.quote;
+        $('res-gabarito-profile').textContent = g.profile;
+
+        // Imagem e Metadados da Classe
+        const imgEl = $('res-class-img');
+        imgEl.src = c.image;
+        imgEl.alt = c.name;
+
+        $('res-token-badge').textContent = c.token;
+        $('res-match-pct').textContent = isSimulation ? 'MODO SÓCIOS' : `${Math.round((profile.winCount / 12) * 100)}% SINCRONIA`;
+
+        $('res-world-chip').textContent = `Mundo: ${c.worldLabel}`;
+        $('res-cat-chip').textContent = `Categoria: ${c.category.toUpperCase()}`;
+        $('res-role-chip').textContent = c.role;
+
+        $('res-class-name').textContent = c.name;
+        $('res-nature-name').textContent = c.nature;
+        $('res-class-desc').textContent = c.desc;
+
+        $('res-stat-shot').textContent = c.shot;
+        $('res-stat-attrs').textContent = c.attrs;
+        $('res-stat-mech').textContent = c.mech;
+
+        // Poderes e Protocolos
+        $('res-talents-nature-badge').textContent = c.token;
+        const talents = c.talents || [];
+        $('res-talents-grid').innerHTML = talents.map(t => `
+          <div class="talent-card">
+            <span class="talent-tag">${t.tag}</span>
+            <strong>${t.name}</strong>
+            <p>${t.desc}</p>
+          </div>
+        `).join('');
+
+        // Barras das 7 Letras A a G
+        const counts = profile.counts || { A: 12, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0 };
+        const lettersMeta = [
+          { letter: 'A', name: 'Mercador da Morte (Operador Tático)' },
+          { letter: 'B', name: 'Carrasco Cinzento (Bastião da Linha de Frente)' },
+          { letter: 'C', name: 'Alquerino (Arsenalista & Preparador Prático)' },
+          { letter: 'D', name: 'Samaritano (Inquisidor da Convicção)' },
+          { letter: 'E', name: 'Taumatúrgico (Canalizador da Teurgia Sagrada)' },
+          { letter: 'F', name: 'Hermético (Mestre da Geometria Sagrada)' },
+          { letter: 'G', name: 'Esotérico (Ocultista & Investigador do Invisível)' }
+        ];
+
+        $('res-bars-letters').innerHTML = lettersMeta.map(item => {
+          const count = counts[item.letter] || 0;
+          const pct = Math.round((count / QUESTIONS.length) * 100);
+          return `
+            <div class="bar-group">
+              <div class="bar-label">
+                <span><strong>Opção ${item.letter}</strong> · ${item.name}</span>
+                <span>${count}/12 (${pct}%)</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+            </div>
+          `;
+        }).join('');
+
+        // Ranking das 7 Doutrinas
+        $('res-bars-classes').innerHTML = (profile.rankedClasses || []).map((item, idx) => {
+          return `
+            <div class="bar-group">
+              <div class="bar-label">
+                <span><strong>${idx + 1}. ${item.gabaritoTitle}</strong></span>
+                <span>${item.pct}%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width:${item.pct}%"></div></div>
+            </div>
+          `;
+        }).join('');
+
+        // Matriz Pentagonal
+        drawRadarChart(c.radar || { combat: 70, survival: 70, tactics: 70, occult: 70, bio: 70 });
+
+        // Destaque no Catálogo de Sócios
+        document.querySelectorAll('.catalog-pill').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.classId === c.id);
+        });
+
+        window.__lastProfile = profile;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function computeAndShowResult() {
+        const profile = calculateProfile();
+        renderResultView(profile, false);
+      }
+
+      // Simulação direta para apresentação a sócios
+      function simulateClassForPartners(classId) {
+        const target = CLASSES.find(c => c.id === classId);
+        if (!target) return;
+
+        let letter = 'A';
+        for (let [l, g] of Object.entries(GABARITO)) {
+          if (g.classId === target.id) {
+            letter = l;
+            break;
+          }
+        }
+
+        const gabarito = GABARITO[letter] || {
+          letter: '✦',
+          classId: target.id,
+          title: target.name,
+          doctrine: target.role,
+          profile: target.desc,
+          quote: target.quote
+        };
+
+        const counts = { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0 };
+        counts[letter] = 12;
+
+        const rankedClasses = Object.entries(GABARITO).map(([l, g]) => ({
+          letter: l,
+          gabaritoTitle: g.title,
+          pct: l === letter ? 100 : 0
+        })).sort((a, b) => b.pct - a.pct);
+
+        renderResultView({
+          winner: target,
+          winLetter: letter,
+          winCount: 12,
+          gabarito,
+          counts,
+          rankedClasses
+        }, true);
+
+        showToast(`Visualizando arquétipo: ${target.name}`);
+      }
+
+      function filterAndRenderCatalog() {
+        const list = $('catalog-list');
+        const q = searchQuery.toLowerCase().trim();
+        const gabaritoIds = ['mercador-da-morte', 'carrasco-cinzento', 'alquerino', 'samaritano', 'taumaturgico', 'hermetico', 'esoterico'];
+
+        const filtered = CLASSES.filter(c => {
+          if (currentFilter === 'gabarito' && !gabaritoIds.includes(c.id)) return false;
+          if (currentFilter === 'ocultatun' && c.world !== 'ocultatun') return false;
+          if (currentFilter === 'exodo' && c.world !== 'exodo') return false;
+          if (currentFilter === 'combatente' && c.category !== 'combatente') return false;
+          if (currentFilter === 'sobrevivente' && c.category !== 'sobrevivente') return false;
+          if (currentFilter === 'especialista' && c.category !== 'especialista') return false;
+
+          if (q) {
+            const matchName = c.name.toLowerCase().includes(q);
+            const matchNature = c.nature.toLowerCase().includes(q);
+            const matchRole = c.role.toLowerCase().includes(q);
+            const matchDesc = c.desc.toLowerCase().includes(q);
+            if (!matchName && !matchNature && !matchRole && !matchDesc) return false;
+          }
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          list.innerHTML = `<div style="grid-column: 1 / -1; padding: 20px; text-align: center; color: var(--text-dim);">Nenhuma classe encontrada para o filtro selecionado.</div>`;
+          return;
+        }
+
+        list.innerHTML = filtered.map(c => `
+          <button type="button" class="catalog-pill ${window.__lastProfile?.winner?.id === c.id ? 'active' : ''}" data-class-id="${c.id}">
+            <strong>${c.name}</strong>
+            <small>${c.worldLabel} · ${c.category.toUpperCase()}</small>
+          </button>
+        `).join('');
+
+        list.querySelectorAll('[data-class-id]').forEach(btn => {
+          btn.addEventListener('click', () => simulateClassForPartners(btn.dataset.classId));
+        });
+      }
+
+      function buildPartnerCatalog() {
+        const filterContainer = $('catalog-filters');
+        if (filterContainer) {
+          filterContainer.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              filterContainer.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+              btn.classList.add('active');
+              currentFilter = btn.dataset.filter || 'all';
+              filterAndRenderCatalog();
+            });
+          });
+        }
+
+        const searchInput = $('catalog-search');
+        if (searchInput) {
+          searchInput.addEventListener('input', e => {
+            searchQuery = e.target.value;
+            filterAndRenderCatalog();
+          });
+        }
+
+        filterAndRenderCatalog();
+      }
+
+      function startQuiz() {
+        SoundEngine.ensureActive();
+        SoundEngine.startDrone();
+        currentStep = 0;
+        answers.fill(null);
+        $('view-intro').hidden = true;
+        $('view-result').hidden = true;
+        $('view-quiz').hidden = false;
+        renderQuestion();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function resetToIntro() {
+        SoundEngine.stopDrone();
+        currentStep = 0;
+        answers.fill(null);
+        $('view-quiz').hidden = true;
+        $('view-result').hidden = true;
+        $('view-intro').hidden = false;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // =========================================================================
+      // 5. EXPORTAÇÃO GRÁFICA DO DOSSIÊ DA ALMA (CANVAS PNG DOWNLOAD)
+      // =========================================================================
+      async function exportCharacterCardPng() {
+        const p = window.__lastProfile;
+        if (!p) return;
+
+        showToast('Gerando Card da Alma em alta resolução...');
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 1200;
+        canvas.height = 675;
+        const ctx = canvas.getContext('2d');
+
+        // Fundo Sombrio
+        const bgGrad = ctx.createLinearGradient(0, 0, 1200, 675);
+        bgGrad.addColorStop(0, '#06070a');
+        bgGrad.addColorStop(0.5, '#0c0f17');
+        bgGrad.addColorStop(1, '#050608');
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, 1200, 675);
+
+        // Brilho Dourado
+        const glow = ctx.createRadialGradient(250, 280, 10, 250, 280, 340);
+        glow.addColorStop(0, 'rgba(229, 193, 104, 0.22)');
+        glow.addColorStop(1, 'transparent');
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, 1200, 675);
+
+        // Moldura Dourada
+        ctx.strokeStyle = 'rgba(229, 193, 104, 0.35)';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(28, 28, 1144, 619);
+
+        // Cantoneiras
+        ctx.strokeStyle = '#e5c168';
+        ctx.lineWidth = 4;
+        const cornerLen = 28;
+        ctx.beginPath(); ctx.moveTo(28, 28 + cornerLen); ctx.lineTo(28, 28); ctx.lineTo(28 + cornerLen, 28); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(1172 - cornerLen, 28); ctx.lineTo(1172, 28); ctx.lineTo(1172, 28 + cornerLen); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(28, 647 - cornerLen); ctx.lineTo(28, 647); ctx.lineTo(28 + cornerLen, 647); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(1172 - cornerLen, 647); ctx.lineTo(1172, 647); ctx.lineTo(1172, 647 - cornerLen); ctx.stroke();
+
+        // Cabeçalho
+        ctx.fillStyle = '#e5c168';
+        ctx.font = 'bold 15px "JetBrains Mono", monospace';
+        ctx.fillText('✦ MUNDOS SOMBRIOS // ORÁCULO DE VOCAÇÃO', 60, 68);
+
+        ctx.fillStyle = '#aba59a';
+        ctx.font = '13px "JetBrains Mono", monospace';
+        ctx.fillText(`DIAGNÓSTICO OFICIAL · MAIORIA ${p.winLetter || 'A'}`, 840, 68);
+
+        // Retrato
+        const imgEl = $('res-class-img');
+        const imgBoxX = 60, imgBoxY = 96, imgBoxW = 280, imgBoxH = 430;
+
+        ctx.fillStyle = '#07090e';
+        ctx.fillRect(imgBoxX, imgBoxY, imgBoxW, imgBoxH);
+        ctx.strokeStyle = 'rgba(229, 193, 104, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(imgBoxX, imgBoxY, imgBoxW, imgBoxH);
+
+        if (imgEl && imgEl.complete && imgEl.naturalWidth > 0) {
+          try {
+            ctx.drawImage(imgEl, imgBoxX, imgBoxY, imgBoxW, imgBoxH);
+          } catch (_) {
+            ctx.fillStyle = '#e5c168';
+            ctx.font = 'bold 36px "Cinzel", serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(p.winner.name.charAt(0), imgBoxX + imgBoxW / 2, imgBoxY + imgBoxH / 2);
+            ctx.textAlign = 'left';
+          }
+        }
+
+        // Overlay do Retrato
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.fillRect(imgBoxX, imgBoxY + imgBoxH - 46, imgBoxW, 46);
+        ctx.fillStyle = '#e5c168';
+        ctx.font = 'bold 12px "JetBrains Mono", monospace';
+        ctx.fillText(`MAIORIA ${p.winLetter} · ${p.winner.token}`, imgBoxX + 14, imgBoxY + imgBoxH - 18);
+
+        // Informações Principais
+        const textX = 380;
+        ctx.fillStyle = '#aba59a';
+        ctx.font = '13px "JetBrains Mono", monospace';
+        ctx.fillText(`DOUTactivity: ${p.gabarito.doctrine.toUpperCase()}`, textX, 118);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 36px "Cinzel", serif';
+        ctx.fillText(p.gabarito.title, textX, 162);
+
+        ctx.fillStyle = '#e5c168';
+        ctx.font = 'italic 18px "Cormorant Garamond", serif';
+        ctx.fillText(`${p.gabarito.quote}`, textX, 204);
+
+        // Perfil do Gabarito
+        ctx.fillStyle = '#f3efe6';
+        ctx.font = '14px "Inter", sans-serif';
+        const words = p.gabarito.profile.split(' ');
+        let line = '';
+        let lineY = 244;
+        for (let w of words) {
+          const testLine = line + w + ' ';
+          if (ctx.measureText(testLine).width > 730) {
+            ctx.fillText(line, textX, lineY);
+            line = w + ' ';
+            lineY += 22;
+          } else {
+            line = testLine;
+          }
+        }
+        ctx.fillText(line, textX, lineY);
+
+        // Box de Talentos de Assinatura
+        const boxY = lineY + 28;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+        ctx.strokeStyle = 'rgba(229, 193, 104, 0.25)';
+        ctx.lineWidth = 1;
+        ctx.fillRect(textX, boxY, 740, 110);
+        ctx.strokeRect(textX, boxY, 740, 110);
+
+        ctx.fillStyle = '#e5c168';
+        ctx.font = 'bold 12px "JetBrains Mono", monospace';
+        ctx.fillText('TALENTOS & PROTOCOLOS DE ASSINATURA', textX + 18, boxY + 24);
+
+        const talents = p.winner.talents || [];
+        talents.slice(0, 3).forEach((t, i) => {
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 13px "Cinzel", serif';
+          ctx.fillText(`• ${t.name}:`, textX + 18, boxY + 48 + i * 20);
+
+          ctx.fillStyle = '#aba59a';
+          ctx.font = '12px "Inter", sans-serif';
+          ctx.fillText(t.desc.slice(0, 85) + '...', textX + 18 + ctx.measureText(`• ${t.name}: `).width, boxY + 48 + i * 20);
+        });
+
+        // Rodapé
+        ctx.fillStyle = '#736e65';
+        ctx.font = '12px "JetBrains Mono", monospace';
+        ctx.fillText('Mundos Sombrios V2.11.2 · Protótipo Oficial Independente · mundossombrios.com.br', 60, 616);
+
+        canvas.toBlob(blob => {
+          if (!blob) return;
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `mundos-sombrios-${p.winner.id}.png`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          showToast('Card da Alma baixado com sucesso!');
+        }, 'image/png');
+      }
+
+      // =========================================================================
+      // 6. EVENTOS DE INTERFACE & ATALHOS DE TECLADO
+      // =========================================================================
+      $('btn-start-quiz').addEventListener('click', startQuiz);
+      $('btn-retake').addEventListener('click', startQuiz);
+      $('btn-restart-top').addEventListener('click', resetToIntro);
+
+      $('btn-prev-question').addEventListener('click', () => {
+        if (currentStep > 0) {
+          SoundEngine.playStep();
+          currentStep--;
+          renderQuestion();
+        }
+      });
+
+      $('btn-sound-toggle').addEventListener('click', () => {
+        SoundEngine.toggle();
+        updateSoundToggleBtn();
+        showToast(SoundEngine.enabled ? 'Áudio ativado' : 'Áudio silenciado');
+      });
+
+      $('btn-toggle-catalog').addEventListener('click', () => {
+        const drawer = $('partner-catalog');
+        drawer.hidden = !drawer.hidden;
+        if (!drawer.hidden) {
+          drawer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+
+      $('btn-close-catalog').addEventListener('click', () => {
+        $('partner-catalog').hidden = true;
+      });
+
+      $('btn-download-card').addEventListener('click', exportCharacterCardPng);
+
+      $('btn-copy-summary').addEventListener('click', async () => {
+        const p = window.__lastProfile;
+        if (!p) return;
+        const talents = (p.winner.talents || []).map(t => `  • ${t.name}: ${t.desc}`).join('\n');
+        const text = [
+          `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+          `✦ MUNDOS SOMBRIOS — RESULTADO DO ORÁCULO ✦`,
+          `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+          `• Resultado: ${p.gabarito.title}`,
+          `• Doutrina: ${p.gabarito.doctrine}`,
+          `• Diagnóstico: Maioria ${p.winLetter} (${p.winCount} de 12 escolhas - ${Math.round((p.winCount/12)*100)}%)`,
+          `• Citação: ${p.gabarito.quote}`,
+          ``,
+          `✦ PERFIL OPERACIONAL:`,
+          p.gabarito.profile,
+          ``,
+          `✦ PODERES & PROTOCOLOS DE ASSINATURA:`,
+          talents,
+          `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`
+        ].join('\n');
+
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast('Relatório completo copiado para a área de transferência!');
+        } catch (_) {
+          showToast('Relatório gerado!');
+        }
+      });
+
+      // Atalhos de teclado A, B, C, D, E, F, G e 1 a 7
+      window.addEventListener('keydown', e => {
+        if ($('view-quiz').hidden) return;
+        const keyUpper = e.key.toUpperCase();
+        const letterMap = { 
+          'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6,
+          '1': 0, '2': 1, '3': 2, '4': 3, '5': 4, '6': 5, '7': 6 
+        };
+        if (keyUpper in letterMap) {
+          e.preventDefault();
+          selectOption(letterMap[keyUpper]);
+        } else if (e.key === 'ArrowLeft' && currentStep > 0) {
+          e.preventDefault();
+          SoundEngine.playStep();
+          currentStep--;
+          renderQuestion();
+        }
+      });
+
+      // Inicialização
+      updateSoundToggleBtn();
+      initAmbientParticles();
+      buildPartnerCatalog();
+    })();
+  </script>
+</body>
+</html>

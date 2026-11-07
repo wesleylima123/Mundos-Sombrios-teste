@@ -1,0 +1,554 @@
+--- before/index.html
++++ after/index.html
+@@ -990,6 +990,7 @@
+     <script src="js/portal/portal-core.js"></script>
+     <script src="js/portal/portal-admin.js"></script>
+     <script src="js/archetype-art-direction.js"></script>
++    <script src="js/asset-loader.js"></script>
+     <script src="js/vendor-loader.js"></script>
+     <script src="js/ms-runtime-config.js"></script>
+     <script src="js/ms-config.js"></script>
+--- before/css/table-shell-v3.css
++++ after/css/table-shell-v3.css
+@@ -1,13 +1,52 @@
+-/* Mundos Sombrios — Mesa ao Vivo V3 */
+-#screen-vtt.ms-table-v3-active{padding:0!important;overflow:hidden;background:radial-gradient(circle at 48% 20%,#15191c 0,#08090a 42%,#030404 100%)}
+-.ms-table-v3{--v3-gold:#c9a86a;--v3-cyan:#74cbd4;--v3-line:rgba(201,168,106,.18);height:100vh;display:grid;grid-template-rows:64px minmax(0,1fr) 42px;color:#d6d1c7;background:linear-gradient(135deg,rgba(10,12,13,.98),rgba(3,4,5,.99))}
+-.ms-table-v3-head{display:grid;grid-template-columns:minmax(220px,1fr) auto minmax(320px,1.4fr);gap:18px;align-items:center;padding:8px 16px;border-bottom:1px solid var(--v3-line);background:linear-gradient(180deg,rgba(28,25,20,.96),rgba(7,8,9,.96));box-shadow:0 10px 35px rgba(0,0,0,.35);z-index:20}.ms-table-v3-identity span,.ms-table-v3-identity small{display:block;font:.54rem Cinzel,serif;letter-spacing:.17em;color:#81796b}.ms-table-v3-identity strong{display:block;font:700 1rem Cinzel,serif;color:#eee5d5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ms-table-v3-health{display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid rgba(116,203,212,.2);font:.55rem Orbitron,sans-serif;letter-spacing:.08em}.ms-table-v3-health i{width:7px;height:7px;border-radius:50%;background:#d7a94c;box-shadow:0 0 10px currentColor}.ms-table-v3-health[data-status="synced"] i,.ms-table-v3-health[data-status="connected"] i{background:#76d39b}.ms-table-v3-health[data-status="offline"] i{background:#db5e5e}.ms-table-v3-head-actions{display:flex;justify-content:flex-end;gap:6px;overflow:auto}.ms-table-v3-head-actions .souls-btn{padding:7px 9px!important;font-size:.54rem!important;white-space:nowrap}.ms-table-v3-head-actions .win-close-btn{display:none!important}
+-.ms-table-v3-body{min-height:0;display:grid;grid-template-columns:238px minmax(0,1fr) 330px}.ms-table-v3-left,.ms-table-v3-right{min-height:0;background:rgba(7,8,9,.96)}.ms-table-v3-left{border-right:1px solid var(--v3-line);display:grid;grid-template-rows:auto minmax(0,1fr)}.ms-table-v3-right{border-left:1px solid var(--v3-line);display:grid;grid-template-rows:minmax(230px,1.2fr) minmax(200px,.8fr) auto}.ms-table-v3-nav{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:#25221d;border-bottom:1px solid var(--v3-line)}.ms-table-v3-nav button{border:0;background:#0b0c0d;color:#8d877d;padding:10px 5px;font:700 .52rem Cinzel,serif;letter-spacing:.08em;cursor:pointer}.ms-table-v3-nav button:hover,.ms-table-v3-nav button.active{color:var(--v3-gold);background:#15130f}.ms-table-v3-cards{min-height:0;overflow:auto}.ms-table-v3-stage{min-width:0;min-height:0;position:relative;background:#111}.ms-table-v3-chat,.ms-table-v3-dice{min-height:0;overflow:hidden;border-bottom:1px solid var(--v3-line)}
+-.ms-table-v3-active .vtt-floating-window{position:static!important;transform:none!important;left:auto!important;top:auto!important;margin:0!important;max-width:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;background:#090a0b!important}.ms-table-v3-active #vtt-grid-window{width:100%!important;height:100%!important;display:flex!important;flex-direction:column}.ms-table-v3-active #vtt-grid-window .vtt-window-body{flex:1!important;height:auto!important}.ms-table-v3-active #vtt-cards-window{width:100%!important;height:100%!important;display:flex!important;flex-direction:column}.ms-table-v3-active #vtt-cards-window .vtt-window-body{width:auto!important;max-width:none!important;overflow:auto!important}.ms-table-v3-active #vtt-chat-box{width:100%!important;height:100%!important;display:flex!important;flex-direction:column}.ms-table-v3-active #vtt-dice-box{width:100%!important;height:100%!important;display:flex!important;flex-direction:column}.ms-table-v3-active #vtt-chat-box>.vtt-window-body,.ms-table-v3-active #vtt-dice-box>.vtt-window-body{flex:1!important;height:auto!important;max-height:none!important}.ms-table-v3-active #vtt-chat-box .win-close-btn,.ms-table-v3-active #vtt-dice-box .win-close-btn,.ms-table-v3-active #vtt-grid-window .win-close-btn,.ms-table-v3-active #vtt-cards-window .win-close-btn{display:none!important}.ms-table-v3-active #vtt-dice-box #dice-3d-container{min-height:115px;transform:scale(.68);transform-origin:top center;margin-bottom:-78px}.ms-table-v3-active #vtt-active-cards-container{display:grid!important;grid-template-columns:1fr!important;padding:8px!important}.ms-table-v3-active #vtt-active-cards-container .vtt-char-card{min-width:0!important;width:100%!important}
+-.ms-table-v3-telemetry{padding:10px 12px;background:#070808;border-top:1px solid rgba(116,203,212,.15)}.ms-table-v3-telemetry>span{font:700 .5rem Orbitron,sans-serif;letter-spacing:.13em;color:var(--v3-cyan)}.ms-table-v3-telemetry dl{margin:7px 0 0;display:grid;grid-template-columns:repeat(2,1fr);gap:4px}.ms-table-v3-telemetry dl div{display:flex;justify-content:space-between;gap:6px;font-size:.58rem;border-bottom:1px dotted #24292b}.ms-table-v3-telemetry dt{color:#697477}.ms-table-v3-telemetry dd{margin:0;color:#aebfc2}.ms-table-v3-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:5px 14px;border-top:1px solid var(--v3-line);background:#080909;overflow:hidden}.ms-table-v3-footer [data-ms-table-presence]{display:flex;align-items:center;overflow:auto;white-space:nowrap}.ms-table-v3-footer .ms-presence-chip{margin:0 3px}.ms-table-v3-overlays>.vtt-floating-window{position:fixed!important;z-index:15000!important;inset:8vh 8vw!important;width:auto!important;height:auto!important;max-height:84vh!important;border:1px solid rgba(201,168,106,.28)!important;box-shadow:0 30px 100px #000!important}.ms-table-v3-overlays>.vtt-floating-window[style*="display: none"]{display:none!important}
++/* Mesa V3: estilos complementares. Layout compartilhado consolidado em table-studio-v2.8.6.css.
++ * Breakpoints e propriedades exclusivos desta camada foram preservados. */
++.ms-table-v3-head{z-index:20}
++.ms-table-v3-identity span,.ms-table-v3-identity small{display:block;font:.54rem Cinzel,serif;letter-spacing:.17em;color:#81796b}
++.ms-table-v3-identity strong{display:block;font:700 1rem Cinzel,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
++.ms-table-v3-health{display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid rgba(116,203,212,.2);font:.55rem Orbitron,sans-serif;letter-spacing:.08em}
++.ms-table-v3-health i{width:7px;height:7px;border-radius:50%;background:#d7a94c;box-shadow:0 0 10px currentColor}
++.ms-table-v3-health[data-status="synced"] i,.ms-table-v3-health[data-status="connected"] i{background:#76d39b}
++.ms-table-v3-health[data-status="offline"] i{background:#db5e5e}
++.ms-table-v3-head-actions{overflow:auto}
++.ms-table-v3-head-actions .souls-btn{padding:7px 9px!important;font-size:.54rem!important;white-space:nowrap}
++.ms-table-v3-left,.ms-table-v3-right{min-height:0;background:rgba(7,8,9,.96)}
++.ms-table-v3-nav button{cursor:pointer}
++.ms-table-v3-chat,.ms-table-v3-dice{border-bottom:1px solid var(--v3-line)}
++.ms-table-v3-active .vtt-floating-window{position:static!important;transform:none!important;left:auto!important;top:auto!important;margin:0!important;max-width:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;background:#090a0b!important}
++.ms-table-v3-active #vtt-chat-box{width:100%!important;height:100%!important;display:flex!important;flex-direction:column}
++.ms-table-v3-active #vtt-dice-box{width:100%!important;height:100%!important;display:flex!important;flex-direction:column}
++.ms-table-v3-active #vtt-dice-box #dice-3d-container{min-height:115px;transform:scale(.68);transform-origin:top center;margin-bottom:-78px}
++.ms-table-v3-telemetry{background:#070808;border-top:1px solid rgba(116,203,212,.15)}
++.ms-table-v3-telemetry>span{font:700 .5rem Orbitron,sans-serif;letter-spacing:.13em;color:var(--v3-cyan)}
++.ms-table-v3-telemetry dl{margin:7px 0 0;display:grid;grid-template-columns:repeat(2,1fr);gap:4px}
++.ms-table-v3-telemetry dl div{display:flex;justify-content:space-between;gap:6px;font-size:.58rem;border-bottom:1px dotted #24292b}
++.ms-table-v3-telemetry dt{color:#697477}
++.ms-table-v3-telemetry dd{margin:0;color:#aebfc2}
++.ms-table-v3-footer{overflow:hidden}
++.ms-table-v3-footer .ms-presence-chip{margin:0 3px}
+ @media(max-width:1050px){.ms-table-v3-body{grid-template-columns:190px minmax(0,1fr) 280px}.ms-table-v3-head{grid-template-columns:1fr auto;row-gap:6px}.ms-table-v3-head-actions{grid-column:1/-1;display:flex;justify-content:flex-start;overflow-x:auto;overflow-y:hidden;padding:2px 0 4px;scrollbar-width:thin}.ms-table-v3-head-actions .souls-btn{flex:0 0 auto}.ms-table-v3{grid-template-rows:auto minmax(0,1fr) 42px}.ms-table-v3-identity small{display:none}}
+ @media(max-width:760px){#screen-vtt.ms-table-v3-active{overflow:auto}.ms-table-v3{height:auto;min-height:100vh;grid-template-rows:auto auto auto}.ms-table-v3-head{position:sticky;top:0;grid-template-columns:1fr auto;z-index:50}.ms-table-v3-body{display:flex;flex-direction:column}.ms-table-v3-left{order:2;border:0;max-height:260px}.ms-table-v3-stage{order:1;height:52vh;min-height:380px}.ms-table-v3-right{order:3;border:0;display:grid;grid-template-rows:360px 320px auto}.ms-table-v3-footer{position:sticky;bottom:0;z-index:40}.ms-table-v3-active #vtt-grid-window .vtt-grid-tools{width:115px!important}.ms-table-v3-overlays>.vtt-floating-window{inset:3vh 3vw!important}}
+-.ms-table-v3-legacy-title{display:none!important}.ms-table-v3.is-paused .ms-table-v3-health{border-color:rgba(220,166,76,.45)}.ms-table-v3.is-paused .ms-table-v3-health:after{content:'PAUSADA';color:#dda64c;font:700 .48rem Orbitron,sans-serif;letter-spacing:.12em}.ms-table-v3-director{position:fixed;z-index:17000;top:72px;right:18px;width:min(360px,calc(100vw - 36px));padding:14px;border:1px solid rgba(201,168,106,.36);background:linear-gradient(160deg,rgba(20,17,13,.98),rgba(5,7,8,.99));box-shadow:0 28px 80px #000;color:#d9d1c4}.ms-table-v3-director[hidden]{display:none!important}.ms-table-v3-director header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(201,168,106,.18);padding-bottom:10px;margin-bottom:10px}.ms-table-v3-director header span{font:700 .68rem Cinzel,serif;letter-spacing:.15em;color:#d2b57d}.ms-table-v3-director header button{border:0;background:transparent;color:#8e8679;font-size:1.4rem;cursor:pointer}.ms-table-v3-director-state{display:flex;align-items:center;gap:9px;padding:9px;background:#090a0b;border:1px solid #26231e;margin-bottom:9px}.ms-table-v3-director-state i{width:8px;height:8px;border-radius:50%;background:#6ed39c;box-shadow:0 0 12px currentColor}.is-paused .ms-table-v3-director-state i{background:#dda64c}.ms-table-v3-director-state strong{font:700 .58rem Orbitron,sans-serif;letter-spacing:.1em}.ms-table-v3-director-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.ms-table-v3-director button{padding:8px;border:1px solid #3a342b;background:#0c0d0e;color:#b8aa94;font:700 .52rem Cinzel,serif;cursor:pointer}.ms-table-v3-director button:hover,.ms-table-v3-director button.primary{border-color:#c9a86a;color:#ead7b1}.ms-table-v3-director label{display:grid;gap:6px;margin-top:12px;color:#7e766b;font:700 .52rem Cinzel,serif;letter-spacing:.08em}.ms-table-v3-director textarea{min-height:88px;resize:vertical;padding:9px;border:1px solid #2c2925;background:#070809;color:#d4d0c8;font:600 .7rem Rajdhani,sans-serif}.ms-table-v3-director>button.primary{width:100%;margin-top:7px}
+-
+-/* V2.8.0 — presença pública dos participantes sem expor ficha completa */
+-.ms-table-v3-active .vtt-roster-only{cursor:default}.ms-table-v3-active .vtt-public-participant{min-height:132px!important;display:grid!important;place-items:center;text-align:center;padding:12px!important;border-color:rgba(116,203,212,.22)!important;background:linear-gradient(160deg,rgba(11,22,25,.92),rgba(7,9,10,.98))!important}.ms-table-v3-active .vtt-public-participant small{color:#74cbd4;font:700 .48rem Cinzel,serif;letter-spacing:.1em}.ms-table-v3-active .vtt-public-participant h3{margin:5px 0 2px!important}.ms-table-v3-active .vtt-public-participant-user{font-size:.62rem;color:#8aa5a8}.ms-table-v3-active .vtt-public-participant em{font-size:.55rem;color:#666f70;font-style:normal;letter-spacing:.05em}.ms-table-v3-active .vtt-public-participant-icon{display:grid!important;place-items:center;color:#74cbd4!important;font-size:1.1rem!important}
++.ms-table-v3.is-paused .ms-table-v3-health{border-color:rgba(220,166,76,.45)}
++.ms-table-v3.is-paused .ms-table-v3-health:after{content:'PAUSADA';color:#dda64c;font:700 .48rem Orbitron,sans-serif;letter-spacing:.12em}
++.ms-table-v3-director{position:fixed;z-index:17000;right:18px;width:min(360px,calc(100vw - 36px));padding:14px;border:1px solid rgba(201,168,106,.36);background:linear-gradient(160deg,rgba(20,17,13,.98),rgba(5,7,8,.99));box-shadow:0 28px 80px #000;color:#d9d1c4}
++.ms-table-v3-director[hidden]{display:none!important}
++.ms-table-v3-director header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(201,168,106,.18);padding-bottom:10px;margin-bottom:10px}
++.ms-table-v3-director header span{font:700 .68rem Cinzel,serif;letter-spacing:.15em;color:#d2b57d}
++.ms-table-v3-director header button{border:0;background:transparent;color:#8e8679;font-size:1.4rem;cursor:pointer}
++.ms-table-v3-director-state{display:flex;align-items:center;gap:9px;padding:9px;background:#090a0b;border:1px solid #26231e;margin-bottom:9px}
++.ms-table-v3-director-state i{width:8px;height:8px;border-radius:50%;background:#6ed39c;box-shadow:0 0 12px currentColor}
++.is-paused .ms-table-v3-director-state i{background:#dda64c}
++.ms-table-v3-director-state strong{font:700 .58rem Orbitron,sans-serif;letter-spacing:.1em}
++.ms-table-v3-director-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
++.ms-table-v3-director button{padding:8px;border:1px solid #3a342b;background:#0c0d0e;color:#b8aa94;font:700 .52rem Cinzel,serif;cursor:pointer}
++.ms-table-v3-director button:hover,.ms-table-v3-director button.primary{border-color:#c9a86a;color:#ead7b1}
++.ms-table-v3-director label{display:grid;gap:6px;margin-top:12px;color:#7e766b;font:700 .52rem Cinzel,serif;letter-spacing:.08em}
++.ms-table-v3-director textarea{min-height:88px;resize:vertical;padding:9px;border:1px solid #2c2925;background:#070809;color:#d4d0c8;font:600 .7rem Rajdhani,sans-serif}
++.ms-table-v3-director>button.primary{width:100%;margin-top:7px}
++.ms-table-v3-active .vtt-roster-only{cursor:default}
++.ms-table-v3-active .vtt-public-participant{min-height:132px!important;display:grid!important;place-items:center;text-align:center;padding:12px!important;border-color:rgba(116,203,212,.22)!important;background:linear-gradient(160deg,rgba(11,22,25,.92),rgba(7,9,10,.98))!important}
++.ms-table-v3-active .vtt-public-participant small{color:#74cbd4;font:700 .48rem Cinzel,serif;letter-spacing:.1em}
++.ms-table-v3-active .vtt-public-participant h3{margin:5px 0 2px!important}
++.ms-table-v3-active .vtt-public-participant-user{font-size:.62rem;color:#8aa5a8}
++.ms-table-v3-active .vtt-public-participant em{font-size:.55rem;color:#666f70;font-style:normal;letter-spacing:.05em}
++.ms-table-v3-active .vtt-public-participant-icon{display:grid!important;place-items:center;color:#74cbd4!important;font-size:1.1rem!important}
+--- before/js/operational-control-v2.10.1.js
++++ after/js/operational-control-v2.10.1.js
+@@ -267,11 +267,12 @@
+ 
+   function bindRuntime(){
+     mountGlobalSheetsButton();
+-    window.MS_PLATFORM?.on?.('vtt:entered',()=>{startPolling();setTimeout(refreshCounter,100);});
++    window.MS_PLATFORM?.on?.('vtt:entered',startPolling);
++    window.MS_PLATFORM?.on?.('vtt:left',()=>{stopPolling();closeCrewCenter();crewState.table=null;});
+     window.MS_PLATFORM?.on?.('table:roster-refreshed',()=>{if(document.getElementById('ms-crew-center')?.classList.contains('open'))loadCrew(true);});
+     window.addEventListener('ms:offline-data',()=>{if(manager()&&context().table?.id)refreshCounter();});
+     document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(document.getElementById('ms-character-viewer')?.classList.contains('open'))return;closeCrewCenter();closeQuickSheets();});
+-    if(manager()&&context().table?.id)setTimeout(startPolling,80);
++    if(document.getElementById('screen-vtt')?.classList.contains('active'))startPolling();
+   }
+ 
+   window.msOpenQuickSheets=openQuickSheets;
+--- before/js/ms-realtime.js
++++ after/js/ms-realtime.js
+@@ -24,13 +24,15 @@
+     });
+     platform()?.emit('table:presence', {tableId:state.tableId, users:JSON.parse(JSON.stringify(state.presence))});
+   }
+-  async function connect(tableId, onEvent){
++  async function connect(tableId, onEvent, options = {}){
+     disconnect();
+     const id=String(tableId||'').trim(); if(!id || id==='draft') return ()=>{};
+     state.tableId=id;
+     platform()?.setStatus('realtime','loading');
+     try{
+-      const stop=await window.MS_DB.subscribeTable(id,{event:onEvent,presence:raw=>{state.presence=normalizePresence(raw);renderPresence();}});
++      const release=await window.MS_DB.subscribeTable(id,{event:onEvent,status:options.status,presence:raw=>{state.presence=normalizePresence(raw);renderPresence();}});
++      let released=false;
++      const stop=()=>{if(released)return;released=true;if(state.unsubscribe===stop)state.unsubscribe=null;release?.();};
+       state.unsubscribe=stop;
+       platform()?.setStatus('realtime','success');
+       platform()?.emit('table:connected',{tableId:id});
+--- before/js/forja-overhaul-v2.8.10.js
++++ after/js/forja-overhaul-v2.8.10.js
+@@ -262,21 +262,10 @@
+     if(typeof window.saveCharacter==='function'){
+       const orig=window.saveCharacter;window.saveCharacter=function(event){if(!category()){event?.preventDefault?.();toast('Escolha a categoria fundamental antes de salvar a ficha.','error');return false;}return orig.apply(this,arguments);};
+     }
+-    if(typeof window.enterVTT==='function'){
+-      const orig=window.enterVTT;window.enterVTT=async function(){const r=await orig.apply(this,arguments);setTimeout(()=>{ensureCampaignInTable();if(window.isVttGM&&window.currentTableData?.id&&String(window.currentTableData.id)!=='draft')Promise.resolve(window.MS_SERVICES?.Games?.setLiveStatus?.(window.currentTableData.id,'active')).catch(()=>null);},80);return r;};
+-    }
+-  }
+-
+-  function ensureCampaignInTable(){
+-    const shell=byId('ms-table-v3');if(!shell)return;const nav=shell.querySelector('.ms-table-v3-nav');
+-    if(nav&&!nav.querySelector('[data-open="vtt-campaign-window"]')){const btn=document.createElement('button');btn.type='button';btn.className='gm-only-v3';btn.dataset.open='vtt-campaign-window';btn.textContent='CAMPANHA';btn.hidden=!window.isVttGM;btn.onclick=()=>setTimeout(renderCampaignWindow,0);nav.insertBefore(btn,nav.querySelector('[data-action="director"]')||null);}
+-    const overlays=shell.querySelector('.ms-table-v3-overlays')||shell;if(!byId('vtt-campaign-window')){const wrap=document.createElement('div');wrap.id='vtt-campaign-window';wrap.className='vtt-floating-window';wrap.innerHTML='<div class="vtt-window-header" id="campaign-window-header"><span class="vtt-font">Campanha em Movimento</span><button class="win-close-btn" type="button" onclick="toggleVttWindow(\'vtt-campaign-window\')">X</button></div><div class="vtt-window-body"><div id="vtt-campaign-root"></div></div>';overlays.appendChild(wrap);try{window.dragElement?.(wrap,'campaign-window-header');}catch(_){} }
+-    renderCampaignWindow();
+-  }
+-  function renderCampaignWindow(){const root=byId('vtt-campaign-root');if(!root||!window.isVttGM)return;root.innerHTML='';try{window.MasterCommandCenter?.render?.(root,window.currentTableData||null);}catch(e){root.innerHTML=`<div class="gm-empty">Falha ao carregar campanha: ${esc(e?.message||e)}</div>`;}}
+-
+-
+-
+-  patchLifecycle();ensureBuilderStructure();ensureCampaignInTable();
++
++  }
++
++  // Campanha em Movimento pertence exclusivamente a MS_TABLE_SHELL.
++  patchLifecycle();ensureBuilderStructure();
+   window.MS_FORJA_V2810=Object.freeze({version:'2.8.10',categories:CATEGORY_META,exodoClassCategory:EXODO_CLASS_CATEGORY,setCategory,computeDerived});
+ })();
+--- before/js/master-shield-loader.js
++++ after/js/master-shield-loader.js
+@@ -11,11 +11,11 @@
+     if(typeof window.showScreen==='function')window.showScreen('screen-master-shield');
+     window.syncMasterShieldReturnUI?.();
+     const root=document.getElementById('master-shield-content');
+-    if(root&&!window.msShieldNavigate)root.querySelector('.master-shield-body')?.insertAdjacentHTML('afterbegin','<div id="ms-shield-loading" class="panel"><b>ABRINDO ACERVO RESTRITO…</b><p>Carregando cronologia, cartografia e compêndio somente agora.</p></div>');
++    if(root&&!window.msShieldNavigate&&!document.getElementById('ms-shield-loading'))root.querySelector('.master-shield-body')?.insertAdjacentHTML('afterbegin','<div id="ms-shield-loading" class="panel"><b>ABRINDO ACERVO RESTRITO…</b><p>Carregando cronologia, cartografia e compêndio somente agora.</p></div>');
+     if(!pending)pending=(async()=>{await load('js/master-shield-data.js','ms-shield-data');await load('js/master-atlas-data.js','ms-atlas-data');await load('js/master-atlas.js','ms-atlas-core');await load('js/master-shield.js','ms-shield-core');})();
+     try{await pending;document.getElementById('ms-shield-loading')?.remove();if(window.openMasterShield!==loaderOpen)return window.openMasterShield();}
+     catch(e){pending=null;document.getElementById('ms-shield-loading')?.remove();window.MS_PLATFORM?.toast(e.message||'Não foi possível carregar o Escudo.','error');}
+   };
+-  function load(src,id){return new Promise((resolve,reject)=>{const existing=document.getElementById(id);if(existing){if(existing.dataset.loaded==='1')return resolve();existing.addEventListener('load',resolve,{once:true});existing.addEventListener('error',reject,{once:true});return;}const script=document.createElement('script');script.id=id;script.src=src;script.async=false;script.onload=()=>{script.dataset.loaded='1';resolve()};script.onerror=()=>reject(new Error(`Falha ao carregar ${src}`));document.head.appendChild(script);});}
++  function load(src,id){return window.MS_ASSETS.script(src,{id});}
+   window.openMasterShield=loaderOpen;
+ })();
+--- before/js/progression-v2.8.9.js
++++ after/js/progression-v2.8.9.js
+@@ -779,28 +779,10 @@
+     });
+   }
+ 
+-  function patchEnterVTT() {
+-    if (window.__msProgressionEnterPatched || typeof window.enterVTT !== 'function') return;
+-    window.__msProgressionEnterPatched = true;
+-    const originalEnter = window.enterVTT;
+-    window.enterVTT = async function () {
+-      const result = await originalEnter.apply(this, arguments);
+-      setTimeout(async () => {
+-        ensureOrb(); restoreOrbPosition();
+-        const tableId = ctx().table?.id;
+-        if (tableId) await refreshTableState(tableId);
+-        else updateOrb();
+-      }, 120);
+-      return result;
+-    };
+-    const originalLeave = window.leaveVTT;
+-    if (typeof originalLeave === 'function') {
+-      window.leaveVTT = async function () {
+-        const result = await originalLeave.apply(this, arguments);
+-        tableState = null; updateOrb();
+-        return result;
+-      };
+-    }
++  async function onTableEntered(detail = {}) {
++    ensureOrb(); restoreOrbPosition();
++    const tableId = detail.tableId || ctx().table?.id;
++    if (tableId) await refreshTableState(tableId); else updateOrb();
+   }
+ 
+   let initialized = false;
+@@ -808,18 +790,16 @@
+     if (initialized) return;
+     initialized = true;
+     ensureViewer(); ensureOrb(); ensureAdmissionUI(); ensureArconte();
+-    patchCreateTable(); patchAdminTabs(); patchEnterVTT(); patchBuilderSave();
++    patchCreateTable(); patchAdminTabs(); patchBuilderSave();
+     installRealtimeGrant();
+-    window.MS_PLATFORM?.on?.('vtt:entered', async detail => {
+-      ensureOrb(); restoreOrbPosition();
+-      const tableId = detail?.tableId || ctx().table?.id;
+-      if (tableId) await refreshTableState(tableId); else updateOrb();
+-    });
++    window.MS_PLATFORM?.on?.('vtt:entered', onTableEntered);
++    window.MS_PLATFORM?.on?.('vtt:left', () => { tableState = null; updateOrb(); });
++    if (byId('screen-vtt')?.classList.contains('active')) onTableEntered();
+     window.MS_PLATFORM?.on?.('builder:extensions-ready', onBuilderReady);
+     if (window.MS_FEATURES?.isBuilderReady?.()) onBuilderReady();
+     document.addEventListener('click', event => {
+       const el = event.target.closest('[data-character-id]');
+-      if (el && !el.closest('#ms-character-viewer')) openViewer(el.dataset.characterId, { tableId: el.dataset.tableId || ctx().table?.id || null });
++      if (el && !el.closest('#ms-character-viewer')) window.MS_PROGRESSION.openViewer(el.dataset.characterId, { tableId: el.dataset.tableId || ctx().table?.id || null });
+     });
+   }
+ 
+--- before/js/feature-loader.js
++++ after/js/feature-loader.js
+@@ -24,12 +24,13 @@
+     'js/immersive-experience.js',
+     'js/forja-overhaul-v2.8.10.js'
+   ];
+-  function css(href){if([...document.styleSheets].some(x=>x.href?.endsWith(href)))return;const l=document.createElement('link');l.rel='stylesheet';l.href=href;l.dataset.msFeature='builder';document.head.appendChild(l)}
+-  function script(src){return new Promise((resolve,reject)=>{const old=document.querySelector(`script[data-ms-feature-src="${src}"]`);if(old){if(old.dataset.loaded==='1')return resolve();old.addEventListener('load',resolve,{once:true});old.addEventListener('error',reject,{once:true});return}const s=document.createElement('script');s.src=src;s.async=false;s.dataset.msFeatureSrc=src;s.onload=()=>{s.dataset.loaded='1';resolve()};s.onerror=()=>reject(new Error(`Não foi possível carregar ${src}`));document.body.appendChild(s)})}
++  function css(href){return window.MS_ASSETS.style(href,{dataset:{msFeature:'builder'}});}
++  function script(src){return window.MS_ASSETS.script(src,{dataset:{msFeatureSrc:src}});}
+   async function ensureBuilder(){
+     if(builderReady)return true;if(builderPromise)return builderPromise;
+     builderPromise=(async()=>{
+-      document.body.classList.add('ms-feature-loading');builderCss.forEach(css);window.MS_PLATFORM?.setStatus?.('builder','loading');
++      document.body.classList.add('ms-feature-loading');window.MS_PLATFORM?.setStatus?.('builder','loading');
++      await Promise.all(builderCss.map(css));
+       for(const src of builderScripts)await script(src);
+       builderReady=true;document.body.classList.remove('ms-feature-loading');window.MS_PLATFORM?.setStatus?.('builder','success');window.MS_PLATFORM?.emit?.('builder:extensions-ready',{});return true;
+     })().catch(error=>{builderPromise=null;document.body.classList.remove('ms-feature-loading');window.MS_PLATFORM?.setStatus?.('builder','error',error);throw error});
+@@ -39,7 +40,7 @@
+   async function ensureProgression(){
+     if(progressionReady&&window.MS_PROGRESSION)return true;
+     if(progressionPromise)return progressionPromise;
+-    progressionPromise=(async()=>{css('css/progression-v2.8.9.css');css('css/evolution-gradual-v2.10.1.css');await script('js/progression-v2.8.9.js');await script('js/evolution-backend-v2.10.1.js');await script('js/evolution-gradual-v2.10.1.js');progressionReady=true;window.MS_PLATFORM?.emit?.('progression:ready',{version:'2.10.1'});return true})().catch(error=>{progressionPromise=null;throw error});
++    progressionPromise=(async()=>{await Promise.all([css('css/progression-v2.8.9.css'),css('css/evolution-gradual-v2.10.1.css')]);await script('js/progression-v2.8.9.js');await script('js/evolution-backend-v2.10.1.js');await script('js/evolution-gradual-v2.10.1.js');progressionReady=true;window.MS_PLATFORM?.emit?.('progression:ready',{version:'2.10.1'});return true})().catch(error=>{progressionPromise=null;throw error});
+     return progressionPromise;
+   }
+ 
+--- before/js/script.js
++++ after/js/script.js
+@@ -143,14 +143,6 @@
+ // Expõe o usuário autenticado como window.currentUser (somente leitura) para que
+ // os módulos do Portal (portal-core/portal-content/portal-admin) detectem login e papel de ADM.
+ Object.defineProperty(window, 'currentUser', { configurable: true, get: () => currentUser });
+-
+-async function msSyncOnlineState() {
+-    // V2.8.1: autenticar/hidratar não deve escrever de volta no perfil.
+-    // Isso evita alterar IDs legados e mantém login como uma operação de leitura.
+-    if (!window.MS_DB || !window.MS_DB.ready || !currentUser) return;
+-    try { await window.MS_DB.syncUserState?.({ currentUser, characters }); }
+-    catch (error) { console.warn('[Mundos Sombrios] Sincronização pós-login:', error); }
+-}
+ 
+ // ==========================================
+ // GAME DATABASE
+@@ -2254,10 +2246,12 @@
+     const force = options === true || options?.force === true;
+     if(!force && !confirm("Sair da sessão ao vivo? Sua vinculação com a campanha será preservada.")) return false;
+     try { await window.MS_TABLE_SESSION?.disconnect?.(); } catch(error) { console.warn('[Mundos Sombrios] encerramento de sessão:',error); }
++    const leavingTableId = currentTableData?.id || null;
+     persistMasterShieldReturnContext(null);
+     isDraftMode=false; document.getElementById('screen-vtt')?.classList.remove('ms-table-v3-active'); showScreen('screen-ancoragem'); tablePlayers=[]; currentTableData=null;
+     if (window.MasterTools && typeof window.MasterTools.unmountShield === 'function') window.MasterTools.unmountShield();
+     if(typeof window.renderAncoragem==='function') window.renderAncoragem();
++    window.MS_PLATFORM?.emit('vtt:left', { tableId: leavingTableId });
+     if(force && options?.reason==='membership_revoked') window.MS_PLATFORM?.toast?.('Seu vínculo com esta Mesa foi encerrado pelo Mestre.','error');
+     return true;
+ }
+--- before/js/evolution-gradual-v2.10.1.js
++++ after/js/evolution-gradual-v2.10.1.js
+@@ -12,7 +12,6 @@
+   const unwrap=v=>v&&typeof v==='object'&&Object.prototype.hasOwnProperty.call(v,'data')?v.data:v;
+   const uid=()=>String(window.currentUser?.authUserId||window.currentUser?.auth_user_id||window.currentUser?.id||'');
+   const role=()=>String(window.currentUser?.role||'jogador').toLowerCase();
+-  const tableCtx=()=>window.msGetCurrentTableContext?.()||{table:null,asGM:false};
+   let current=null,developmentContext=null,savePatched=false,leavePatched=false;
+   const labelType=t=>backend()?.typeLabel?.(t)||String(t||'CAPACIDADE').toUpperCase();
+   function toast(msg,type='info'){window.MS_PLATFORM?.toast?.(msg,type)}
+@@ -28,7 +27,6 @@
+     try{const rows=unwrap(await svc()?.Games?.listMine?.())||[];const match=rows.find(t=>String(t.my_character_id||t.character_id||'')===String(charId));if(match?.id)return String(match.id)}catch(_){}
+     return null;
+   }
+-  function ownCharacter(row,payload){return String(row?.user_id||payload?.userId||payload?.participantUserId||payload?.ownerId||'')===uid()}
+   function rankName(track){return`${Number(track.current_rank||0)} → ${Number(track.current_rank||0)+1}`}
+   function requirementState(track){const req=track.requirements||[];return req.length?req.every(x=>x.done===true):true}
+   function progressPct(track){const need=Math.max(1,Number(track.successes_required||10)),got=Math.min(need,Number(track.successes||0));return Math.round(got/need*100)}
+--- before/js/vendor-loader.js
++++ after/js/vendor-loader.js
+@@ -1,17 +1,13 @@
+ /* Mundos Sombrios — carregamento sob demanda de dependências pesadas V2.10.1 */
+ (function(){
+   'use strict';
+-  const cache=new Map();
+   const sources={
+     fabric:{global:'fabric',src:'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js'},
+     html2pdf:{global:'html2pdf',src:'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'},
+     leaflet:{global:'L',src:'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',css:'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'}
+   };
+-  function loadScript(src,key){
+-    if(cache.has(key))return cache.get(key);
+-    const p=new Promise((resolve,reject)=>{const existing=document.querySelector(`script[data-ms-vendor="${key}"]`);if(existing){if(existing.dataset.loaded==='1')return resolve(window[sources[key].global]);existing.addEventListener('load',()=>resolve(window[sources[key].global]),{once:true});existing.addEventListener('error',()=>reject(new Error(`Falha ao carregar ${key}`)),{once:true});return;}const s=document.createElement('script');s.src=src;s.async=true;s.dataset.msVendor=key;s.onload=()=>{s.dataset.loaded='1';resolve(window[sources[key].global]);};s.onerror=()=>reject(new Error(`Falha ao carregar ${key}. Verifique sua conexão.`));document.head.appendChild(s);}).catch(err=>{cache.delete(key);throw err});cache.set(key,p);return p;
+-  }
+-  function ensureCss(href,key){if(!href)return Promise.resolve();const existing=document.querySelector(`link[data-ms-vendor-css="${key}"]`);if(existing)return Promise.resolve();return new Promise((resolve,reject)=>{const link=document.createElement('link');link.rel='stylesheet';link.href=href;link.dataset.msVendorCss=key;link.onload=resolve;link.onerror=()=>reject(new Error(`Falha ao carregar estilos de ${key}`));document.head.appendChild(link);});}
++  async function loadScript(src,key){await window.MS_ASSETS.script(src,{dataset:{msVendor:key}});return window[sources[key].global];}
++  function ensureCss(href,key){return href?window.MS_ASSETS.style(href,{dataset:{msVendorCss:key}}):Promise.resolve();}
+   function offlineRuntime(){const c=window.MS_RUNTIME_CONFIG||{};return c.offlineMode===true||c.sandboxMode===true||String(c.environment||'').toLowerCase()==='sandbox';}
+   async function fabricLite(){
+     if(window.fabric)return window.fabric;
+--- before/tests/player-vtt-v2.8.test.js
++++ after/tests/player-vtt-v2.8.test.js
+@@ -22,7 +22,7 @@
+ test('Mesa V3 mantém fichas, grid, chat e dados visíveis para Jogador',()=>{
+   const html=read('index.html');
+   const shell=read('js/table-shell-v3.js');
+-  const css=read('css/table-shell-v3.css');
++  const css=read('css/table-shell-v3.css')+'\n'+read('css/table-studio-v2.8.6.css');
+   for(const id of ['vtt-active-cards-container','vtt-grid-window','vtt-chat-box','vtt-dice-box']) assert.match(html,new RegExp(`id="${id}"`));
+   assert.match(shell,/document\.getElementById\('vtt-cards-window'\),document\.getElementById\('vtt-grid-window'\),document\.getElementById\('vtt-chat-box'\),document\.getElementById\('vtt-dice-box'\)/);
+   assert.match(shell,/if\(n\)n\.style\.display='flex'/);
+--- before/tests/forja-categories-v2.8.8.test.js
++++ after/tests/forja-categories-v2.8.8.test.js
+@@ -27,9 +27,11 @@
+ });
+ 
+ test('campanha em movimento continua integrada à Mesa do Mestre',()=>{
+-  assert.match(js,/vtt-campaign-window/);
+-  assert.match(js,/MasterCommandCenter/);
+-  assert.match(js,/CAMPANHA/);
++  const shell=read('js/table-shell-v3.js');
++  assert.match(shell,/vtt-campaign-window/);
++  assert.match(shell,/MasterCommandCenter/);
++  assert.match(shell,/CAMPANHA/);
++  assert.doesNotMatch(js,/function ensureCampaignInTable|function renderCampaignWindow/);
+ });
+ 
+ test('responsivo redefine Mesa e Forja em tablet/mobile',()=>{
+--- /dev/null
++++ after/js/asset-loader.js
+@@ -0,0 +1,44 @@
++/* Carregador canônico: Forja, Escudo e dependências compartilham uma promessa
++ * por URL. Uma falha remove o elemento para permitir uma nova tentativa real. */
++(function () {
++  'use strict';
++  const pending = new Map();
++  function load(kind, path, options = {}) {
++    const url = new URL(path, document.baseURI).href;
++    const key = `${kind}:${url}`;
++    if (pending.has(key)) return pending.get(key);
++    const selector = kind === 'script' ? 'script[src]' : 'link[rel="stylesheet"]';
++    const existing = [...document.querySelectorAll(selector)].find(node =>
++      new URL(kind === 'script' ? node.src : node.href, document.baseURI).href === url);
++    if (existing && (existing.dataset.loaded === '1' || (kind === 'style' && existing.sheet))) {
++      return Promise.resolve(existing);
++    }
++    const node = existing || document.createElement(kind === 'script' ? 'script' : 'link');
++    const promise = new Promise((resolve, reject) => {
++      function cleanup() {
++        node.removeEventListener('load', loaded);
++        node.removeEventListener('error', failed);
++      }
++      function loaded() { cleanup(); node.dataset.loaded = '1'; resolve(node); }
++      function failed() {
++        cleanup(); node.remove(); pending.delete(key);
++        reject(new Error(`Não foi possível carregar ${path}`));
++      }
++      node.addEventListener('load', loaded, { once: true });
++      node.addEventListener('error', failed, { once: true });
++      if (!existing) {
++        if (options.id) node.id = options.id;
++        Object.assign(node.dataset, options.dataset || {});
++        if (kind === 'script') { node.async = false; node.src = path; }
++        else { node.rel = 'stylesheet'; node.href = path; }
++        document.head.appendChild(node);
++      }
++    });
++    pending.set(key, promise);
++    return promise;
++  }
++  window.MS_ASSETS = Object.freeze({
++    script: (src, options) => load('script', src, options),
++    style: (href, options) => load('style', href, options)
++  });
++})();
+--- /dev/null
++++ after/tests/consolidation-runtime.test.js
+@@ -0,0 +1,161 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {readFileSync, readdirSync, existsSync} from 'node:fs';
++import vm from 'node:vm';
++const read = path => readFileSync(new URL('../'+path, import.meta.url), 'utf8');
++const flush = () => new Promise(resolve => setImmediate(resolve));
++function bus() {
++  const handlers = new Map();
++  return {on(name, fn) {const list = handlers.get(name) || []; list.push(fn); handlers.set(name,list);},
++    emit(name, data={}) {for (const fn of handlers.get(name)||[]) fn(data);}, setStatus(){}, toast(){}};
++}
++function dom() {
++  const nodes=[];
++  function node(tag='div') {
++    const listeners=new Map(), classes=new Set();
++    const n={tagName:tag.toUpperCase(),dataset:{},style:{},innerHTML:'',textContent:'',
++      classList:{contains:k=>classes.has(k),add:k=>classes.add(k),remove:k=>classes.delete(k),toggle(k,on){if(on)classes.add(k);else classes.delete(k);}},
++      addEventListener(type,fn){const s=listeners.get(type)||new Set();s.add(fn);listeners.set(type,s);},
++      removeEventListener(type,fn){listeners.get(type)?.delete(fn);},
++      fire(type){for(const fn of [...(listeners.get(type)||[])])fn({target:n});},
++      remove(){const i=nodes.indexOf(n);if(i>=0)nodes.splice(i,1);},
++      querySelector(){return null;},querySelectorAll(){return [];},appendChild(child){nodes.push(child);},closest(){return null;}};
++    return n;
++  }
++  const document={baseURI:'https://test.invalid/project/',readyState:'complete',body:node(),
++    head:{appendChild(n){nodes.push(n);}},createElement:node,
++    querySelectorAll(selector){return nodes.filter(n=>selector==='script[src]'?n.tagName==='SCRIPT':n.tagName==='LINK');},
++    getElementById(id){return nodes.find(n=>n.id===id)||null;},addEventListener(){}};
++  return {document,nodes,node};
++}
++function assetRuntime() {
++  const d=dom(),ctx={window:{},document:d.document,URL,console};
++  vm.createContext(ctx);vm.runInContext(read('js/asset-loader.js'),ctx);
++  return {...d,api:ctx.window.MS_ASSETS};
++}
++test('carregador compartilha uma única solicitação por URL entre consumidores concorrentes',async()=>{
++  const {api,nodes}=assetRuntime();
++  const a=api.script('js/example.js'),b=api.script('./js/example.js');
++  assert.equal(a,b);assert.equal(nodes.length,1);assert.equal(nodes[0].async,false);
++  nodes[0].fire('load');await a;await api.script('js/example.js');assert.equal(nodes.length,1);
++});
++test('erro de script rejeita todos os consumidores e nova tentativa cria um elemento novo',async()=>{
++  const {api,nodes}=assetRuntime();const a=api.script('js/example.js'),b=api.script('js/example.js');
++  const first=nodes[0],failA=assert.rejects(a,/Não foi possível/),failB=assert.rejects(b,/Não foi possível/);
++  first.fire('error');await Promise.all([failA,failB]);assert.equal(nodes.length,0);
++  const retry=api.script('js/example.js');assert.notEqual(nodes[0],first);nodes[0].fire('load');await retry;
++});
++test('estilos aguardam carga e podem ser recuperados após erro',async()=>{
++  const {api,nodes}=assetRuntime();let completed=false;const p=api.style('css/example.css');p.then(()=>{completed=true;},()=>{});
++  await flush();assert.equal(completed,false);const fail=assert.rejects(p);nodes[0].fire('error');await fail;
++  const retry=api.style('css/example.css');nodes[0].fire('load');await retry;assert.equal(nodes.length,1);
++});
++test('folha já disponível no HTML não é carregada novamente',async()=>{
++  const {api,nodes,node}=assetRuntime();const css=node('link');css.href='css/existing.css';css.rel='stylesheet';css.sheet={};nodes.push(css);
++  assert.equal(await api.style('./css/existing.css'),css);assert.equal(nodes.length,1);
++});
++test('Forja, Escudo e vendors delegam à mesma fonte de carregamento',()=>{
++  for(const name of ['feature-loader','master-shield-loader','vendor-loader']){
++    const s=read(`js/${name}.js`);assert.match(s,/MS_ASSETS\.script/);assert.doesNotMatch(s,/createElement\(['"]script/);
++  }
++  const html=read('index.html');assert.ok(html.indexOf('js/asset-loader.js')<html.indexOf('js/vendor-loader.js'));
++});
++test('Realtime encaminha status e encerra a inscrição apenas uma vez',async()=>{
++  let handlers,stops=0;const statuses=[],events=[];const platform=bus();
++  const ctx={window:{MS_PLATFORM:platform,MS_DB:{subscribeTable:async(id,h)=>{handlers=h;h.status('SUBSCRIBED');return()=>stops++;}}},document:{querySelectorAll:()=>[],addEventListener(){}},console};
++  vm.createContext(ctx);vm.runInContext(read('js/ms-realtime.js'),ctx);
++  const api=ctx.window.MS_REALTIME;const stop=await api.connect('table-1',e=>events.push(e),{status:s=>statuses.push(s)});
++  handlers.status('TIMED_OUT');handlers.event({id:1});assert.deepEqual(statuses,['SUBSCRIBED','TIMED_OUT']);assert.equal(events.length,1);
++  stop();api.disconnect();stop();assert.equal(stops,1);assert.equal(api.current().tableId,null);
++});
++test('motor real e adaptador real conectam heartbeat e detectam queda do canal',async()=>{
++  let handlers,stops=0,heartbeats=0;const timers=new Map();let seq=0;
++  const platform=bus(),ctx={console,crypto:{randomUUID:()=> 'event-id'},document:{querySelectorAll:()=>[],addEventListener(){}},
++    setTimeout(fn){timers.set(++seq,fn);return seq;},clearTimeout:id=>timers.delete(id),setInterval:()=>++seq,clearInterval(){},window:{}};
++  ctx.window.MS_PLATFORM=platform;ctx.window.MS_SERVICES={Games:{touchPresence:async()=>{heartbeats++;}},VTT:{state:async()=>({}),event:async()=>({id:1})}};
++  ctx.window.MS_DB={subscribeTable:async(id,h)=>{handlers=h;h.status('SUBSCRIBED');return()=>stops++;},fetchTableEventsAfter:async()=>({data:[]})};
++  vm.createContext(ctx);vm.runInContext(read('js/ms-realtime.js'),ctx);vm.runInContext(read('js/table-session-engine.js'),ctx);
++  const engine=ctx.window.MS_TABLE_SESSION;await engine.connect('table-1',()=>{});assert.equal(heartbeats,1);assert.equal(engine.current().status,'synced');
++  handlers.status('CHANNEL_ERROR');assert.equal(engine.current().status,'offline');assert.equal(timers.size,1);
++  await engine.disconnect();assert.equal(stops,1);assert.equal(timers.size,0);assert.equal(heartbeats,2);
++});
++function progressionRuntime(active=false) {
++  const d=dom(),elements=new Map();for(const id of ['ms-character-viewer','ms-evolution-orb','ms-progression-panel','screen-vtt']){const n=d.node();n.id=id;elements.set(id,n);}
++  if(active)elements.get('screen-vtt').classList.add('active');
++  d.document.getElementById=id=>elements.get(id)||null;
++  d.document.querySelectorAll=()=>[];
++  const platform=bus();let calls=0;const table={table:{id:'t1'},asGM:false,players:[]};
++  const originalEnter=async()=>platform.emit('vtt:entered',{tableId:'t1'});
++  const ctx={console,document:d.document,setTimeout,clearTimeout,localStorage:{getItem:()=>null},window:{currentUser:{id:'p',role:'jogador'},MS_PLATFORM:platform,MS_DB:{ready:true},MS_SERVICES:{Progression:{state:async()=>{calls++;return {wallet:{balance:0}};}}},msGetCurrentTableContext:()=>table,enterVTT:originalEnter}};
++  vm.createContext(ctx);vm.runInContext(read('js/progression-v2.8.9.js'),ctx);
++  return {ctx,platform,getCalls:()=>calls,originalEnter,table};
++}
++test('progressão usa somente evento de entrada, sem substituir enterVTT',async()=>{
++  const r=progressionRuntime();assert.equal(r.ctx.window.enterVTT,r.originalEnter);
++  await r.ctx.window.enterVTT();await flush();assert.equal(r.getCalls(),1);
++  r.table.table=null;r.platform.emit('vtt:left');await flush();assert.equal(r.getCalls(),1);
++});
++test('progressão carregada tardiamente recupera a mesa que já está aberta',async()=>{
++  const r=progressionRuntime(true);await flush();assert.equal(r.getCalls(),1);
++});
++test('saída cancelada preserva sessão; saída confirmada emite um único evento após limpar contexto',async()=>{
++  let allow=false,disconnects=0;const snapshots=[];
++  const source=read('js/script.js');const fn=source.slice(source.indexOf('async function leaveVTT('),source.indexOf('function openManagePlayers('));
++  const ctx={console,confirm:()=>allow,currentTableData:{id:'t1'},isDraftMode:false,tablePlayers:[],persistMasterShieldReturnContext(){},showScreen(){},document:{getElementById:()=>null},window:{MS_TABLE_SESSION:{disconnect:async()=>disconnects++},MS_PLATFORM:{emit:(name,p)=>snapshots.push({name,id:p.tableId,table:ctx.currentTableData})}}};
++  vm.createContext(ctx);vm.runInContext(fn,ctx);
++  assert.equal(await ctx.leaveVTT(),false);assert.equal(disconnects,0);assert.equal(snapshots.length,0);
++  allow=true;assert.equal(await ctx.leaveVTT(),true);assert.equal(disconnects,1);assert.deepEqual(snapshots,[{name:'vtt:left',id:'t1',table:null}]);
++});
++test('Tripulação atualiza uma vez na entrada e cancela polling na saída',async()=>{
++  const d=dom(),platform=bus();const intervals=new Set();let seq=0,calls=0,table={id:'t1'};
++  d.document.querySelectorAll=()=>[];d.document.querySelector=()=>null;
++  const ctx={console,document:d.document,setTimeout:()=>0,clearTimeout(){},setInterval(){intervals.add(++seq);return seq;},clearInterval:id=>intervals.delete(id),window:{addEventListener(){},currentUser:{role:'mestre'},MS_PLATFORM:platform,msGetCurrentTableContext:()=>({table,asGM:true}),MS_SERVICES:{Games:{joinRequests:async()=>{calls++;return [];}},Progression:{state:async()=>({})}}}};
++  vm.createContext(ctx);vm.runInContext(read('js/operational-control-v2.10.1.js'),ctx);
++  platform.emit('vtt:entered');await flush();assert.equal(calls,1);assert.equal(intervals.size,1);
++  table=null;platform.emit('vtt:left');assert.equal(intervals.size,0);
++});
++test('campanha possui um único construtor e Forja não redefine entrada da Mesa',()=>{
++  const forge=read('js/forja-overhaul-v2.8.10.js');assert.doesNotMatch(forge,/window\.enterVTT\s*=|function ensureCampaignInTable|vtt-campaign-root/);
++  const shell=read('js/table-shell-v3.js');assert.equal((shell.match(/function ensureCampaignWindow\(/g)||[]).length,1);
++});
++test('versões históricas ficam fora do runtime e todos os assets locais literais existem',()=>{
++  const archived=readdirSync(new URL('../ARCHIVE/legacy-runtime/js/',import.meta.url));
++  for(const name of archived)assert.equal(existsSync(new URL('../js/'+name,import.meta.url)),false);
++  const files=['index.html',...readdirSync(new URL('../js/',import.meta.url)).filter(n=>n.endsWith('.js')).map(n=>'js/'+n)];
++  for(const name of files){
++    const source=read(name);
++    for(const match of source.matchAll(/['"]((?:js|css|assets|codex-files)\/[^'"\s<>]+)['"]/g)){
++      const path=match[1];
++      if(path.includes('${') || source.slice(Math.max(0,match.index-12),match.index).endsWith('placeholder='))continue;
++      assert.ok(existsSync(new URL('../'+path,import.meta.url)),`${name} referencia ${path}`);
++    }
++  }
++});
++
++// Comparação estrutural limitada às duas folhas da Mesa: não substitui navegador.
++function cssBlocks(source) {
++  const s=source.replace(/\/\*[\s\S]*?\*\//g,'');const result=[];let i=0;
++  while(i<s.length){const start=s.indexOf('{',i);if(start<0)break;let end=start+1,depth=1;
++    while(end<s.length&&depth){if(s[end]==='{')depth++;if(s[end]==='}')depth--;end++;}
++    assert.equal(depth,0);result.push([s.slice(i,start).trim(),s.slice(start+1,end-1)]);i=end;
++  }return result;
++}
++function cssValues(source,width) {
++  const result=new Map();
++  function visit(blocks){for(const [selector,body] of blocks){
++    if(selector.startsWith('@media')){const limits=[...selector.matchAll(/(max|min)-width:\s*(\d+)px/g)];
++      if(limits.every(([,kind,n])=>kind==='max'?width<=Number(n):width>=Number(n)))visit(cssBlocks(body));continue;}
++    if(selector.startsWith('@'))continue;
++    for(const text of body.split(';')){const i=text.indexOf(':');if(i<0)continue;
++      const prop=text.slice(0,i).trim(),value=text.slice(i+1).trim(),key=selector+'|'+prop,important=value.includes('!important');
++      if(!result.has(key)||Number(important)>=Number(result.get(key).important))result.set(key,{important,value});
++    }
++  }}visit(cssBlocks(source));return Object.fromEntries([...result].sort(([a],[b])=>a.localeCompare(b)));
++}
++test('consolidação CSS preserva valores por seletor/propriedade em 12 larguras e ordem de carga',()=>{
++  const html=read('index.html');assert.ok(html.indexOf('css/table-shell-v3.css')<html.indexOf('css/table-studio-v2.8.6.css'));
++  const later=read('css/table-studio-v2.8.6.css');
++  for(const width of [320,390,640,760,761,1024,1040,1041,1050,1051,1440,1920]){
++    assert.deepEqual(cssValues(read('tests/fixtures/table-shell-v3.before.css.txt')+later,width),cssValues(read('css/table-shell-v3.css')+later,width),`largura ${width}`);
++  }
++});

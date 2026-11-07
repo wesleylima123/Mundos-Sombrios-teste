@@ -1,0 +1,12 @@
+{
+  "name": "mundos-sombrios",
+  "version": "2.10.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sandbox": "node scripts/build-sandbox.mjs",
+    "syntax": "node tests/syntax-check.mjs",
+    "test": "node --test tests/*.test.js",
+    "build": "npm run sandbox && npm run syntax && npm test && node scripts/build-site.mjs"
+  }
+}

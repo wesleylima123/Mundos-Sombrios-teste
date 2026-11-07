@@ -1,0 +1,592 @@
+[
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": "#screen-vtt.ms-table-v3-active",
+    "body": "padding:0!important;overflow:hidden!important;background:#030507!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3",
+    "body": "--v3-gold:var(--fenda-gold);--v3-cyan:var(--fenda-cyan);--v3-line:rgba(255,255,255,.07);height:100vh!important;display:grid!important;grid-template-rows:58px minmax(0,1fr) 36px!important;color:var(--fenda-text)!important;background:linear-gradient(135deg,#080b0f,#030507 58%,#08070a)!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-head",
+    "body": "display:grid!important;grid-template-columns:minmax(220px,.8fr) auto minmax(300px,1.3fr)!important;gap:14px!important;align-items:center!important;padding:7px 12px!important;border-bottom:1px solid var(--v3-line)!important;background:rgba(7,9,12,.96)!important;box-shadow:none!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-identity",
+    "body": "min-width:0"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-identity span",
+    "body": "color:#68727c!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-identity strong",
+    "body": "color:#e8e2d4!important;font-size:.92rem!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-health",
+    "body": "border-radius:999px!important;background:#091014!important;border-color:rgba(118,216,223,.16)!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-head-actions",
+    "body": "display:flex!important;gap:5px!important;justify-content:flex-end!important;overflow-x:auto!important;scrollbar-width:none"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-head-actions::-webkit-scrollbar",
+    "body": "display:none"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-head-actions .souls-btn",
+    "body": "height:30px!important;margin:0!important;border-radius:7px!important;background:#0b0e12!important;border-color:#293039!important;color:#aeb7bf!important;box-shadow:none!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-head-actions .souls-btn:hover",
+    "body": "border-color:rgba(214,181,106,.42)!important;color:#e2cc95!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-head-actions #btn-save-table",
+    "body": "border-color:rgba(119,215,168,.5)!important;color:#9ce8c2!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-head-actions button[onclick*=\"leaveVTT\"],.ms-table-v3-head-actions button[data-action=\"leave\"]",
+    "body": "border-color:rgba(226,113,113,.45)!important;color:#f09191!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-head-actions .win-close-btn",
+    "body": "display:none!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-body",
+    "body": "min-height:0!important;display:grid!important;grid-template-columns:196px minmax(0,1fr) 310px!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-left",
+    "body": "min-height:0!important;border-right:1px solid var(--v3-line)!important;background:#07090c!important;display:grid!important;grid-template-rows:auto auto minmax(0,1fr)!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-right",
+    "body": "min-height:0!important;border-left:1px solid var(--v3-line)!important;background:#07090c!important;display:grid!important;grid-template-rows:auto minmax(0,1fr)!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-stage",
+    "body": "min-width:0!important;min-height:0!important;position:relative!important;background:#0b0d10!important;overflow:hidden!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-nav",
+    "body": "display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:1px!important;background:#1a1e23!important;border-bottom:1px solid var(--v3-line)!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-nav button",
+    "body": "min-height:38px!important;border:0!important;background:#0b0e12!important;color:#7f8993!important;padding:7px 5px!important;font:800 .48rem Orbitron,sans-serif!important;letter-spacing:.05em!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-nav button:hover,.ms-table-v3-nav button.active",
+    "body": "color:#e5c97e!important;background:#13171c!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-gridtools",
+    "body": "padding:10px;border-bottom:1px solid var(--v3-line);display:grid;grid-template-columns:1fr 1fr;gap:6px;background:linear-gradient(180deg,#090d11,#07090c)"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-gridtools>span,.ms-table-v3-sidebar-title",
+    "body": "grid-column:1/-1;color:#697580;font:800 .48rem Orbitron,sans-serif;letter-spacing:.13em"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-gridtools button,.ms-table-v3-gridtools label",
+    "body": "min-height:32px;border:1px solid #262d34;border-radius:7px;background:#0b0f14;color:#9aa5ae;padding:6px 7px;font:700 .51rem Roboto,sans-serif;cursor:pointer"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-gridtools button:hover,.ms-table-v3-gridtools button.active",
+    "body": "border-color:rgba(118,216,223,.38);color:#aee8ec;background:rgba(118,216,223,.055)"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-gridtools button.danger",
+    "body": "border-color:rgba(226,113,113,.25);color:#c77b7b"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-gridtools .gm-only-v3[hidden]",
+    "body": "display:none!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-gridmeta",
+    "body": "grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:5px"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-gridmeta label",
+    "body": "display:grid;grid-template-columns:1fr 46px;align-items:center;gap:4px;cursor:default"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-gridmeta input",
+    "body": "min-width:0;width:100%;box-sizing:border-box;border:0;background:#05070a;color:#b9c2c9;padding:4px;text-align:center"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-cards",
+    "body": "min-height:0!important;overflow:auto!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-active #vtt-active-cards-container",
+    "body": "display:grid!important;grid-template-columns:1fr!important;padding:7px!important;gap:7px!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-active #vtt-active-cards-container .vtt-char-card",
+    "body": "min-width:0!important;width:100%!important;margin:0!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-right-tabs",
+    "body": "display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#1a1e23;border-bottom:1px solid var(--v3-line)"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-right-tabs button",
+    "body": "height:38px;border:0;background:#0b0e12;color:#75808a;font:800 .47rem Orbitron,sans-serif;letter-spacing:.06em;cursor:pointer"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-right-tabs button.active",
+    "body": "background:#13171c;color:#e3c77e"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-right-stack",
+    "body": "min-height:0;position:relative"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-pane",
+    "body": "position:absolute;inset:0;min-height:0;overflow:hidden"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-pane[hidden]",
+    "body": "display:none!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-chat,.ms-table-v3-dice",
+    "body": "height:100%;min-height:0!important;overflow:hidden!important;border:0!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-active #vtt-chat-box,.ms-table-v3-active #vtt-dice-box",
+    "body": "width:100%!important;height:100%!important;display:flex!important;flex-direction:column!important;background:#080a0d!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-active #vtt-chat-box>.vtt-window-body,.ms-table-v3-active #vtt-dice-box>.vtt-window-body",
+    "body": "flex:1!important;height:auto!important;max-height:none!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-active #vtt-chat-box .win-close-btn,.ms-table-v3-active #vtt-dice-box .win-close-btn,.ms-table-v3-active #vtt-grid-window .win-close-btn,.ms-table-v3-active #vtt-cards-window .win-close-btn",
+    "body": "display:none!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-roster-pane",
+    "body": "height:100%;overflow:auto;padding:10px"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-roster-pane h4",
+    "body": "margin:0 0 8px;color:#b8a46f;font:700 .68rem Cinzel,serif"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-roster-pane p",
+    "body": "margin:0;color:#707b85;font-size:.62rem;line-height:1.45"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-active #vtt-grid-window",
+    "body": "width:100%!important;height:100%!important;display:flex!important;flex-direction:column!important;position:static!important;transform:none!important;left:auto!important;top:auto!important;margin:0!important;max-width:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:#0a0d11!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-active #vtt-grid-window .vtt-window-header",
+    "body": "height:32px!important;min-height:32px!important;padding:0 10px!important;background:#090c10!important;border-bottom:1px solid var(--v3-line)!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-active #vtt-grid-window .vtt-window-body",
+    "body": "flex:1!important;height:auto!important;min-height:0!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-active #vtt-grid-window .vtt-grid-tools",
+    "body": "display:none!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-active #vtt-cards-window",
+    "body": "width:100%!important;height:100%!important;display:flex!important;flex-direction:column!important;position:static!important;transform:none!important;left:auto!important;top:auto!important;margin:0!important;box-shadow:none!important;border:0!important;background:#07090c!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-active #vtt-cards-window .vtt-window-header",
+    "body": "display:none!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-active #vtt-cards-window .vtt-window-body",
+    "body": "width:auto!important;max-width:none!important;overflow:auto!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-initiative",
+    "body": "height:100%;display:flex;flex-direction:column"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-initiative header",
+    "body": "display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px;border-bottom:1px solid var(--v3-line)"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-initiative header span",
+    "body": "font:800 .5rem Orbitron,sans-serif;letter-spacing:.1em;color:#88949e"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-initiative header button",
+    "body": "border:1px solid #2b333a;border-radius:6px;background:#0c1014;color:#aab4bc;padding:5px 7px;font-size:.55rem;cursor:pointer"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-initiative-list",
+    "body": "min-height:0;overflow:auto;padding:8px;display:grid;gap:5px"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-initiative-list article",
+    "body": "display:grid;grid-template-columns:28px 1fr auto;gap:7px;align-items:center;padding:7px;border:1px solid #20262c;border-radius:7px;background:#090c10"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-initiative-list article.active",
+    "body": "border-color:rgba(214,181,106,.4);background:rgba(214,181,106,.055)"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-initiative-list b",
+    "body": "color:#d5dce1;font-size:.62rem"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-initiative-list small",
+    "body": "display:block;color:#68737d;font-size:.54rem"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-initiative-list strong",
+    "body": "color:#d8bd75;font:800 .64rem Orbitron,sans-serif"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-initiative-empty",
+    "body": "padding:18px;text-align:center;color:#65717a;font-size:.62rem"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-initiative-actions",
+    "body": "display:flex;gap:5px;padding:8px;border-top:1px solid var(--v3-line)"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-initiative-actions button",
+    "body": "flex:1;border:1px solid #262e35;border-radius:6px;background:#0b0f13;color:#98a3ab;padding:6px;font-size:.54rem;cursor:pointer"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-footer",
+    "body": "display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;padding:4px 10px!important;border-top:1px solid var(--v3-line)!important;background:#06080a!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-footer [data-ms-table-presence]",
+    "body": "display:flex;align-items:center;gap:3px;overflow:auto;white-space:nowrap"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-footer-actions",
+    "body": "display:flex;gap:5px"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-footer-actions button",
+    "body": "border:0;background:transparent;color:#68737c;font-size:.55rem;cursor:pointer"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-telemetry",
+    "body": "padding:8px 10px!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-overlays>.vtt-floating-window",
+    "body": "position:fixed!important;z-index:15000!important;inset:6vh 6vw!important;width:auto!important;height:auto!important;max-height:88vh!important;border:1px solid rgba(214,181,106,.24)!important;box-shadow:0 34px 110px #000!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-overlays>.vtt-floating-window[style*=\"display: none\"]",
+    "body": "display:none!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-director",
+    "body": "top:66px!important;border-radius:12px!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-legacy-title",
+    "body": "display:none!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-body",
+    "body": "grid-template-columns:170px minmax(0,1fr) 270px!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-head",
+    "body": "grid-template-columns:1fr auto!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-head-actions",
+    "body": "grid-column:1/-1!important;justify-content:flex-start!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3",
+    "body": "grid-template-rows:auto minmax(0,1fr) 36px!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": "#screen-vtt.ms-table-v3-active",
+    "body": "overflow:auto!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3",
+    "body": "height:auto!important;min-height:100vh!important;grid-template-rows:auto auto auto!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-head",
+    "body": "position:sticky;top:0;z-index:80;grid-template-columns:1fr auto!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-body",
+    "body": "display:flex!important;flex-direction:column!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-left",
+    "body": "order:2;max-height:none;display:grid!important;grid-template-rows:auto auto 260px!important;border-right:0!important;border-top:1px solid var(--v3-line)!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-stage",
+    "body": "order:1;height:58vh;min-height:420px!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-right",
+    "body": "order:3;height:430px;border-left:0!important;border-top:1px solid var(--v3-line)!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-footer",
+    "body": "position:sticky;bottom:0;z-index:70"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-gridtools",
+    "body": "grid-template-columns:repeat(4,1fr)"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-gridtools>span,.ms-table-v3-gridmeta",
+    "body": "grid-column:1/-1"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-gridtools button",
+    "body": "font-size:.48rem;padding:5px"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-overlays>.vtt-floating-window",
+    "body": "inset:3vh 3vw!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-gridtools",
+    "body": "grid-template-columns:repeat(2,1fr)"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-head-actions .souls-btn",
+    "body": "font-size:.48rem!important"
+  },
+  {
+    "file": "css/table-studio-v2.8.6.css",
+    "selector": ".ms-table-v3-right",
+    "body": "height:390px"
+  },
+  {
+    "file": "css/forja-overhaul-v2.8.10.css",
+    "selector": "#screen-vtt.ms-table-v3-active .ms-table-v3-body",
+    "body": "grid-template-columns:220px minmax(0,1fr) 320px"
+  },
+  {
+    "file": "css/forja-overhaul-v2.8.10.css",
+    "selector": "#screen-vtt.ms-table-v3-active .ms-table-v3-body",
+    "body": "display:flex;flex-direction:column;gap:12px"
+  },
+  {
+    "file": "css/forja-overhaul-v2.8.10.css",
+    "selector": "#screen-vtt.ms-table-v3-active .ms-table-v3-left,#screen-vtt.ms-table-v3-active .ms-table-v3-right,#screen-vtt.ms-table-v3-active .ms-table-v3-stage",
+    "body": "width:100%;min-width:0"
+  },
+  {
+    "file": "css/forja-overhaul-v2.8.10.css",
+    "selector": "#screen-vtt.ms-table-v3-active .ms-table-v3-left",
+    "body": "order:1"
+  },
+  {
+    "file": "css/forja-overhaul-v2.8.10.css",
+    "selector": "#screen-vtt.ms-table-v3-active .ms-table-v3-stage",
+    "body": "order:2;min-height:48vh"
+  },
+  {
+    "file": "css/forja-overhaul-v2.8.10.css",
+    "selector": "#screen-vtt.ms-table-v3-active .ms-table-v3-right",
+    "body": "order:3"
+  },
+  {
+    "file": "css/forja-overhaul-v2.8.10.css",
+    "selector": "#screen-vtt.ms-table-v3-active .ms-table-v3-nav,#screen-vtt.ms-table-v3-active .ms-table-v3-gridtools",
+    "body": "overflow:auto;max-width:100%"
+  },
+  {
+    "file": "css/forja-overhaul-v2.8.10.css",
+    "selector": "#screen-vtt.ms-table-v3-active .ms-table-v3-nav",
+    "body": "display:flex;flex-wrap:nowrap"
+  },
+  {
+    "file": "css/forja-overhaul-v2.8.10.css",
+    "selector": "#screen-vtt.ms-table-v3-active .ms-table-v3-nav button",
+    "body": "flex:0 0 auto"
+  },
+  {
+    "file": "css/forja-overhaul-v2.8.10.css",
+    "selector": "#screen-vtt.ms-table-v3-active .vtt-floating-window",
+    "body": "width:96vw!important;height:80vh!important;max-width:96vw!important;left:2vw!important;top:10vh!important"
+  },
+  {
+    "file": "css/forja-overhaul-v2.8.10.css",
+    "selector": "#screen-vtt.ms-table-v3-active .vtt-window-body",
+    "body": "max-height:calc(80vh - 42px)"
+  },
+  {
+    "file": "css/forja-overhaul-v2.8.10.css",
+    "selector": "#screen-vtt.ms-table-v3-active .ms-table-v3-head,#screen-vtt.ms-table-v3-active .ms-table-v3-footer",
+    "body": "gap:10px;flex-wrap:wrap"
+  },
+  {
+    "file": "css/forja-overhaul-v2.8.10.css",
+    "selector": "#screen-vtt.ms-table-v3-active .ms-table-v3-head-actions,#screen-vtt.ms-table-v3-active .ms-table-v3-footer-actions",
+    "body": "width:100%;display:flex;flex-wrap:wrap;gap:8px"
+  },
+  {
+    "file": "css/forja-overhaul-v2.8.10.css",
+    "selector": "#screen-vtt.ms-table-v3-active .ms-table-v3-head-actions button,#screen-vtt.ms-table-v3-active .ms-table-v3-footer-actions button",
+    "body": "flex:1 1 calc(50% - 8px)"
+  },
+  {
+    "file": "css/forja-overhaul-v2.8.10.css",
+    "selector": "#screen-vtt.ms-table-v3-active .ms-table-v3-gridmeta",
+    "body": "grid-template-columns:1fr"
+  },
+  {
+    "file": "css/operational-control-v2.10.1.css",
+    "selector": "#ms-table-v3 .ms-table-v3-nav",
+    "body": "grid-template-columns:repeat(2,minmax(0,1fr));width:100%;overflow:hidden"
+  },
+  {
+    "file": "css/operational-control-v2.10.1.css",
+    "selector": "#ms-table-v3 .ms-table-v3-nav button",
+    "body": "min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+  },
+  {
+    "file": "css/operational-control-v2.10.1.css",
+    "selector": "#ms-table-v3 .ms-table-v3-nav [data-action=\"manage\"]",
+    "body": "position:relative;z-index:15020;pointer-events:auto"
+  },
+  {
+    "file": "css/operational-control-v2.10.1.css",
+    "selector": "#screen-vtt.ms-table-v3-active #ms-table-v3",
+    "body": "width:100%!important;max-width:100%!important;min-width:0!important"
+  },
+  {
+    "file": "css/operational-control-v2.10.1.css",
+    "selector": "#ms-table-v3 .ms-table-v3-nav",
+    "body": "position:relative!important;z-index:16020!important"
+  },
+  {
+    "file": "css/operational-control-v2.10.1.css",
+    "selector": "#screen-vtt.ms-table-v3-active #ms-table-v3 .ms-table-v3-nav",
+    "body": "display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;width:100%!important;max-width:100%!important;overflow:hidden!important;position:relative!important;z-index:16020!important"
+  },
+  {
+    "file": "css/operational-control-v2.10.1.css",
+    "selector": "#screen-vtt.ms-table-v3-active #ms-table-v3 .ms-table-v3-nav button",
+    "body": "flex:none!important;width:auto!important;min-width:0!important;max-width:100%!important"
+  },
+  {
+    "file": "css/operational-control-v2.10.1.css",
+    "selector": "#screen-vtt.ms-table-v3-active #ms-table-v3 .ms-table-v3-body,\n  #screen-vtt.ms-table-v3-active #ms-table-v3 .ms-table-v3-left,\n  #screen-vtt.ms-table-v3-active #ms-table-v3 .ms-table-v3-right,\n  #screen-vtt.ms-table-v3-active #ms-table-v3 .ms-table-v3-stage",
+    "body": "width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important"
+  },
+  {
+    "file": "css/operational-control-v2.10.1.css",
+    "selector": "#screen-vtt.ms-table-v3-active #ms-table-v3 .ms-table-v3-nav .gm-only-v3[data-action=\"manage\"]",
+    "body": "\n    position:fixed!important;left:auto!important;right:12px!important;top:auto!important;bottom:58px!important;\n    width:132px!important;max-width:calc(100vw - 24px)!important;min-width:0!important;z-index:15020!important;\n    border:1px solid rgba(212,175,55,.62)!important;background:#17130c!important;color:#e8cf82!important;\n    box-shadow:0 10px 30px rgba(0,0,0,.58)!important\n  "
+  }
+]

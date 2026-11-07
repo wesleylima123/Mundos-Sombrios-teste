@@ -1,0 +1,52 @@
+/* Mesa V3: estilos complementares. Layout compartilhado consolidado em table-studio-v2.8.6.css.
+ * Breakpoints e propriedades exclusivos desta camada foram preservados. */
+.ms-table-v3-head{z-index:20}
+.ms-table-v3-identity span,.ms-table-v3-identity small{display:block;font:.54rem Cinzel,serif;letter-spacing:.17em;color:#81796b}
+.ms-table-v3-identity strong{display:block;font:700 1rem Cinzel,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ms-table-v3-health{display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid rgba(116,203,212,.2);font:.55rem Orbitron,sans-serif;letter-spacing:.08em}
+.ms-table-v3-health i{width:7px;height:7px;border-radius:50%;background:#d7a94c;box-shadow:0 0 10px currentColor}
+.ms-table-v3-health[data-status="synced"] i,.ms-table-v3-health[data-status="connected"] i{background:#76d39b}
+.ms-table-v3-health[data-status="offline"] i{background:#db5e5e}
+.ms-table-v3-head-actions{overflow:auto}
+.ms-table-v3-head-actions .souls-btn{padding:7px 9px!important;font-size:.54rem!important;white-space:nowrap}
+.ms-table-v3-left,.ms-table-v3-right{min-height:0;background:rgba(7,8,9,.96)}
+.ms-table-v3-nav button{cursor:pointer}
+.ms-table-v3-chat,.ms-table-v3-dice{border-bottom:1px solid var(--v3-line)}
+.ms-table-v3-active .vtt-floating-window{position:static!important;transform:none!important;left:auto!important;top:auto!important;margin:0!important;max-width:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;background:#090a0b!important}
+.ms-table-v3-active #vtt-chat-box{width:100%!important;height:100%!important;display:flex!important;flex-direction:column}
+.ms-table-v3-active #vtt-dice-box{width:100%!important;height:100%!important;display:flex!important;flex-direction:column}
+.ms-table-v3-active #vtt-dice-box #dice-3d-container{min-height:115px;transform:scale(.68);transform-origin:top center;margin-bottom:-78px}
+.ms-table-v3-telemetry{background:#070808;border-top:1px solid rgba(116,203,212,.15)}
+.ms-table-v3-telemetry>span{font:700 .5rem Orbitron,sans-serif;letter-spacing:.13em;color:var(--v3-cyan)}
+.ms-table-v3-telemetry dl{margin:7px 0 0;display:grid;grid-template-columns:repeat(2,1fr);gap:4px}
+.ms-table-v3-telemetry dl div{display:flex;justify-content:space-between;gap:6px;font-size:.58rem;border-bottom:1px dotted #24292b}
+.ms-table-v3-telemetry dt{color:#697477}
+.ms-table-v3-telemetry dd{margin:0;color:#aebfc2}
+.ms-table-v3-footer{overflow:hidden}
+.ms-table-v3-footer .ms-presence-chip{margin:0 3px}
+@media(max-width:1050px){.ms-table-v3-body{grid-template-columns:190px minmax(0,1fr) 280px}.ms-table-v3-head{grid-template-columns:1fr auto;row-gap:6px}.ms-table-v3-head-actions{grid-column:1/-1;display:flex;justify-content:flex-start;overflow-x:auto;overflow-y:hidden;padding:2px 0 4px;scrollbar-width:thin}.ms-table-v3-head-actions .souls-btn{flex:0 0 auto}.ms-table-v3{grid-template-rows:auto minmax(0,1fr) 42px}.ms-table-v3-identity small{display:none}}
+@media(max-width:760px){#screen-vtt.ms-table-v3-active{overflow:auto}.ms-table-v3{height:auto;min-height:100vh;grid-template-rows:auto auto auto}.ms-table-v3-head{position:sticky;top:0;grid-template-columns:1fr auto;z-index:50}.ms-table-v3-body{display:flex;flex-direction:column}.ms-table-v3-left{order:2;border:0;max-height:260px}.ms-table-v3-stage{order:1;height:52vh;min-height:380px}.ms-table-v3-right{order:3;border:0;display:grid;grid-template-rows:360px 320px auto}.ms-table-v3-footer{position:sticky;bottom:0;z-index:40}.ms-table-v3-active #vtt-grid-window .vtt-grid-tools{width:115px!important}.ms-table-v3-overlays>.vtt-floating-window{inset:3vh 3vw!important}}
+.ms-table-v3.is-paused .ms-table-v3-health{border-color:rgba(220,166,76,.45)}
+.ms-table-v3.is-paused .ms-table-v3-health:after{content:'PAUSADA';color:#dda64c;font:700 .48rem Orbitron,sans-serif;letter-spacing:.12em}
+.ms-table-v3-director{position:fixed;z-index:17000;right:18px;width:min(360px,calc(100vw - 36px));padding:14px;border:1px solid rgba(201,168,106,.36);background:linear-gradient(160deg,rgba(20,17,13,.98),rgba(5,7,8,.99));box-shadow:0 28px 80px #000;color:#d9d1c4}
+.ms-table-v3-director[hidden]{display:none!important}
+.ms-table-v3-director header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(201,168,106,.18);padding-bottom:10px;margin-bottom:10px}
+.ms-table-v3-director header span{font:700 .68rem Cinzel,serif;letter-spacing:.15em;color:#d2b57d}
+.ms-table-v3-director header button{border:0;background:transparent;color:#8e8679;font-size:1.4rem;cursor:pointer}
+.ms-table-v3-director-state{display:flex;align-items:center;gap:9px;padding:9px;background:#090a0b;border:1px solid #26231e;margin-bottom:9px}
+.ms-table-v3-director-state i{width:8px;height:8px;border-radius:50%;background:#6ed39c;box-shadow:0 0 12px currentColor}
+.is-paused .ms-table-v3-director-state i{background:#dda64c}
+.ms-table-v3-director-state strong{font:700 .58rem Orbitron,sans-serif;letter-spacing:.1em}
+.ms-table-v3-director-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ms-table-v3-director button{padding:8px;border:1px solid #3a342b;background:#0c0d0e;color:#b8aa94;font:700 .52rem Cinzel,serif;cursor:pointer}
+.ms-table-v3-director button:hover,.ms-table-v3-director button.primary{border-color:#c9a86a;color:#ead7b1}
+.ms-table-v3-director label{display:grid;gap:6px;margin-top:12px;color:#7e766b;font:700 .52rem Cinzel,serif;letter-spacing:.08em}
+.ms-table-v3-director textarea{min-height:88px;resize:vertical;padding:9px;border:1px solid #2c2925;background:#070809;color:#d4d0c8;font:600 .7rem Rajdhani,sans-serif}
+.ms-table-v3-director>button.primary{width:100%;margin-top:7px}
+.ms-table-v3-active .vtt-roster-only{cursor:default}
+.ms-table-v3-active .vtt-public-participant{min-height:132px!important;display:grid!important;place-items:center;text-align:center;padding:12px!important;border-color:rgba(116,203,212,.22)!important;background:linear-gradient(160deg,rgba(11,22,25,.92),rgba(7,9,10,.98))!important}
+.ms-table-v3-active .vtt-public-participant small{color:#74cbd4;font:700 .48rem Cinzel,serif;letter-spacing:.1em}
+.ms-table-v3-active .vtt-public-participant h3{margin:5px 0 2px!important}
+.ms-table-v3-active .vtt-public-participant-user{font-size:.62rem;color:#8aa5a8}
+.ms-table-v3-active .vtt-public-participant em{font-size:.55rem;color:#666f70;font-style:normal;letter-spacing:.05em}
+.ms-table-v3-active .vtt-public-participant-icon{display:grid!important;place-items:center;color:#74cbd4!important;font-size:1.1rem!important}

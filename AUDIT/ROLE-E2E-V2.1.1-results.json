@@ -1,0 +1,458 @@
+[
+  {
+    "role": "jogador",
+    "test": "sessão/perfil carregado",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "portal possui quatro acessos principais",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "controles restritos ocultos",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "ficha remota hidratada do backend",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "Conhecer os Mundos",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "Códice abre e renderiza",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "jogador impedido de criar mesa",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "jogador impedido no painel ADM",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "jogador impedido no Escudo",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "Santuário Êxodo abre",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "Santuário lista ficha existente",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "Forja narrativa abre",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "modos Criar/Evoluir/Jogar presentes",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "controle Funcional/Imersivo/Cinemático presente",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "carrossel focal de origem",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "arte de Nexo carregada",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "classe aparece após origem",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "card mostra decisão mecânica",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "classe confirmada e atributos autofill",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "transparência de regra dos atributos",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "modo Cinemático aplicado",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "áudio opcional alterna",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "salvamento retorna ao Santuário",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "modo Jogar prioriza HUD",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "histórico de ficha consultável",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "Forja Ocultatun abre com 4 origens",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "arte Agente de Carreira carregada",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "visão do jogador da Ancoragem",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "mesa conectada aparece",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "modal de entrada lista personagens",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "jogador entra no VTT",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "controles GM continuam ocultos no VTT",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "chat do jogador envia mensagem",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "grid/token/régua de jogador operam",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "perfil Mestre carregado",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "emblema e aba Mestre visíveis",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "painel ADM oculto para Mestre",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "Sala dos Mestres renderiza",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "mesa própria aparece",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "Mestre pode abrir criação de mesa",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "criação de mesa possui contexto de campanha",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "notas privadas salvam",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "NPC completo registrado",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "encontro preparado",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "iniciativa registra combatente",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "controle de rodada/turno opera",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "pista pode ser revelada",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "consequência de mundo registrada",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "campanha e sessões carregam",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "nova sessão é criada",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "Escudo do Mestre abre",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "Escudo aba linha",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "Escudo aba mapa",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "Escudo aba economia",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "Escudo aba exodo",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "Escudo aba ocultatun",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "Escudo aba ordem",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "Escudo aba envolto",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "Escudo aba arvores",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "Escudo aba arquivos",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "Mestre entra no VTT como GM",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "controles GM aparecem",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "GM adiciona NPC/área e ativa régua",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "mestre",
+    "test": "Mestre envia chat e bloqueia",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "admin",
+    "test": "perfil ADM carregado",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "admin",
+    "test": "controles ADM/Mestre visíveis",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "admin",
+    "test": "painel do Arconte abre",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "admin",
+    "test": "painel oferece papéis e banimento",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "admin",
+    "test": "ADM altera usuário/papel",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "admin",
+    "test": "CMS do Portal abre",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "admin",
+    "test": "ADM publica conteúdo",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "admin",
+    "test": "ADM herda Sala dos Mestres",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "admin",
+    "test": "ADM acessa Escudo",
+    "ok": true,
+    "value": true
+  },
+  {
+    "role": "jogador",
+    "test": "erros de console/runtime",
+    "ok": true,
+    "value": []
+  },
+  {
+    "role": "mestre",
+    "test": "erros de console/runtime",
+    "ok": true,
+    "value": []
+  },
+  {
+    "role": "admin",
+    "test": "erros de console/runtime",
+    "ok": true,
+    "value": []
+  }
+]

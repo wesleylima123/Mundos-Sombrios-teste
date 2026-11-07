@@ -1,0 +1,9 @@
+SITE OFICIAL MS V2.10.4 — CORREÇÃO OFFLINE/SANDBOX
+
+Empacotamento padronizado: Site-oficial-MS_2.10.4.
+O modo Offline fica em offline-local/ e o SANDBOX em sandbox-offline/.
+O pacote COM SANDBOX inclui o marcador PUBLISH-SANDBOX para que o GitHub Pages publique a área QA.
+O pacote SEM SANDBOX não inclui sandbox-offline/ nem PUBLISH-SANDBOX.
+O diretório dist/ não é incluído nos pacotes-fonte porque é regenerado por npm run build e pelo workflow do GitHub Pages.
+
+Validação: 296 testes; 277 aprovados, 0 falhas, 19 condicionais/ignorados.

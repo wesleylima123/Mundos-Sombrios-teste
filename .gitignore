@@ -1,0 +1,16 @@
+# Dependency and editor leftovers
+.DS_Store
+Thumbs.db
+.vscode/
+__pycache__/
+*.log
+
+# Local deployment artifacts
+*.local
+
+# Build e segredos locais
+dist/
+node_modules/
+.env
+.env.*
+!.env.example

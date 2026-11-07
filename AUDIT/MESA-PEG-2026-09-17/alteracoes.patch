@@ -1,0 +1,527 @@
+--- antes/js/evolution-gradual-v2.10.1.js
++++ depois/js/evolution-gradual-v2.10.1.js
+@@ -100,7 +100,15 @@
+   function openEvidence(row,state,d){const track=state.tracks.find(t=>t.capability_type===d.type&&t.capability_key===d.key);dialog(`Registrar prática · ${track?.label||''}`,`<div class="ms-evo-form"><label>Sessão / marco<input data-session placeholder="Sessão 07 — A Queda"></label><label>Sucessos relevantes<input data-successes type="number" min="1" max="10" value="1"></label><label class="wide">O que aconteceu<textarea data-note placeholder="Ação bem-sucedida, impacto narrativo e contexto."></textarea></label><button class="primary wide" data-submit>ENVIAR AO MESTRE</button></div>`,async b=>{const n=Number(b.querySelector('[data-successes]').value||0),session=b.querySelector('[data-session]').value.trim(),note=b.querySelector('[data-note]').value.trim();if(!n||!note)throw new Error('Informe sucessos e descreva a prática.');await backend().submitEvidence(state.table_id,row.id,d.type,d.key,n,session,note);toast('Prática enviada para reconhecimento do Mestre.','success');await reload(row,state)})}
+   function openTraining(row,state,d){const track=state.tracks.find(t=>t.capability_type===d.type&&t.capability_key===d.key);dialog(`Treinar · ${track?.label||''}`,`<div class="ms-evo-form"><label>Tipo de treino<select data-kind><option value="basic">Básico · CD 13 · +1</option><option value="practical" selected>Prático · CD 18 · +2</option><option value="difficult">Difícil · CD 23 · +3</option></select></label><label>Ambiente<select data-env><option value="0">Normal · +0</option><option value="2">Excelente / mentor · +2</option><option value="-2">Improvisado · -2</option></select></label><label>Período narrativo<input data-session placeholder="Dia 3 entre missões"></label><label class="wide">Contexto do treino<textarea data-note placeholder="Onde, como e com quais recursos será realizado."></textarea></label><p class="wide ms-evo-hint">O Mestre aprova o contexto. A rolagem é registrada pelo sistema. Máximo de 3 sucessos de treino por período narrativo.</p><button class="primary wide" data-submit>SOLICITAR TREINO</button></div>`,async b=>{const kind=b.querySelector('[data-kind]').value,env=Number(b.querySelector('[data-env]').value||0),session=b.querySelector('[data-session]').value.trim(),note=b.querySelector('[data-note]').value.trim();if(!session||!note)throw new Error('Informe período narrativo e contexto do treino.');await backend().requestTraining(state.table_id,row.id,d.type,d.key,kind,env,session,note);toast('Treino enviado para aprovação do Mestre.','success');await reload(row,state)})}
+   async function requestUpgrade(row,state,d){const track=state.tracks.find(t=>t.capability_type===d.type&&t.capability_key===d.key);try{const req=await backend().requestUpgrade(state.table_id,row.id,d.type,d.key,`Evolução de ${track?.label||d.key}`),cost=Number(req?.recommended_cost||costOf(row,track)),balance=Number(state.account?.balance||0),missing=Math.max(0,cost-balance);toast(missing>0?`Solicitação enviada. Faltam ${missing} PEG; o Mestre poderá completar pela reserva da Mesa ao aprovar.`:'Evolução enviada ao Mestre. A ficha só mudará após aprovação.','success');await reload(row,state)}catch(error){toast(err(error),'error')}}
+-  async function managerGrantUpgrade(row,state,d){const track=state.tracks.find(t=>t.capability_type===d.type&&t.capability_key===d.key);if(!track)return;const cost=costOf(row,track),balance=Number(state.account?.balance||0),missing=Math.max(0,cost-balance);let autoFund=false;if(missing>0){const ok=confirm(`Esta evolução custa ${cost} PEG e a ficha possui ${balance}. Deseja transferir automaticamente os ${missing} PEG faltantes da reserva da Mesa?`);if(!ok)return;autoFund=true}const reason=String(prompt('Motivo da concessão de evolução:','Concessão direta do Mestre')||'').trim();if(!reason)return;try{const out=await backend().grantUpgrade(state.table_id,row.id,d.type,d.key,autoFund,reason);toast(`${track.label} evoluiu para graduação ${Number(track.current_rank||0)+1}.${Number(out?.funded_missing||0)>0?` ${Number(out.funded_missing)} PEG foram transferidos da reserva.`:''}`,'success');await reload(row,state)}catch(error){toast(err(error),'error')}}
++  async function managerGrantUpgrade(row,state,d){
++    const track=state.tracks.find(t=>t.capability_type===d.type&&t.capability_key===d.key);if(!track)return;
++    const cost=costOf(row,track),balance=Number(state.account?.balance||0),missing=Math.max(0,cost-balance);
++    dialog(`Confirmar evolução · ${track.label}`,`<div class="ms-evo-form"><p class="wide">Graduação <strong>${Number(track.current_rank||0)} → ${Number(track.current_rank||0)+1}</strong></p><p class="wide">Custo: <strong>${cost} PEG</strong> · Saldo do personagem: <strong>${balance} PEG</strong> · Saldo após a evolução: <strong>${Math.max(0,balance-cost)} PEG</strong>.</p>${missing?`<label class="ms-evo-check wide"><input type="checkbox" data-fund> Transferir os ${missing} PEG faltantes da reserva e utilizá-los nesta evolução.</label><p class="wide ms-evo-hint">O sistema verificará o saldo da reserva ao confirmar.</p>`:'<p class="wide ms-evo-hint">O saldo do personagem cobre esta evolução. A reserva não será utilizada.</p>'}<label class="wide">Motivo<textarea data-note placeholder="Descreva o marco que justifica este avanço."></textarea></label><button type="button" class="primary wide" data-submit>CONFIRMAR EVOLUÇÃO</button></div>`,async b=>{
++      const autoFund=missing>0&&!!b.querySelector('[data-fund]')?.checked,reason=b.querySelector('[data-note]').value.trim();if(!reason)throw new Error('Informe o motivo da evolução.');if(missing&&!autoFund)throw new Error('Autorize o complemento pela reserva ou conceda pontos ao personagem antes de continuar.');
++      const out=await backend().grantUpgrade(state.table_id,row.id,d.type,d.key,autoFund,reason);toast(`${track.label} evoluiu para graduação ${Number(track.current_rank||0)+1}.${Number(out?.funded_missing||0)>0?` ${Number(out.funded_missing)} PEG foram transferidos da reserva.`:''}`,'success');await reload(row,state);
++    });
++  }
++
+   function managerSuccess(row,state,d){const track=state.tracks.find(t=>t.capability_type===d.type&&t.capability_key===d.key);dialog(`Reconhecer sucessos · ${track?.label||''}`,`<div class="ms-evo-form"><label>Sucessos<input data-successes type="number" min="1" max="20" value="1"></label><label>Sessão / marco<input data-session placeholder="Sessão atual"></label><label class="wide">Justificativa<textarea data-note placeholder="Feito reconhecido pelo Mestre."></textarea></label><button class="primary wide" data-submit>REGISTRAR SUCESSOS</button></div>`,async b=>{const n=Number(b.querySelector('[data-successes]').value||0),session=b.querySelector('[data-session]').value.trim(),note=b.querySelector('[data-note]').value.trim();if(!n||!note)throw new Error('Informe sucessos e justificativa.');await backend().recordSuccess(state.table_id,row.id,d.type,d.key,n,session,note);toast('Sucessos incorporados à trilha.','success');await reload(row,state)})}
+   function managerAcceleration(row,state,d){const track=state.tracks.find(t=>t.capability_type===d.type&&t.capability_key===d.key);dialog(`Aceleração · ${track?.label||''}`,`<div class="ms-evo-form"><label class="wide">Acontecimento excepcional<textarea data-note placeholder="Desafio mortal, sacrifício, conhecimento proibido ou despertar extraordinário."></textarea></label><label class="ms-evo-check wide"><input type="checkbox" data-free> Conceder como exceção sem consumir PEG do personagem</label><p class="wide ms-evo-hint">A aceleração ignora sucessos e requisitos da trilha e fica destacada no Ledger.</p><button class="danger wide" data-submit>ACELERAR +1 GRADUAÇÃO</button></div>`,async b=>{const note=b.querySelector('[data-note]').value.trim(),free=b.querySelector('[data-free]').checked;if(!note)throw new Error('Justifique a aceleração narrativa.');await backend().accelerate(state.table_id,row.id,d.type,d.key,free,note);toast('Aceleração aplicada e registrada.','success');await reload(row,state)})}
+   async function toggleRequirement(row,state,type,key,reqKey,done){const track=state.tracks.find(t=>t.capability_type===type&&t.capability_key===key),req=track?.requirements?.find(x=>x.key===reqKey);try{await backend().setRequirement(state.table_id,row.id,type,key,reqKey,done,req?.label||reqKey);toast(done?'Requisito reconhecido.':'Requisito reaberto.','success');await reload(row,state)}catch(error){toast(err(error),'error')}}
+--- antes/js/operational-control-v2.10.1.js
++++ depois/js/operational-control-v2.10.1.js
+@@ -8,7 +8,7 @@
+   const context=()=>window.msGetCurrentTableContext?.()||{table:null,asGM:false,players:[]};
+   const manager=()=>role()==='admin'||!!context().asGM||!!document.getElementById('ms-table-v3')?.classList.contains('is-gm');
+   const unwrap=v=>v?.data!==undefined?v.data:v;
+-  let crewState={table:null,roster:[],requests:[],progression:null,tab:'participants',evolutionTab:'characters',loading:false};
++  let crewState={table:null,roster:[],requests:[],progression:null,tab:'participants',evolutionTab:'reserve',loading:false};
+   let pollTimer=null;
+ 
+   function toast(message,type='info'){window.MS_PLATFORM?.toast?.(message,type);}
+@@ -105,7 +105,7 @@
+   function participantCards(){
+     const rows=(crewState.roster||[]).filter(r=>String(r.status)==='active');
+     if(!rows.length)return '<div class="ms-op-empty">Nenhum participante ativo.</div>';
+-    return `<div class="ms-op-list">${rows.map(r=>{const a=accountFor(r.characterId);return `<article class="ms-op-card"><div><strong>${esc(r.characterName||r.username)}</strong><small>@${esc(r.username)} · ${esc(String(r.memberRole).replace('_',' ').toUpperCase())}${a?` · PEG ${Number(a.balance||0)}`:''}</small></div><div class="ms-op-actions">${r.characterId?`<button type="button" data-crew-view="${esc(r.characterId)}">VER FICHA</button><button type="button" class="approve" data-crew-grant="${esc(r.characterId)}" data-crew-name="${esc(r.characterName)}">CONCEDER PONTOS</button><button type="button" data-crew-withdraw="${esc(r.characterId)}" data-crew-name="${esc(r.characterName)}">RETIRAR PONTOS</button>`:''}</div></article>`}).join('')}</div>`;
++    return `<div class="ms-op-list">${rows.map(r=>{const a=accountFor(r.characterId);return `<article class="ms-op-card"><div><strong>${esc(r.characterName||r.username)}</strong><small>@${esc(r.username)} · ${esc(String(r.memberRole).replace('_',' ').toUpperCase())}${a?` · PEG ${Number(a.balance||0)}`:''}</small></div><div class="ms-op-actions">${r.characterId?`<button type="button" data-crew-view="${esc(r.characterId)}">VER FICHA</button><button type="button" class="approve" data-crew-grant="${esc(r.characterId)}" data-crew-name="${esc(r.characterName)}">CONCEDER PONTOS</button><button type="button" data-crew-withdraw="${esc(r.characterId)}" data-crew-name="${esc(r.characterName)}">DEVOLVER À RESERVA</button>`:''}</div></article>`}).join('')}</div>`;
+   }
+   function requestCards(){
+     const rows=pendingRequests();
+@@ -117,7 +117,7 @@
+   function evoCharacterCards(){
+     const rows=(crewState.roster||[]).filter(r=>String(r.status)==='active'&&r.characterId);
+     if(!rows.length)return '<div class="ms-op-empty">Nenhuma ficha vinculada à tripulação.</div>';
+-    return `<div class="ms-op-list">${rows.map(r=>{const a=accountFor(r.characterId)||{},tracks=evoTracksFor(r.characterId),ready=tracks.filter(t=>String(t.status)==='ready').length,progress=tracks.filter(t=>String(t.status)!=='ready').length,pending=(crewState.progression?.upgradeRequests||[]).filter(x=>String(x.character_id)===String(r.characterId)&&String(x.status||'pending')==='pending').length;return `<article class="ms-op-card"><div><strong>${esc(r.characterName||r.username)}</strong><small>${Number(a.balance||0)} PEG · ${ready} pronta(s) · ${progress} em progresso${pending?` · ${pending} solicitação(ões)`:''}</small></div><div class="ms-op-actions"><button type="button" data-crew-view="${esc(r.characterId)}">VER FICHA</button><button type="button" data-evo-manage="${esc(r.characterId)}">GERENCIAR EVOLUÇÃO</button>${ready?`<button type="button" class="approve" data-evo-direct="${esc(r.characterId)}">CONCEDER EVOLUÇÃO</button>`:''}<button type="button" class="approve" data-crew-grant="${esc(r.characterId)}" data-crew-name="${esc(r.characterName)}">CONCEDER PONTOS</button><button type="button" data-crew-withdraw="${esc(r.characterId)}" data-crew-name="${esc(r.characterName)}">RETIRAR PONTOS</button></div></article>`}).join('')}</div>`;
++    return `<div class="ms-op-list">${rows.map(r=>{const a=accountFor(r.characterId)||{},tracks=evoTracksFor(r.characterId),ready=tracks.filter(t=>String(t.status)==='ready').length,progress=tracks.filter(t=>String(t.status)!=='ready').length,pending=(crewState.progression?.upgradeRequests||[]).filter(x=>String(x.character_id)===String(r.characterId)&&String(x.status||'pending')==='pending').length;return `<article class="ms-op-card"><div><strong>${esc(r.characterName||r.username)}</strong><small>${Number(a.balance||0)} PEG · ${ready} pronta(s) · ${progress} em progresso${pending?` · ${pending} solicitação(ões)`:''}</small></div><div class="ms-op-actions"><button type="button" data-crew-view="${esc(r.characterId)}">VER FICHA</button><button type="button" data-evo-manage="${esc(r.characterId)}">GERENCIAR EVOLUÇÃO</button>${ready?`<button type="button" class="approve" data-evo-direct="${esc(r.characterId)}">CONCEDER EVOLUÇÃO</button>`:''}<button type="button" class="approve" data-crew-grant="${esc(r.characterId)}" data-crew-name="${esc(r.characterName)}">CONCEDER PONTOS</button><button type="button" data-crew-withdraw="${esc(r.characterId)}" data-crew-name="${esc(r.characterName)}">DEVOLVER À RESERVA</button></div></article>`}).join('')}</div>`;
+   }
+   function evoRequestsPane(){
+     const p=crewState.progression||{},items=[];
+@@ -134,14 +134,17 @@
+     return `<div class="ms-op-list">${rows.map(r=>`<article class="ms-op-card"><div><strong>${esc(r.label||'Capacidade')} · ${esc(labels[r.training_type]||r.training_type||'TREINO')}</strong><small>${r.session_label?esc(r.session_label)+' · ':''}Ambiente ${Number(r.environment_modifier||0)>=0?'+':''}${Number(r.environment_modifier||0)}${r.note?`<br>${esc(r.note)}`:''}</small></div><div class="ms-op-actions"><button type="button" data-evo-view-history="${esc(r.character_id)}">VER FICHA</button><button type="button" class="approve" data-evo-training="${esc(r.id)}" data-evo-approved="1">APROVAR E ROLAR</button><button type="button" class="danger" data-evo-training="${esc(r.id)}" data-evo-approved="0">RECUSAR</button></div></article>`).join('')}</div>`;
+   }
+   function evoLedgerPane(){
+-    const events=crewState.progression?.evolutionEvents||[],tx=crewState.progression?.recentTransactions||crewState.progression?.transactions||[],rows=[...events.map(e=>({date:e.created_at,title:e.event_type||'EVOLUÇÃO',detail:`${e.successes?`${Number(e.successes)} sucesso(s) · `:''}${e.note||''}`})),...tx.slice(0,40).map(t=>({date:t.created_at,title:t.tx_type||'PEG',detail:`${Number(t.amount||0)>0?'+':''}${Number(t.amount||0)} PEG · ${t.reason||''}`}))].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))).slice(0,80);
+-    return rows.length?`<div class="ms-op-list">${rows.map(r=>`<article class="ms-op-card"><div><strong>${esc(r.title)}</strong><small>${esc(r.detail||'Registro operacional')} · ${esc(r.date?new Date(r.date).toLocaleString('pt-BR'):'')}</small></div></article>`).join('')}</div>`:'<div class="ms-op-empty">O Ledger de evolução ainda não possui registros.</div>';
++    const p=crewState.progression||{},eligible=new Set(window.MS_POINTS.reversible(p).map(t=>String(t.id)));
++    const labels={CHARACTER_GRANT:'Pontos concedidos',CHARACTER_GRANT_REVERSAL:'Pontos devolvidos à reserva',TABLE_PURCHASE:'Reserva abastecida',CHARACTER_SPEND:'Pontos utilizados',PROPOSAL_APPROVED:'Evolução aprovada',CAREER_PROGRESS:'Progresso de carreira',RESOURCE_ADJUST:'Recurso ajustado',ADMIN_TABLE_ADJUST:'Reserva ajustada'};
++    const rows=[...(p.evolutionEvents||[]).map(e=>({date:e.created_at,title:String(e.event_type||'Evolução').replaceAll('_',' '),detail:`${e.successes?`${Number(e.successes)} sucesso(s) · `:''}${e.note||''}`})),...(p.recentTransactions||p.transactions||[]).slice(0,40).map(t=>{const person=crewState.roster.find(r=>String(r.characterId)===String(t.character_id));return {date:t.created_at,title:labels[t.tx_type]||String(t.tx_type||'PEG').replaceAll('_',' '),detail:`${Number(t.amount||0)} PEG · ${person?.characterName||'Mesa'} · ${t.reason||'Sem motivo informado'}`,transaction:eligible.has(String(t.id))?t:null,name:person?.characterName||'Personagem'};})].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))).slice(0,80);
++    return rows.length?`<div class="ms-op-list">${rows.map(r=>`<article class="ms-op-card"><div><strong>${esc(r.title)}</strong><small>${esc(r.detail||'Registro operacional')} · ${esc(r.date?new Date(r.date).toLocaleString('pt-BR'):'')}</small></div>${r.transaction?`<button type="button" data-peg-return="${esc(r.transaction.id)}" data-character="${esc(r.transaction.character_id)}" data-name="${esc(r.name)}">Devolver concessão à reserva</button>`:''}</article>`).join('')}</div>`:'<div class="ms-op-empty">Nenhuma movimentação de evolução registrada.</div>';
+   }
+   function evolutionPane(){
+-    const wallet=crewState.progression?.wallet||{},tab=crewState.evolutionTab||'characters',pending=evoPendingCount();
+-    const nav=`<nav class="ms-op-subtabs"><button type="button" data-evo-tab="characters" class="${tab==='characters'?'active':''}">PERSONAGENS</button><button type="button" data-evo-tab="requests" class="${tab==='requests'?'active':''}">SOLICITAÇÕES${pending?` <span class="ms-op-badge">${pending}</span>`:''}</button><button type="button" data-evo-tab="training" class="${tab==='training'?'active':''}">TREINAMENTOS</button><button type="button" data-evo-tab="ledger" class="${tab==='ledger'?'active':''}">LEDGER</button></nav>`;
++    const wallet=crewState.progression?.wallet||{},tab=crewState.evolutionTab||'reserve',pending=evoPendingCount();
++    const nav=`<div class="ms-peg-path" aria-label="Como funciona a evolução"><span>① Abastecer reserva</span><span>② Conceder aos personagens</span><span>③ Validar evolução</span></div><nav class="ms-op-subtabs"><button type="button" data-evo-tab="reserve" class="${tab==='reserve'?'active':''}">RESERVA</button><button type="button" data-evo-tab="characters" class="${tab==='characters'?'active':''}">PERSONAGENS</button><button type="button" data-evo-tab="requests" class="${tab==='requests'?'active':''}">SOLICITAÇÕES${pending?` <span class="ms-op-badge">${pending}</span>`:''}</button><button type="button" data-evo-tab="training" class="${tab==='training'?'active':''}">TREINAMENTOS</button><button type="button" data-evo-tab="ledger" class="${tab==='ledger'?'active':''}">HISTÓRICO</button></nav>`;
+     let content='';
+-    if(tab==='characters')content=`<div class="ms-op-evolution"><section class="ms-op-panel"><h3>RESERVA DA MESA</h3><div class="ms-op-summary"><span class="ms-op-chip">Disponível <b>${Number(wallet.balance||0)} PEG</b></span><span class="ms-op-chip">Comprado <b>${Number(wallet.lifetime_purchased||0)}</b></span><span class="ms-op-chip">Distribuído <b>${Number(wallet.lifetime_distributed||0)}</b></span></div><p>1. Abasteça a reserva com SoulDrakma.<br>2. Conceda PEG a um personagem.<br>3. Valide a evolução quando a trilha estiver pronta.</p><button type="button" class="ms-op-primary" data-buy-peg-btn>ABASTECER RESERVA</button><small class="ms-op-note">Você verá o custo total antes de confirmar.</small></section><section class="ms-op-panel"><h3>EVOLUÇÃO DA TRIPULAÇÃO</h3><p class="ms-op-note">Sucessos tornam a trilha elegível; PEG efetiva o avanço. Gerencie cada ficha sem abrir o editor completo.</p>${evoCharacterCards()}</section></div>`;
++    if(tab==='reserve')content=`<div class="ms-op-evolution"><section class="ms-op-panel ms-peg-vault"><h3>RESERVA DA MESA</h3><div class="ms-op-summary"><span class="ms-op-chip">Disponível <b>${Number(wallet.balance||0)} PEG</b></span><span class="ms-op-chip">Comprado <b>${Number(wallet.lifetime_purchased||0)}</b></span><span class="ms-op-chip">Distribuído <b>${Number(wallet.lifetime_distributed||0)}</b></span></div><p>1. Abasteça a reserva com SoulDrakma.<br>2. Conceda PEG a um personagem.<br>3. Valide a evolução quando a trilha estiver pronta.</p><button type="button" class="ms-op-primary" data-buy-peg-btn>ABASTECER RESERVA</button><small class="ms-op-note">Você verá o custo total antes de confirmar.</small><button type="button" data-evo-tab="characters">ESCOLHER PERSONAGEM PARA CONCEDER PEG</button></section></div>`;
++    else if(tab==='characters')content=`<section class="ms-op-panel"><h3>EVOLUÇÃO DA TRIPULAÇÃO</h3><p class="ms-op-note">Sucessos tornam a trilha elegível; PEG efetiva o avanço. Gerencie cada ficha sem abrir o editor completo.</p>${evoCharacterCards()}</section>`;
+     else if(tab==='requests')content=evoRequestsPane();
+     else if(tab==='training')content=evoTrainingPane();
+     else content=evoLedgerPane();
+@@ -156,6 +159,7 @@
+   }
+   function bindCrewActions(root){
+     root.querySelectorAll('[data-crew-view],[data-request-view]').forEach(b=>b.onclick=()=>{const id=b.dataset.crewView||b.dataset.requestView;if(id)window.msOpenCharacterViewer?.(id,{tableId:crewState.table?.id,source:'crew-center'});});
++    root.querySelectorAll('[data-peg-return]').forEach(b=>b.onclick=async()=>{if(await window.MS_POINTS.open('reverse',{tableId:crewState.table?.id,characterId:b.dataset.character,name:b.dataset.name,transactionId:b.dataset.pegReturn}))await loadCrew(true);});
+     root.querySelectorAll('[data-crew-withdraw]').forEach(b=>b.onclick=async()=>{if(await window.MS_POINTS.open('reverse',{tableId:crewState.table?.id,characterId:b.dataset.crewWithdraw,name:b.dataset.crewName}))await loadCrew(true);});
+     root.querySelectorAll('[data-crew-grant]').forEach(b=>b.onclick=()=>grantPeg(b.dataset.crewGrant,b.dataset.crewName));
+     root.querySelectorAll('[data-request-accept]').forEach(b=>b.onclick=()=>resolveRequest(b.dataset.requestAccept,true));
+@@ -203,11 +207,12 @@
+   async function buyPeg(){
+     if(await window.MS_POINTS.open('buy',{tableId:crewState.table?.id}))await loadCrew(true);
+   }
+-  async function openCrewCenter(){
++  async function openCrewCenter(options={}){
++    if(['participants','requests','evolution'].includes(options?.tab))crewState.tab=options.tab;
+     if(!manager())return toast('A Central Operacional exige autoridade de Mestre, Co-Mestre ou Arconte.','error');
+     const table=context().table;if(!table?.id)return toast('Entre em uma Mesa para abrir a Tripulação.','error');
+     try{await window.MS_FEATURES?.ensureProgression?.()}catch(error){return toast(errorText(error),'error')}
+-    const modal=ensureCrewCenter();modal.classList.add('open');lock(true);crewState.table=clone(table);await loadCrew(false);
++    const modal=ensureCrewCenter();modal.classList.add('open');modal.querySelector('[role=dialog]').setAttribute('aria-modal',String(!document.body.classList.contains('ms-workspace-active')));lock(true);crewState.table=clone(table);await loadCrew(false);
+   }
+   async function refreshCounter(){if(!manager()||!context().table?.id)return;try{const tableId=context().table.id,[requests,progression]=await Promise.all([svc()?.Games?.joinRequests?.(tableId),svc()?.Progression?.state?.(tableId)]);crewState.requests=unwrap(requests)||[];crewState.progression=unwrap(progression)||crewState.progression;updateCrewCounter();if(document.getElementById('ms-crew-center')?.classList.contains('open'))renderCrew();}catch(_){}}
+   function startPolling(){clearInterval(pollTimer);if(manager()&&context().table?.id){refreshCounter();pollTimer=setInterval(refreshCounter,8000);}}
+--- antes/js/points-ui.js
++++ depois/js/points-ui.js
+@@ -26,13 +26,13 @@
+  return new Promise(resolve=>{
+   const finish=value=>{if(active!==dialog)return;active=null;dialog.close?.();dialog.remove();previous?.focus?.();resolve(value);};
+   dialog.addEventListener('cancel',e=>{e.preventDefault();if(!busy)finish(null);});
+-  if(dialog.showModal)dialog.showModal();else dialog.setAttribute('open','');
++  if(document.body.classList.contains('ms-workspace-active')&&dialog.show){dialog.show();dialog.addEventListener('keydown',e=>{if(e.key==='Escape'&&!busy){e.preventDefault();finish(null);}});}else if(dialog.showModal)dialog.showModal();else dialog.setAttribute('open','');
+   (async()=>{try{
+    const service=window.MS_SERVICES.Progression,state=unwrap(await service.state(tableId))||{};
+    if(active!==dialog)return;
+-   const characterId=options.characterId,name=options.name||'Personagem',titles={buy:'Abastecer a reserva',grant:'Conceder pontos',reverse:'Retirar pontos'};
++   const characterId=options.characterId,name=options.name||'Personagem',titles={buy:'Abastecer a reserva',grant:'Conceder pontos',reverse:'Devolver à reserva'};
+    const grants=reversible(state,characterId),initial=grants.find(t=>String(t.id)===String(options.transactionId))||grants[0];
+-   dialog.innerHTML=`<form><header><div><small>EVOLUÇÃO · ${esc(context().table?.name||'MESA')}</small><h2>${titles[action]}</h2></div><button type="button" data-cancel aria-label="Fechar">×</button></header><p>${action==='buy'?'Compre PEG com SoulDrakma. Os pontos ficam na reserva até serem concedidos a um personagem.':action==='grant'?`Transfira pontos da reserva para <strong>${esc(name)}</strong>. Isso não aumenta atributos ou graduações automaticamente.`:'Devolva à reserva os pontos de uma concessão anterior. A retirada é integral e só é permitida se o personagem ainda tiver saldo suficiente.'}</p><div class="ms-points-balances"><span>Reserva da mesa <b>${Number(state.wallet?.balance||0)} PEG</b></span>${action!=='buy'?`<span>Destino <b>${esc(name)}</b></span>`:''}</div>${action==='reverse'?`<label>Concessão a retirar<select name="grant" ${grants.length?'':'disabled'}>${grants.map(t=>`<option value="${esc(t.id)}" ${t===initial?'selected':''}>${Number(t.amount)} PEG · ${esc(t.reason||'Sem motivo')} · ${esc(t.created_at?new Date(t.created_at).toLocaleDateString('pt-BR'):'')}</option>`).join('')}</select></label>${grants.length?'':'<p>Nenhuma concessão reversível foi encontrada no histórico disponível.</p>'}`:`<label>Quantidade de pontos (PEG)<input name="amount" type="number" min="1" step="1" max="${action==='buy'?200:Number(state.wallet?.balance||0)}" value="${Math.max(1,Math.min(action==='buy'?200:Number(state.wallet?.balance||0)||1,Number(options.amount)||3))}" required></label>`}${action!=='buy'?'<label>Motivo<textarea name="reason" required maxlength="500" placeholder="Ex.: recompensa pela sessão ou correção de uma concessão."></textarea></label>':''}<output class="ms-points-preview" aria-live="polite"></output><p role="alert" data-error></p><footer><button type="button" data-cancel>Cancelar</button><button type="submit" class="primary">${action==='buy'?'Confirmar compra':action==='grant'?'Confirmar concessão':'Confirmar retirada'}</button></footer></form>`;
++   dialog.innerHTML=`<form><header><div><small>EVOLUÇÃO · ${esc(context().table?.name||'MESA')}</small><h2>${titles[action]}</h2></div><button type="button" data-cancel aria-label="Fechar">×</button></header><p>${action==='buy'?'Compre PEG com SoulDrakma. Os pontos ficam na reserva até serem concedidos a um personagem.':action==='grant'?`Transfira pontos da reserva para <strong>${esc(name)}</strong>. Isso não aumenta atributos ou graduações automaticamente.`:'Devolva à reserva os pontos de uma concessão anterior. A devolução é integral e só é permitida se o personagem ainda tiver saldo suficiente.'}</p><div class="ms-points-balances"><span>Reserva da mesa <b>${Number(state.wallet?.balance||0)} PEG</b></span>${action!=='buy'?`<span>Destino <b>${esc(name)}</b></span>`:''}</div>${action==='reverse'?`<label>Concessão a devolver<select name="grant" ${grants.length?'':'disabled'}>${grants.map(t=>`<option value="${esc(t.id)}" ${t===initial?'selected':''}>${Number(t.amount)} PEG · ${esc(t.reason||'Sem motivo')} · ${esc(t.created_at?new Date(t.created_at).toLocaleDateString('pt-BR'):'')}</option>`).join('')}</select></label>${grants.length?'':'<p>Nenhuma concessão reversível foi encontrada no histórico disponível.</p>'}`:`<label>Quantidade de pontos (PEG)<input name="amount" type="number" min="1" step="1" max="${action==='buy'?200:Number(state.wallet?.balance||0)}" value="${Math.max(1,Math.min(action==='buy'?200:Number(state.wallet?.balance||0)||1,Number(options.amount)||3))}" required></label>`}${action!=='buy'?'<label>Motivo<textarea name="reason" required maxlength="500" placeholder="Ex.: recompensa pela sessão ou correção de uma concessão."></textarea></label>':''}<output class="ms-points-preview" aria-live="polite"></output><p role="alert" data-error></p><footer><button type="button" data-cancel>Cancelar</button><button type="submit" class="primary">${action==='buy'?'Confirmar compra':action==='grant'?'Confirmar concessão':'Confirmar devolução'}</button></footer></form>`;
+    const form=dialog.querySelector('form'),submit=form.querySelector('[type=submit]'),output=form.querySelector('output'),error=form.querySelector('[data-error]');
+    const selected=()=>grants.find(t=>String(t.id)===form.elements.grant?.value);
+    const values=()=>{const tx=selected();return {amount:action==='reverse'?Number(tx?.amount||0):Number(form.elements.amount.value),char:action==='reverse'?tx?.character_id:characterId,tx};};
+--- antes/js/table-sheets.js
++++ depois/js/table-sheets.js
+@@ -4,13 +4,14 @@
+ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const context=()=>window.msGetCurrentTableContext?.()||{};
+ const idOf=p=>String(p.sourceCharId||p.id||'');
+-const nodes=new Map();let host=null,scope='',epoch=0,positions={};
++const nodes=new Map();let host=null,scope='',epoch=0,positions={},participantSearch='',participantView='grid';
+ function visiblePlayers(c,user){return (c.players||[]).filter(p=>!p.isNPC&&idOf(p)&&(c.asGM||p.isMe||[p.participantUserId,p.userId,p.sourceOwnerId,p.ownerId].some(id=>id!=null&&[user?.id,user?.authUserId].filter(Boolean).map(String).includes(String(id)))));}
+-function clamp(x,y,w=64,h=64){const top=document.body.dataset.msEnvironment==='local'||document.body.dataset.msEnvironment==='unavailable'?48:8;return {x:Math.max(8,Math.min(Number(x)||8,Math.max(8,innerWidth-w-8))),y:Math.max(top,Math.min(Number(y)||top,Math.max(top,innerHeight-h-8)))};}
++function clamp(x,y,w=64,h=64){const r=window.MS_TABLE_SHELL?.workspaceBounds?.();const top=r?r.top+4:document.body.dataset.msEnvironment==='local'||document.body.dataset.msEnvironment==='unavailable'?48:8,left=r?r.left+4:8,right=r?r.right-4:innerWidth-8,bottom=r?r.bottom-4:innerHeight-8;return {x:Math.max(left,Math.min(Number(x)||left,Math.max(left,right-w))),y:Math.max(top,Math.min(Number(y)||top,Math.max(top,bottom-h)))};}
++
+ function store(){try{sessionStorage.setItem('ms-sheet-positions:'+scope,JSON.stringify(positions));}catch(_){}}
+ function move(el,key,x,y){const p=clamp(x,y,el.offsetWidth||64,el.offsetHeight||64);el.style.left=p.x+'px';el.style.top=p.y+'px';positions[key]=p;return p;}
+ function draggable(el,handle,key,onClick){let drag=null,suppress=false;
+- handle.addEventListener('pointerdown',e=>{if(e.button!==0)return;const r=el.getBoundingClientRect();drag={id:e.pointerId,x:e.clientX,y:e.clientY,left:r.left,top:r.top,moved:false};handle.setPointerCapture?.(e.pointerId);});
++ handle.addEventListener('pointerdown',e=>{if(e.button!==0||el.classList.contains('is-docked'))return;const r=el.getBoundingClientRect();drag={id:e.pointerId,x:e.clientX,y:e.clientY,left:r.left,top:r.top,moved:false};handle.setPointerCapture?.(e.pointerId);});
+  handle.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>5)drag.moved=true;if(drag.moved){move(el,key,drag.left+dx,drag.top+dy);e.preventDefault();}});
+  const end=e=>{if(!drag||e.pointerId!==drag.id)return;suppress=drag.moved;if(drag.moved)store();drag=null;};
+  handle.addEventListener('pointerup',end);handle.addEventListener('pointercancel',end);
+@@ -26,12 +27,13 @@
+  entry.body.innerHTML=window.MS_PROGRESSION.renderSheet(row.payload||row);const bounds=entry.panel.getBoundingClientRect();move(entry.panel,'panel:'+entry.id,bounds.left,bounds.top);entry.panel.querySelector('[data-full]').onclick=()=>window.msOpenCharacterViewer?.(entry.id,{tableId:c.table.id,source:'floating-sheet'});
+  }catch(e){if(gen===epoch&&ticket===entry.ticket){entry.body.innerHTML=`<p role="alert">${esc(e?.message||'Não foi possível consultar a ficha.')}</p><button type="button" data-retry>Tentar novamente</button>`;entry.body.querySelector('[data-retry]').onclick=()=>fill(entry);}}
+ }
++function defaultPosition(index){const r=window.MS_TABLE_SHELL?.workspaceBounds?.(),rows=Math.max(1,Math.floor(((r?.height??innerHeight)-24)/68));return {x:(r?.right??innerWidth)-78-Math.floor(index/rows)*70,y:(r?.top??80)+12+(index%rows)*68};}
+ function add(player,index){const id=idOf(player),button=document.createElement('button'),panel=document.createElement('section');button.type='button';button.className='ms-sheet-orb';button.setAttribute('aria-expanded','false');button.title='Clique para abrir/recolher. Arraste para mover. Alt + setas também move.';
+  panel.className='ms-sheet-mini';panel.id='ms-sheet-mini-'+encodeURIComponent(id);panel.hidden=true;panel.setAttribute('role','region');button.setAttribute('aria-controls',panel.id);
+  panel.innerHTML='<header><button class="ms-sheet-drag" type="button" title="Arraste ou use Alt + setas">⠿ <span></span></button><button data-close type="button" aria-label="Recolher ficha">×</button></header><p class="ms-sheet-private">SOMENTE SUA VISUALIZAÇÃO · LEITURA</p><div class="ms-sheet-mini-body"></div><footer><button data-refresh type="button">Atualizar</button><button data-full type="button">Abrir ficha completa</button></footer>';
+  const entry={id,button,panel,body:panel.querySelector('.ms-sheet-mini-body'),ticket:0};nodes.set(id,entry);ensure().append(button,panel);panel.querySelector('[data-close]').onclick=()=>{closeMini(entry);button.focus();};panel.querySelector('[data-refresh]').onclick=()=>fill(entry);
+  draggable(button,button,'orb:'+id,()=>toggle(entry));draggable(panel,panel.querySelector('.ms-sheet-drag'),'panel:'+id);
+- const saved=positions['orb:'+id];move(button,'orb:'+id,saved?.x??(innerWidth-90-(Math.floor(index/5)*82)),saved?.y??(150+(index%5)*76));return entry;
++ const saved=positions['orb:'+id]||defaultPosition(index);move(button,'orb:'+id,saved.x,saved.y);return entry;
+ }
+ function reset(){epoch++;nodes.clear();host?.remove();host=null;document.getElementById('ms-participant-window')?.remove();scope='';}
+ function sync(){const c=context(),active=!!document.getElementById('screen-vtt')?.classList.contains('active');
+@@ -43,10 +45,19 @@
+  players.forEach((p,i)=>{const entry=nodes.get(idOf(p))||add(p,i);entry.button.textContent=String(p.name||'Ficha').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();entry.button.title=(p.name||'Personagem')+' · Clique para abrir/recolher. Arraste ou use Alt + setas para mover.';entry.button.setAttribute('aria-label',`${p.name||'Personagem'}: abrir ou recolher miniatura`);entry.panel.setAttribute('aria-label','Miniatura de '+(p.name||'personagem'));entry.panel.querySelector('.ms-sheet-drag span').textContent=p.name||'Personagem';});
+  if(rosterWindow&&!rosterWindow.hidden)renderParticipants(rosterWindow);
+ }
+-function renderParticipants(win){const players=visiblePlayers(context(),window.currentUser),body=win.querySelector('main');body.innerHTML=players.length?`<div class="ms-participant-grid">${players.map(p=>`<article><span class="ms-participant-seal" aria-hidden="true">${esc(String(p.name||'?').slice(0,1))}</span><h3>${esc(p.name||'Personagem')}</h3><p>${esc([p.mode,p.nature,p.className].filter(Boolean).join(' · '))}</p><dl>${Object.entries(p.isRosterOnly?{}:p.resources||{}).slice(0,4).map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl><button type="button" data-mini="${esc(idOf(p))}">Abrir / recolher miniatura</button></article>`).join('')}</div>`:'<p>Nenhuma ficha disponível nesta mesa.</p>';body.querySelectorAll('[data-mini]').forEach(b=>b.onclick=()=>{const entry=nodes.get(b.dataset.mini);if(entry)toggle(entry);});}
+-function openParticipants(){sync();if(!host||host.hidden)return;let win=document.getElementById('ms-participant-window');if(!win){win=document.createElement('section');win.id='ms-participant-window';win.className='ms-participant-window';win.setAttribute('role','dialog');win.setAttribute('aria-modal','false');win.setAttribute('aria-label','Fichas dos participantes');win.innerHTML='<header><button class="ms-sheet-drag" type="button">⠿ Fichas dos participantes</button><button data-close type="button" aria-label="Fechar participantes">×</button></header><p>Abra miniaturas sem sair do mapa. Os ícones podem ser arrastados e clicados novamente para recolher.</p><main></main><footer><button data-refresh type="button">Atualizar participantes</button><button data-reset type="button">Organizar ícones</button></footer>';document.body.appendChild(win);win.querySelector('[data-close]').onclick=()=>{win.hidden=true;};win.querySelector('[data-refresh]').onclick=async()=>{await window.MS_FEATURES.ensureOperational();await window.msRefreshCurrentVttRoster?.();sync();};win.querySelector('[data-reset]').onclick=()=>{let i=0;for(const entry of nodes.values()){move(entry.button,'orb:'+entry.id,innerWidth-90-Math.floor(i/5)*82,150+(i%5)*76);i++;}store();};draggable(win,win.querySelector('.ms-sheet-drag'),'window');}
+- win.hidden=false;renderParticipants(win);const saved=positions.window;move(win,'window',saved?.x??80,saved?.y??110);win.querySelector('[data-close]').focus();}
+-function init(){const screen=document.getElementById('screen-vtt');if(screen&&typeof MutationObserver==='function')new MutationObserver(sync).observe(screen,{attributes:true,attributeFilter:['class']});const bus=window.MS_PLATFORM;for(const event of ['vtt:entered','table:roster-refreshed','table:cache-updated'])bus?.on?.(event,sync);bus?.on?.('vtt:left',reset);window.addEventListener('ms-auth-state',e=>{reset();if(e.detail?.event!=='SIGNED_OUT')queueMicrotask(sync);});window.addEventListener('screen:changing',()=>queueMicrotask(sync));window.addEventListener('resize',()=>{for(const entry of nodes.values()){for(const [el,key] of [[entry.button,'orb:'+entry.id],[entry.panel,'panel:'+entry.id]]){if(el.hidden)continue;const r=el.getBoundingClientRect();move(el,key,r.left,r.top);}}const win=document.getElementById('ms-participant-window');if(win&&!win.hidden){const r=win.getBoundingClientRect();move(win,'window',r.left,r.top);}});document.addEventListener('keydown',e=>{if(e.key!=='Escape'||document.querySelector('dialog[open]'))return;for(const entry of nodes.values())closeMini(entry);const win=document.getElementById('ms-participant-window');if(win)win.hidden=true;});sync();}
+-window.MS_TABLE_SHEETS=Object.freeze({openParticipants,sync,visiblePlayers,clamp});
++function renderParticipants(win){const c=context(),all=visiblePlayers(c,window.currentUser),players=all.filter(p=>String(p.name||'').toLocaleLowerCase('pt-BR').includes(participantSearch.toLocaleLowerCase('pt-BR'))),body=win.querySelector('main');body.innerHTML=players.length?`<div class="ms-participant-grid ${participantView==='list'?'is-list':''}">${players.map(p=>`<article><span class="ms-participant-seal" aria-hidden="true">${esc(String(p.name||'?').slice(0,1))}</span><h3>${esc(p.name||'Personagem')}</h3><p>${esc([p.mode,p.nature,p.className].filter(Boolean).join(' · '))}</p><dl>${Object.entries(p.isRosterOnly?{}:p.resources||{}).slice(0,4).map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl><div class="ms-participant-actions"><button type="button" data-mini="${esc(idOf(p))}">Miniatura</button><button type="button" data-full="${esc(idOf(p))}">Ficha completa</button>${c.asGM?`<button type="button" data-evolve="${esc(idOf(p))}">Evolução</button>`:''}</div></article>`).join('')}</div>`:`<p>${all.length?'Nenhum personagem corresponde à busca.':'Nenhuma ficha disponível nesta mesa.'}</p>`;
++ body.querySelectorAll('[data-mini]').forEach(b=>b.onclick=()=>{const entry=nodes.get(b.dataset.mini);if(entry)toggle(entry);});
++ const view=async(id,evolution)=>{try{await window.MS_FEATURES.ensureProgression();if(evolution)await window.MS_PROGRESSION.openEvolutionForCharacter(id,c.table.id);else await window.msOpenCharacterViewer?.(id,{tableId:c.table.id,source:'participants'});}catch(e){window.MS_PLATFORM?.toast?.(e.message,'error');}};
++ body.querySelectorAll('[data-full]').forEach(b=>b.onclick=()=>view(b.dataset.full,false));body.querySelectorAll('[data-evolve]').forEach(b=>b.onclick=()=>view(b.dataset.evolve,true));
++}
++function organize(){let i=0;for(const entry of nodes.values()){const p=defaultPosition(i++);move(entry.button,'orb:'+entry.id,p.x,p.y);}store();}
++function openParticipants(){sync();if(!host||host.hidden)return;let win=document.getElementById('ms-participant-window');if(!win){win=document.createElement('section');win.id='ms-participant-window';win.className='ms-participant-window';win.setAttribute('role','dialog');win.setAttribute('aria-modal','false');win.setAttribute('aria-label','Fichas dos participantes');win.innerHTML='<header><button class="ms-sheet-drag" type="button">⠿ Participantes</button><button data-close type="button" aria-label="Fechar participantes">×</button></header><div class="ms-participant-toolbar"><label>Buscar personagem<input type="search" data-search placeholder="Nome do personagem"></label><button data-view type="button" aria-pressed="false">Lista compacta</button></div><main></main><footer><button data-refresh type="button">Atualizar</button><button data-reset type="button">Organizar ícones</button></footer>';document.body.appendChild(win);win.querySelector('[data-close]').onclick=()=>{if(win.classList.contains('is-docked'))window.MS_TABLE_SHELL?.setLayout('conduct');win.hidden=true;};win.querySelector('[data-refresh]').onclick=async()=>{try{await window.MS_FEATURES.ensureOperational();await window.msRefreshCurrentVttRoster?.();sync();}catch(e){window.MS_PLATFORM?.toast?.(e.message,'error');}};win.querySelector('[data-reset]').onclick=organize;win.querySelector('[data-search]').value=participantSearch;win.querySelector('[data-search]').oninput=e=>{participantSearch=e.target.value;renderParticipants(win);};win.querySelector('[data-view]').onclick=e=>{participantView=participantView==='grid'?'list':'grid';e.currentTarget.setAttribute('aria-pressed',String(participantView==='list'));renderParticipants(win);};draggable(win,win.querySelector('.ms-sheet-drag'),'window');}
++ win.hidden=false;renderParticipants(win);if(!win.classList.contains('is-docked')){const saved=positions.window;move(win,'window',saved?.x??80,saved?.y??110);}win.querySelector('[data-close]').focus();}
++function dock(enabled){const slot=document.getElementById('ms-participant-slot');if(!slot)return;if(enabled)openParticipants();const win=document.getElementById('ms-participant-window');slot.hidden=!enabled;if(!win)return;win.classList.toggle('is-docked',enabled);if(enabled){slot.appendChild(win);win.hidden=false;}else{document.body.appendChild(win);win.hidden=true;}}
++function reflow(){for(const entry of nodes.values()){for(const [el,key] of [[entry.button,'orb:'+entry.id],[entry.panel,'panel:'+entry.id]]){if(el.hidden)continue;const r=el.getBoundingClientRect();move(el,key,r.left,r.top);}}const win=document.getElementById('ms-participant-window');if(win&&!win.hidden&&!win.classList.contains('is-docked')){const r=win.getBoundingClientRect();move(win,'window',r.left,r.top);}}
++function restore(){positions={};for(const entry of nodes.values())closeMini(entry);dock(false);organize();}
++
++function init(){const screen=document.getElementById('screen-vtt');if(screen&&typeof MutationObserver==='function')new MutationObserver(sync).observe(screen,{attributes:true,attributeFilter:['class']});const bus=window.MS_PLATFORM;for(const event of ['vtt:entered','table:roster-refreshed','table:cache-updated'])bus?.on?.(event,sync);bus?.on?.('vtt:left',reset);window.addEventListener('ms-auth-state',e=>{reset();if(e.detail?.event!=='SIGNED_OUT')queueMicrotask(sync);});window.addEventListener('screen:changing',()=>queueMicrotask(sync));window.addEventListener('resize',reflow);document.addEventListener('keydown',e=>{if(e.key!=='Escape'||document.querySelector('dialog[open]'))return;for(const entry of nodes.values())closeMini(entry);const win=document.getElementById('ms-participant-window');if(win){if(win.classList.contains('is-docked'))window.MS_TABLE_SHELL?.setLayout('conduct');win.hidden=true;}});sync();}
++window.MS_TABLE_SHEETS=Object.freeze({openParticipants,sync,visiblePlayers,clamp,dock,reflow,restore});
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+ })();
+--- antes/js/table-shell-v3.js
++++ depois/js/table-shell-v3.js
+@@ -58,16 +58,51 @@
+   }
+ 
+   function setRightPane(name){
+-    document.querySelectorAll('.ms-table-v3-right-tabs button').forEach(b=>b.classList.toggle('active',b.dataset.rightPane===name));
+-    document.querySelectorAll('.ms-table-v3-pane').forEach(p=>p.hidden=p.dataset.rightPane!==name);
+-    if(name==='initiative')renderInitiative();
++    // Comunicação é permanente: iniciativa abre uma janela, nunca substitui chat/dados.
++    const pane=document.querySelector('.ms-table-v3-roster-pane');
++    if(pane&&name==='initiative'){pane.hidden=!pane.hidden;if(!pane.hidden)renderInitiative();}
++    if(name==='chat')byId('chat-input')?.focus();
++    if(name==='dice')byId('vtt-dice-box')?.querySelector('button[onclick*="roll3DDice"]')?.focus();
++  }
++  function workspaceBounds(){
++    const node=byId('ms-table-v3-desk'),r=node?.getBoundingClientRect?.();
++    return r&&r.width>0&&r.height>0?{left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height}:null;
++  }
++  function refreshBounds(){
++    const active=!!byId('screen-vtt')?.classList.contains('active');
++    document.body.classList.toggle('ms-workspace-active',active);
++    const r=workspaceBounds();if(!active||!r)return;
++    for(const [k,v] of Object.entries({left:r.left,top:r.top,width:r.width,height:r.height}))document.body.style.setProperty('--ms-work-'+k,v+'px');
++    window.MS_TABLE_SHEETS?.reflow?.();window.msResizeVttGrid?.();
++  }
++  function setLayout(name){
++    const shell=byId('ms-table-v3');if(!shell)return;
++    const layout=['conduct','follow','prepare'].includes(name)?name:'conduct';shell.dataset.layout=layout;
++    shell.querySelectorAll('[data-layout]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.layout===layout)));
++    const stage=byId('ms-table-v3-stage');if(stage){stage.style.width='';stage.style.height='';}
++    if(layout==='follow')window.MS_TABLE_SHEETS?.dock?.(true);else window.MS_TABLE_SHEETS?.dock?.(false);
++    if(layout==='prepare'){ensureCampaignWindow();const campaign=byId('vtt-campaign-window');if(campaign&&activeAsGM)campaign.style.display='flex';else call('toggleVttWindow','vtt-gallery-window');}
++    else{for(const id of ['vtt-campaign-window','vtt-gallery-window','vtt-equipment-window']){const el=byId(id);if(el)el.style.display='none';}}
++    requestAnimationFrame(refreshBounds);
++  }
++  function restoreLayout(){
++    setLayout('conduct');setMobilePane('stage');
++    document.querySelectorAll('.ms-table-v3-director,.ms-table-v3-roster-pane').forEach(el=>el.hidden=true);
++    window.MS_TABLE_SHEETS?.restore?.();requestAnimationFrame(refreshBounds);
++  }
++  async function openEvolution(){
++    if(!activeAsGM)return;
++    try{await window.MS_FEATURES.ensureOperational();await window.msOpenCrewCenter?.({tab:'evolution'});}catch(e){window.MS_PLATFORM?.toast?.(e.message,'error');}
+   }
+   function setMobilePane(name){
+     const shell=byId('ms-table-v3');if(!shell)return;
+     const pane=['stage','cards','tools','session'].includes(name)?name:'stage';
+     shell.dataset.mobilePane=pane;
+     shell.querySelectorAll('[data-mobile-pane-target]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mobilePaneTarget===pane)));
++    if(pane==='session')byId('chat-input')?.focus();
++    if(pane==='cards')window.MS_TABLE_SHEETS?.openParticipants();
+     if(pane==='stage')requestAnimationFrame(()=>window.msResizeVttGrid?.());
++    requestAnimationFrame(refreshBounds);
+   }
+ 
+   function setGridButtonState(){
+@@ -98,8 +133,8 @@
+     const saveButton=byId('btn-save-table');
+     const cards=document.getElementById('vtt-cards-window'),grid=document.getElementById('vtt-grid-window'),chat=document.getElementById('vtt-chat-box'),dice=document.getElementById('vtt-dice-box');
+     const quick=byId('vtt-quick-access'),presence=screen.querySelector('.ms-vtt-presence');
+-    const shell=document.createElement('div');shell.id='ms-table-v3';shell.className='ms-table-v3';shell.dataset.mobilePane='stage';
+-    shell.innerHTML=`<header class="ms-table-v3-head"><div class="ms-table-v3-identity"><span>FENDA ATIVA</span><strong data-ms-table-title>Mesa</strong><small data-ms-table-code>RASCUNHO</small></div><div class="ms-table-v3-health"><i></i><b data-ms-sync-label>CONECTANDO</b><small data-ms-latency></small></div><div class="ms-table-v3-head-actions"></div></header><div class="ms-table-v3-body"><aside id="ms-table-v3-left" class="ms-table-v3-left" aria-label="Personagens e ferramentas"><nav class="ms-table-v3-nav"><button data-left-action="stage" class="active">MAPA</button><button data-action="sheets">FICHAS</button><button data-open="vtt-gallery-window">ARQUIVOS</button><button data-open="vtt-equipment-window">ARSENAL</button><button class="gm-only-v3" data-action="director">DIREÇÃO</button><button class="gm-only-v3" data-action="manage">TRIPULAÇÃO</button><button class="gm-only-v3" data-action="shield">ESCUDO</button><button class="gm-only-v3" data-action="shop">LOJA</button><button class="gm-only-v3" data-action="forge">FORJA</button></nav><section class="ms-table-v3-gridtools"><span>FERRAMENTAS DO GRID</span><button data-grid-action="select">CURSOR</button><button data-grid-action="pc">MEU TOTEM</button><button class="gm-only-v3" data-grid-action="npc">NPC</button><button class="gm-only-v3" data-grid-action="map">MAPA</button><button data-grid-action="grid" class="active">GRADE</button><button data-grid-action="snap">ENCAIXE</button><button data-grid-action="ruler">RÉGUA</button><button data-grid-action="cone">CONE</button><button data-grid-action="line">LINHA</button><button data-grid-action="radius">RAIO</button><button data-grid-action="clear">LIMPAR MEDIDAS</button><button class="danger" data-grid-action="delete">APAGAR SEL.</button><div class="ms-table-v3-gridmeta"><label>ESCALA<input data-grid-scale-proxy type="number" min="0.1" step="0.1" value="1.5"></label><label>PASSO<input data-grid-size-proxy type="number" min="20" max="120" step="5" value="50"></label></div></section><section class="ms-table-v3-cards"></section></aside><main id="ms-table-v3-stage" class="ms-table-v3-stage" aria-label="Mapa da Mesa"></main><aside id="ms-table-v3-right" class="ms-table-v3-right" aria-label="Conversa, dados e iniciativa"><nav class="ms-table-v3-right-tabs"><button class="active" data-right-pane="chat">CHAT</button><button data-right-pane="dice">DADOS</button><button data-right-pane="initiative">INICIATIVA</button></nav><div class="ms-table-v3-right-stack"><section class="ms-table-v3-pane ms-table-v3-chat" data-right-pane="chat"></section><section class="ms-table-v3-pane ms-table-v3-dice" data-right-pane="dice" hidden></section><section class="ms-table-v3-pane ms-table-v3-roster-pane" data-right-pane="initiative" hidden><div class="ms-table-v3-initiative"></div></section></div><section class="ms-table-v3-telemetry" hidden></section></aside></div><footer class="ms-table-v3-footer"><div data-ms-table-presence></div><div class="ms-table-v3-footer-actions"><button data-action="theme" class="gm-only-v3">TEMA</button><button data-action="hp" class="gm-only-v3">HP NPC</button><button data-action="leave">SAIR DA MESA</button></div></footer><nav class="ms-table-v3-mobile-nav" aria-label="Painéis da Mesa"><button data-mobile-pane-target="stage" aria-pressed="true" aria-controls="ms-table-v3-stage">Mapa</button><button data-mobile-pane-target="cards" aria-pressed="false" aria-controls="ms-table-v3-left">Personagens</button><button data-mobile-pane-target="tools" aria-pressed="false" aria-controls="ms-table-v3-left">Ferramentas</button><button data-mobile-pane-target="session" aria-pressed="false" aria-controls="ms-table-v3-right">Conversa</button></nav><div class="ms-table-v3-overlays"></div><aside class="ms-table-v3-director" hidden><header><span>DIREÇÃO AO VIVO</span><button data-action="director-close">×</button></header><div class="ms-table-v3-director-state"><i></i><strong data-director-state>SESSÃO ATIVA</strong></div><div class="ms-table-v3-director-actions"><button data-action="pause">PAUSAR SESSÃO</button><button data-action="resume">RETOMAR SESSÃO</button><button data-action="manage">GERIR EQUIPE</button><button data-action="shield">ESCUDO DO MESTRE</button></div><label>AVISO PARA TODOS OS PARTICIPANTES<textarea data-director-notice maxlength="400" placeholder="Mensagem para todos na mesa"></textarea></label><button class="primary" data-action="notice">TRANSMITIR AVISO</button></aside>`;
++    const shell=document.createElement('div');shell.id='ms-table-v3';shell.className='ms-table-v3';shell.dataset.mobilePane='stage';shell.dataset.layout='conduct';
++    shell.innerHTML=`<header class="ms-table-v3-head"><div class="ms-table-v3-identity"><span>FENDA ATIVA</span><strong data-ms-table-title>Mesa</strong><small data-ms-table-code>RASCUNHO</small></div><div class="ms-table-v3-health"><i></i><b data-ms-sync-label>CONECTANDO</b><small data-ms-latency></small></div><div class="ms-table-v3-head-actions"></div></header><div class="ms-table-v3-body"><aside id="ms-table-v3-left" class="ms-table-v3-left" aria-label="Personagens e ferramentas"><nav class="ms-table-v3-nav"><button data-left-action="stage" class="active">MAPA</button><button data-action="sheets">FICHAS</button><button class="gm-only-v3" data-action="evolution">EVOLUÇÃO · PEG</button><button data-open="vtt-gallery-window">ARQUIVOS</button><button data-open="vtt-equipment-window">ARSENAL</button><button class="gm-only-v3" data-action="director">DIREÇÃO</button><button class="gm-only-v3" data-action="manage">TRIPULAÇÃO</button><button class="gm-only-v3" data-action="shield">ESCUDO</button><button class="gm-only-v3" data-action="shop">LOJA</button><button class="gm-only-v3" data-action="forge">FORJA</button></nav><section class="ms-table-v3-gridtools"><span>FERRAMENTAS DO GRID</span><button data-grid-action="select">CURSOR</button><button data-grid-action="pc">MEU TOTEM</button><button class="gm-only-v3" data-grid-action="npc">NPC</button><button class="gm-only-v3" data-grid-action="map">MAPA</button><button data-grid-action="grid" class="active">GRADE</button><button data-grid-action="snap">ENCAIXE</button><button data-grid-action="ruler">RÉGUA</button><button data-grid-action="cone">CONE</button><button data-grid-action="line">LINHA</button><button data-grid-action="radius">RAIO</button><button data-grid-action="clear">LIMPAR MEDIDAS</button><button class="danger" data-grid-action="delete">APAGAR SEL.</button><div class="ms-table-v3-gridmeta"><label>ESCALA<input data-grid-scale-proxy type="number" min="0.1" step="0.1" value="1.5"></label><label>PASSO<input data-grid-size-proxy type="number" min="20" max="120" step="5" value="50"></label></div></section><section class="ms-table-v3-cards"></section></aside><main class="ms-table-v3-workspace"><nav class="ms-workspace-presets" aria-label="Organização da Mesa"><button data-layout="conduct" aria-pressed="true">Condução</button><button data-layout="follow" aria-pressed="false">Acompanhamento</button><button data-layout="prepare" aria-pressed="false">Preparação</button><button data-action="restore-layout">Restaurar</button></nav><div id="ms-table-v3-desk" class="ms-table-v3-desk"><section id="ms-table-v3-stage" class="ms-table-v3-stage" aria-label="Janela do mapa"><header class="ms-map-window-head"><strong>MAPA · GRID</strong><button data-layout="conduct" title="Maximizar mapa preservando chat e dados">Maximizar</button></header><div class="ms-map-window-body"></div></section><section id="ms-participant-slot" aria-label="Janela dos participantes" hidden></section></div></main><aside id="ms-table-v3-right" class="ms-table-v3-right" aria-label="Conversa, dados e iniciativa"><nav class="ms-table-v3-right-tabs"><button class="active" data-right-pane="chat">CHAT</button><button data-right-pane="dice">DADOS</button><button data-right-pane="initiative">INICIATIVA</button></nav><div class="ms-table-v3-right-stack"><section class="ms-table-v3-pane ms-table-v3-chat" data-right-pane="chat"></section><section class="ms-table-v3-pane ms-table-v3-dice" data-right-pane="dice"></section></div><section class="ms-table-v3-telemetry" hidden></section></aside></div><footer class="ms-table-v3-footer"><div data-ms-table-presence></div><div class="ms-table-v3-footer-actions"><button data-action="theme" class="gm-only-v3">TEMA</button><button data-action="hp" class="gm-only-v3">HP NPC</button><button data-action="leave">SAIR DA MESA</button></div></footer><nav class="ms-table-v3-mobile-nav" aria-label="Painéis da Mesa"><button data-mobile-pane-target="stage" aria-pressed="true" aria-controls="ms-table-v3-stage">Mapa</button><button data-mobile-pane-target="cards" aria-pressed="false" aria-controls="ms-table-v3-left">Personagens</button><button data-mobile-pane-target="tools" aria-pressed="false" aria-controls="ms-table-v3-left">Ferramentas</button><button data-mobile-pane-target="session" aria-pressed="false" aria-controls="ms-table-v3-right">Conversa</button></nav><div class="ms-table-v3-overlays"></div><section class="ms-table-v3-pane ms-table-v3-roster-pane" data-right-pane="initiative" hidden><button data-right-pane="initiative" aria-label="Fechar iniciativa">Fechar iniciativa</button><div class="ms-table-v3-initiative"></div></section><aside class="ms-table-v3-director" hidden><header><span>DIREÇÃO AO VIVO</span><button data-action="director-close">×</button></header><div class="ms-table-v3-director-state"><i></i><strong data-director-state>SESSÃO ATIVA</strong></div><div class="ms-table-v3-director-actions"><button data-action="pause">PAUSAR SESSÃO</button><button data-action="resume">RETOMAR SESSÃO</button><button data-action="manage">GERIR EQUIPE</button><button data-action="shield">ESCUDO DO MESTRE</button></div><label>AVISO PARA TODOS OS PARTICIPANTES<textarea data-director-notice maxlength="400" placeholder="Mensagem para todos na mesa"></textarea></label><button class="primary" data-action="notice">TRANSMITIR AVISO</button></aside>`;
+     screen.insertBefore(shell,legacyHeader||screen.firstChild);
+     if(typeof ResizeObserver==='function'){const observer=new ResizeObserver(()=>window.msResizeVttGrid?.());observer.observe(shell.querySelector('.ms-table-v3-stage'));}
+     const headActions=shell.querySelector('.ms-table-v3-head-actions');
+@@ -109,19 +144,24 @@
+     if(legacyTitle){legacyTitle.classList.add('ms-table-v3-legacy-title');shell.querySelector('.ms-table-v3-identity').appendChild(legacyTitle);}
+     legacyHeader?.remove();quick?.remove();presence?.remove();
+     if(cards)shell.querySelector('.ms-table-v3-cards').appendChild(cards);
+-    if(grid)shell.querySelector('.ms-table-v3-stage').appendChild(grid);
++    if(grid)shell.querySelector('.ms-map-window-body').appendChild(grid);
+     if(chat)shell.querySelector('.ms-table-v3-chat').appendChild(chat);
+     if(dice)shell.querySelector('.ms-table-v3-dice').appendChild(dice);
++    const diceArt=byId('dice-3d-container');if(diceArt){const detail=document.createElement('details');detail.className='ms-dice-animation';detail.innerHTML='<summary>Animação do dado</summary>';diceArt.parentNode.appendChild(detail);detail.appendChild(diceArt);}
++
+     ['vtt-gallery-window','vtt-equipment-window'].forEach(id=>{const n=byId(id);if(n)shell.querySelector('.ms-table-v3-overlays').appendChild(n);});
+ 
+     shell.addEventListener('click',async e=>{
+       const b=e.target.closest('button');if(!b)return;
++      if(b.dataset.layout)setLayout(b.dataset.layout);
+       if(b.dataset.mobilePaneTarget)setMobilePane(b.dataset.mobilePaneTarget);
+       if(b.dataset.leftAction==='stage')setMobilePane('stage');
+       if(b.dataset.open)call('toggleVttWindow',b.dataset.open);
+       if(b.dataset.rightPane)setRightPane(b.dataset.rightPane);
+       if(b.dataset.gridAction)runGridAction(b.dataset.gridAction);
+       const a=b.dataset.action;
++      if(a==='restore-layout')restoreLayout();
++      if(a==='evolution')openEvolution();
+       if(a==='sheets')window.MS_TABLE_SHEETS?.openParticipants();
+       if(a==='director')toggleDirector(true);if(a==='director-close')toggleDirector(false);if(a==='manage'){if(typeof window.msOpenCrewCenter==='function')window.msOpenCrewCenter();else if(window.MS_FEATURES?.ensureOperational)window.MS_FEATURES.ensureOperational().then(()=>window.msOpenCrewCenter?.()).catch(()=>call('openManagePlayers'));else call('openManagePlayers');}if(a==='shield')call('openMasterShield');if(a==='shop')call('openEquipmentShop');if(a==='forge')call('openForgeWindow');if(a==='theme')call('openThemeEditor');if(a==='hp')call('toggleNPCHealthVisibility');if(a==='leave')call('leaveVTT');if(a==='pause')await setLiveStatus('paused');if(a==='resume')await setLiveStatus('active');if(a==='notice')await sendNotice();
+     });
+@@ -129,6 +169,9 @@
+     const sizeProxy=shell.querySelector('[data-grid-size-proxy]');
+     scaleProxy?.addEventListener('change',()=>{const real=byId('vtt-grid-scale');if(real){real.value=scaleProxy.value;real.dispatchEvent(new Event('change',{bubbles:true}));}});
+     sizeProxy?.addEventListener('change',()=>{window.__msGridSize=Math.max(20,Math.min(120,Number(sizeProxy.value)||50));call('drawGridLines');});
++    if(typeof ResizeObserver==='function'){const obs=new ResizeObserver(()=>requestAnimationFrame(refreshBounds));obs.observe(byId('ms-table-v3-desk'));}
++    if(typeof MutationObserver==='function')new MutationObserver(()=>requestAnimationFrame(refreshBounds)).observe(screen,{attributes:true,attributeFilter:['class']});
++    window.addEventListener('resize',refreshBounds);
+     mounted=true;
+   }
+ 
+@@ -145,7 +188,7 @@
+     ensureCampaignWindow();
+     if(asGM&&table?.id&&String(table.id)!=='draft')Promise.resolve(window.MS_SERVICES?.Games?.setLiveStatus?.(table.id,'active')).catch(()=>null);
+     [document.getElementById('vtt-cards-window'),document.getElementById('vtt-grid-window'),document.getElementById('vtt-chat-box'),document.getElementById('vtt-dice-box')].forEach(n=>{if(n)n.style.display='flex';});
+-    updateDirector();renderInitiative();setGridButtonState();
++    updateDirector();renderInitiative();setGridButtonState();requestAnimationFrame(refreshBounds);
+     const health=window.MS_TABLE_SESSION?.current?.();if(health){lastHealth=health;updateHealth(health);}
+     const tele=shell.querySelector('.ms-table-v3-telemetry');if(tele)tele.hidden=role()!=='admin';if(role()==='admin')renderTelemetry(health||{});
+     setRealtimeControlsEnabled(canUseRealtime());
+@@ -163,5 +206,5 @@
+ 
+   window.addEventListener('ms:table-shell-refresh',e=>mount(e.detail?.table,e.detail?.asGM));
+   document.addEventListener('DOMContentLoaded',()=>{window.MS_PLATFORM?.on?.('table:session-health',h=>{lastHealth=h||{};updateHealth(h);setRealtimeControlsEnabled(canUseRealtime());renderTelemetry(h);});window.MS_PLATFORM?.on?.('table:live-status',e=>{if(activeTable?.id&&String(e?.tableId||'')!==String(activeTable.id))return;livePaused=String(e?.status)==='paused';if(activeTable)activeTable.status=livePaused?'paused':'active';updateDirector();});window.MS_PLATFORM?.on?.('table:cache-updated',()=>renderInitiative());});
+-  window.MS_TABLE_SHELL=Object.freeze({version:'2.9.0',mount,renderTelemetry,renderInitiative,setRightPane,setMobilePane,ensureCampaignWindow,renderCampaignWindow});
++  window.MS_TABLE_SHELL=Object.freeze({version:'2.9.0',mount,renderTelemetry,renderInitiative,setRightPane,setMobilePane,setLayout,restoreLayout,workspaceBounds,refreshBounds,ensureCampaignWindow,renderCampaignWindow});
+ })();
+--- antes/css/table-sheets.css
++++ depois/css/table-sheets.css
+@@ -29,3 +29,11 @@
+ .ms-points-dialog label{display:grid;gap:8px;margin:18px 0}.ms-points-dialog :is(input,select,textarea){min-height:44px;width:100%;box-sizing:border-box;padding:10px;background:#080f18;color:#f4f6fa;border:1px solid #617089;border-radius:6px;font:inherit}.ms-points-dialog textarea{min-height:80px}.ms-points-dialog .primary{background:#d9c08b;color:#101720}.ms-points-dialog button:disabled{opacity:.5;cursor:not-allowed}
+ .ms-points-balances{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px;background:#192332;border-radius:8px}.ms-points-balances b{display:block}.ms-points-preview{display:block;padding:14px;border-left:3px solid #93d9dd;background:#172a30}.ms-points-dialog [data-error]{color:#ffb7ac}
+ @media(prefers-reduced-motion:reduce){.ms-sheet-mini,.ms-sheet-orb{transition:none;animation:none}}
++
++body.ms-workspace-active .ms-sheet-mini{width:min(360px,calc(var(--ms-work-width) - 8px));max-height:calc(var(--ms-work-height) - 8px)}
++body.ms-workspace-active .ms-participant-window{width:min(900px,calc(var(--ms-work-width) - 8px));max-width:calc(var(--ms-work-width) - 8px);max-height:calc(var(--ms-work-height) - 8px);resize:both}
++body.ms-workspace-active .ms-participant-window.is-docked{position:static;width:100%;height:100%;max-width:100%;max-height:100%;resize:none;box-shadow:none}
++.ms-participant-toolbar{display:flex;align-items:end;gap:8px;padding:10px;flex-wrap:wrap}.ms-participant-toolbar label{display:grid;flex:1;min-width:120px;gap:4px}.ms-participant-toolbar input{width:100%;box-sizing:border-box;min-height:44px;background:#080f18;color:#eff2f7;border:1px solid #536174;border-radius:6px;padding:8px;font:inherit}
++.ms-participant-actions{display:flex;gap:6px;flex-wrap:wrap}.ms-participant-grid.is-list{grid-template-columns:1fr}.ms-participant-grid.is-list article{padding:10px}.ms-participant-grid.is-list :is(.ms-participant-seal,p,dl){display:none}.ms-participant-grid.is-list h3{margin:0 0 8px}
++.ms-peg-path{display:flex;flex-wrap:wrap;gap:10px;padding:16px;border:1px solid #706347;background:linear-gradient(120deg,#222116,#101923);border-radius:10px;margin-bottom:14px;color:#edd5a3;font:500 .9375rem/1.5 Arial,sans-serif}.ms-peg-path span{flex:1;min-width:150px}
++.ms-peg-vault{background:radial-gradient(ellipse at top,#353022,#101720 70%)}.ms-peg-vault h3:before{content:'◈';display:inline-grid;place-items:center;width:48px;height:48px;margin-right:12px;border:1px solid #b59c64;border-radius:50%;color:#efcf87;font-size:2rem}.ms-peg-vault .ms-op-summary{display:flex;flex-wrap:wrap}.ms-peg-vault .ms-op-chip:first-child b{font:600 2rem Georgia,serif;color:#efcf87}.ms-peg-vault>button{margin:8px 8px 0 0}
+--- antes/css/table-shell-v3.css
++++ depois/css/table-shell-v3.css
+@@ -21,7 +21,7 @@
+ #screen-vtt .ms-table-v3-head-actions{display:flex;gap:8px;align-items:center;overflow-x:auto;min-width:0}
+ #screen-vtt .ms-table-v3-head-actions button{flex:0 0 auto}
+ #screen-vtt .ms-table-v3-head-actions .win-close-btn{display:none}
+-#screen-vtt .ms-table-v3-body{display:grid;grid-template-columns:224px minmax(0,1fr) 330px;min-width:0;min-height:0;overflow:hidden}
++#screen-vtt .ms-table-v3-body{display:grid;grid-template-columns:180px minmax(0,1fr) 350px;min-width:0;min-height:0;overflow:hidden}
+ #screen-vtt .ms-table-v3-left{display:flex;flex-direction:column;min-width:0;min-height:0;overflow:auto;border-right:1px solid var(--v3-line);background:#0c121b}
+ #screen-vtt .ms-table-v3-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:10px;border-bottom:1px solid var(--v3-line);flex:0 0 auto}
+ #screen-vtt .ms-table-v3-gridtools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:10px;border-bottom:1px solid var(--v3-line);flex:0 0 auto}
+@@ -30,15 +30,15 @@
+ #screen-vtt .ms-table-v3-gridmeta{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+ #screen-vtt .ms-table-v3-gridmeta label{display:grid;gap:4px;color:#b9c7d8;font-size:.75rem}
+ #screen-vtt .ms-table-v3-gridmeta input{width:100%}
+-#screen-vtt .ms-table-v3-cards{min-height:180px;flex:1;overflow:auto}
++#screen-vtt .ms-table-v3-cards{display:none}
+ #screen-vtt #vtt-active-cards-container{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;padding:10px}
+ #screen-vtt #vtt-active-cards-container .vtt-char-card{width:100%;min-width:0;margin:0}
+ #screen-vtt .ms-table-v3-stage{position:relative;min-width:0;min-height:0;overflow:hidden;background:#101722}
+ #screen-vtt .ms-table-v3-right{display:flex;flex-direction:column;min-width:0;min-height:0;border-left:1px solid var(--v3-line);background:#0c121b}
+ #screen-vtt .ms-table-v3-right-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:8px;border-bottom:1px solid var(--v3-line)}
+ #screen-vtt .ms-table-v3-right-tabs .active{color:#f5db9e;border-color:#a58950;background:#282319}
+-#screen-vtt .ms-table-v3-right-stack{flex:1;min-height:0;position:relative}
+-#screen-vtt .ms-table-v3-pane{position:absolute;inset:0;min-height:0;overflow:auto}
++#screen-vtt .ms-table-v3-right-stack{flex:1;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:1px;background:var(--v3-line)}
++#screen-vtt .ms-table-v3-pane{position:relative;min-width:0;min-height:0;overflow:auto;background:#0c121b}
+ #screen-vtt .ms-table-v3-chat,#screen-vtt .ms-table-v3-dice{height:100%;overflow:hidden}
+ #screen-vtt.ms-table-v3-active :is(#vtt-grid-window,#vtt-cards-window,#vtt-chat-box,#vtt-dice-box){position:static!important;left:auto!important;top:auto!important;transform:none!important;width:100%!important;height:100%!important;min-width:0;max-width:none;max-height:none;display:flex;flex-direction:column;margin:0;border:0;border-radius:0;box-shadow:none;background:transparent;overflow:hidden}
+ #screen-vtt :is(#vtt-grid-window,#vtt-cards-window,#vtt-chat-box,#vtt-dice-box) .win-close-btn{display:none}
+@@ -50,7 +50,6 @@
+ #screen-vtt #vtt-cards-window>.vtt-window-header{display:none}
+ #screen-vtt #vtt-chat-box :is(input,textarea){font-size:1rem}
+ #screen-vtt #vtt-chat-log,#screen-vtt #chat-messages{font-size:.9375rem;line-height:1.5;overflow-wrap:anywhere}
+-#screen-vtt #vtt-dice-box #dice-3d-container{min-height:150px;transform:none;margin:0 auto}
+ #screen-vtt .ms-table-v3-initiative{padding:12px;font-size:.9375rem}
+ #screen-vtt .ms-table-v3-initiative header,#screen-vtt .ms-table-v3-initiative-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+ #screen-vtt .ms-table-v3-initiative-list{display:grid;gap:8px;margin-bottom:12px}
+@@ -62,10 +61,10 @@
+ #screen-vtt [data-ms-table-presence]{min-width:0;display:flex;overflow:auto;white-space:nowrap}
+ #screen-vtt .ms-table-v3-footer-actions{display:flex;gap:6px}
+ #screen-vtt .ms-table-v3-mobile-nav{display:none}
+-#screen-vtt .ms-table-v3-overlays>.vtt-floating-window{position:fixed!important;inset:max(12px,var(--ms-environment-height,0px)) 4vw 12px!important;transform:none!important;width:auto!important;height:auto!important;min-width:0;max-height:calc(100dvh - 60px);border:1px solid #596371;border-radius:12px;z-index:15000;box-shadow:0 24px 80px #000}
++#screen-vtt .ms-table-v3-overlays>.vtt-floating-window{position:fixed!important;inset:auto!important;left:var(--ms-work-left,12px)!important;top:var(--ms-work-top,60px)!important;transform:none!important;width:var(--ms-work-width,90vw)!important;height:var(--ms-work-height,80dvh)!important;min-width:0;max-height:var(--ms-work-height,80dvh);border:1px solid #596371;border-radius:12px;z-index:15000;box-shadow:0 24px 80px #000}
+ #screen-vtt .ms-table-v3-overlays>.vtt-floating-window>.vtt-window-body{min-height:0;overflow:auto}
+ #screen-vtt .ms-table-v3-overlays>.vtt-floating-window .win-close-btn{min-width:44px;min-height:44px}
+-#screen-vtt .ms-table-v3-director{position:fixed;z-index:15010;top:calc(var(--ms-environment-height,0px) + 12px);right:12px;width:min(400px,calc(100vw - 24px));max-height:calc(100dvh - 72px);overflow:auto;padding:16px;border:1px solid #7c7159;border-radius:12px;background:#101720;box-shadow:0 24px 80px #000}
++#screen-vtt .ms-table-v3-director{position:fixed;z-index:15010;top:var(--ms-work-top,60px);left:var(--ms-work-left,12px);width:min(400px,var(--ms-work-width,90vw));max-height:var(--ms-work-height,80dvh);overflow:auto;padding:16px;border:1px solid #7c7159;border-radius:12px;background:#101720;box-shadow:0 24px 80px #000}
+ #screen-vtt .ms-table-v3-director header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+ #screen-vtt .ms-table-v3-director-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+ #screen-vtt .ms-table-v3-director label{display:grid;gap:8px}
+@@ -75,26 +74,30 @@
+ #screen-vtt .ms-table-v3-telemetry dl>div{display:flex;justify-content:space-between;gap:8px}
+ #screen-vtt .vtt-public-participant{padding:16px;text-align:center;color:#c3d5e5}
+ #screen-vtt .vtt-public-participant :is(small,em){display:block;font-size:.8125rem}
+-@media(max-width:1180px){#screen-vtt .ms-table-v3-body{grid-template-columns:200px minmax(0,1fr) 290px}#screen-vtt .ms-table-v3-head{grid-template-columns:minmax(0,1fr) auto}#screen-vtt .ms-table-v3-head-actions{grid-column:1/-1}}
++@media(max-width:1180px){#screen-vtt .ms-table-v3-body{grid-template-columns:160px minmax(0,1fr) 300px}#screen-vtt .ms-table-v3-head{grid-template-columns:minmax(0,1fr) auto}#screen-vtt .ms-table-v3-head-actions{grid-column:1/-1}}
+ @media(max-width:960px){
+  #screen-vtt .ms-table-v3{grid-template-rows:auto minmax(0,1fr) auto auto}
+  #screen-vtt .ms-table-v3-head{padding:8px 12px;gap:6px}
+  #screen-vtt .ms-table-v3-identity small{display:none}
+- #screen-vtt .ms-table-v3-body{display:block;position:relative;overflow:hidden}
++ #screen-vtt .ms-table-v3-body{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(140px,1fr) minmax(180px,32%);position:relative;overflow:hidden}
+  #screen-vtt .ms-table-v3-stage{height:100%}
+- #screen-vtt .ms-table-v3-left,#screen-vtt .ms-table-v3-right{display:none;height:100%;border:0}
+- #screen-vtt [data-mobile-pane="cards"] .ms-table-v3-stage,#screen-vtt [data-mobile-pane="tools"] .ms-table-v3-stage,#screen-vtt [data-mobile-pane="session"] .ms-table-v3-stage{display:none}
+- #screen-vtt [data-mobile-pane="cards"] .ms-table-v3-left,#screen-vtt [data-mobile-pane="tools"] .ms-table-v3-left{display:flex}
+- #screen-vtt [data-mobile-pane="cards"] .ms-table-v3-nav,#screen-vtt [data-mobile-pane="cards"] .ms-table-v3-gridtools{display:none}
+- #screen-vtt [data-mobile-pane="tools"] .ms-table-v3-cards{display:none}
+- #screen-vtt [data-mobile-pane="session"] .ms-table-v3-right{display:flex}
++ #screen-vtt .ms-table-v3-left{display:none;position:fixed;left:var(--ms-work-left);top:var(--ms-work-top);width:var(--ms-work-width);height:var(--ms-work-height);z-index:16010}
++ #screen-vtt [data-mobile-pane="tools"] .ms-table-v3-left{display:flex}
++ #screen-vtt .ms-table-v3-right{display:flex;border-top:1px solid var(--v3-line)}
++ #screen-vtt .ms-table-v3-right-tabs{display:none}
++ #screen-vtt .ms-table-v3-right-stack{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
++ #screen-vtt .ms-table-v3-workspace{min-height:0}
++ #screen-vtt .ms-workspace-presets{overflow-x:auto;flex-wrap:nowrap}
++ #screen-vtt .ms-workspace-presets button{flex:0 0 auto}
++ #screen-vtt #vtt-chat-box .vtt-window-body{padding:4px}
++ #screen-vtt #vtt-chat-box .vtt-window-body>div:last-child{flex-wrap:wrap}
++ #screen-vtt #vtt-chat-box input{width:80px}
+  #screen-vtt .ms-table-v3-cards{min-height:0}
+  #screen-vtt #vtt-active-cards-container{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+  #screen-vtt .ms-table-v3-mobile-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:#0c121b;border-top:1px solid var(--v3-line)}
+  #screen-vtt .ms-table-v3-mobile-nav button{padding:8px 4px;font-size:.8125rem}
+  #screen-vtt .ms-table-v3-footer{min-height:30px;padding:4px 10px}
+  #screen-vtt .ms-table-v3-footer-actions{display:none}
+- #screen-vtt .ms-table-v3-overlays>.vtt-floating-window{inset:calc(var(--ms-environment-height,0px) + 8px) 8px 8px!important}
+ }
+ @media(prefers-reduced-motion:reduce){#screen-vtt *{animation:none!important;transition:none!important}}
+ /* A cena domina a sessão; a janela Fichas oferece a consulta ampliada. */
+@@ -102,3 +105,29 @@
+ #screen-vtt .ms-table-v3.is-paused .ms-table-v3-head{border-bottom:3px solid #e5b866}
+ #screen-vtt .ms-table-v3.is-paused [data-ms-table-title]:after{content:" · PAUSADA";font:600 .8125rem Arial,sans-serif;color:#e5b866}
+ #screen-vtt .ms-table-v3 [data-action="leave"]{color:#f4cac0;border-color:#80554e}
++
++/* A área de comunicação nunca é substituída por uma janela de trabalho. */
++#screen-vtt .ms-table-v3-workspace{display:grid;grid-template-rows:auto minmax(0,1fr);min-width:0;min-height:0;overflow:hidden}
++#screen-vtt .ms-workspace-presets{display:flex;gap:6px;padding:6px;background:#101720;overflow:auto}
++#screen-vtt .ms-table-v3-desk{display:grid;grid-template-columns:minmax(0,1fr);min-height:0;min-width:0;overflow:hidden;position:relative;gap:8px}
++#screen-vtt .ms-table-v3[data-layout="follow"] .ms-table-v3-desk{grid-template-columns:minmax(0,3fr) minmax(240px,2fr)}
++#screen-vtt .ms-table-v3-stage{display:grid;grid-template-rows:auto minmax(0,1fr);max-width:100%;max-height:100%;resize:both;border:1px solid #3c4857}
++#screen-vtt .ms-map-window-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 10px;font-size:.875rem}
++#screen-vtt .ms-map-window-body,#ms-participant-slot{min-height:0;min-width:0;overflow:hidden}
++#screen-vtt .ms-table-v3-roster-pane{position:fixed;left:var(--ms-work-left);top:var(--ms-work-top);width:var(--ms-work-width);max-height:var(--ms-work-height);z-index:16010;border:1px solid #8c7d60}
++#screen-vtt #vtt-dice-box .vtt-window-body{display:flex;flex-direction:column;gap:6px}
++#screen-vtt #vtt-dice-box #dice-3d-container{min-height:0;width:130px;height:130px;transform:none;margin:0 auto}
++#screen-vtt .ms-dice-animation{order:5}
++#screen-vtt .ms-dice-animation summary{cursor:pointer;min-height:44px;padding:10px}
++#screen-vtt #vtt-dice-box .vtt-window-body>div{margin-top:0!important}
++#screen-vtt #vtt-dice-box #dice-result-text{margin:4px 0;font-size:1rem}
++#screen-vtt #chat-messages{min-height:0}
++body.ms-workspace-active :is(.ms-crew-center,.ms-quick-sheets,.ms-viewer-modal,.ms-evo-action-dialog,.ms-history-modal,.modal,#equipment-shop-modal){position:fixed;inset:auto!important;left:var(--ms-work-left)!important;top:var(--ms-work-top)!important;width:var(--ms-work-width)!important;height:var(--ms-work-height)!important;max-height:var(--ms-work-height);min-width:0;overflow:auto;box-sizing:border-box;padding:8px}
++body.ms-workspace-active :is(.ms-op-shell,.ms-viewer-shell){max-height:100%;min-width:0;width:100%}
++body.ms-workspace-active .ms-points-dialog{position:fixed;inset:auto;left:var(--ms-work-left);top:var(--ms-work-top);width:min(560px,var(--ms-work-width));max-height:var(--ms-work-height);margin:0;box-sizing:border-box;z-index:18000}
++@media(max-width:960px){#screen-vtt .ms-table-v3[data-layout="follow"] .ms-table-v3-desk{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(100px,1fr) minmax(120px,1fr)}}
++
++body.ms-workspace-active :is(.ms-evo-action-dialog,.modal)>:is(section,.modal-content){max-width:100%;max-height:100%;min-width:0;box-sizing:border-box;overflow:auto}
++body.ms-workspace-active .ms-evo-action-dialog{z-index:17500}
++body.ms-workspace-active .ms-op-evolution{grid-template-columns:minmax(0,1fr)}
++@media(max-width:960px){#screen-vtt [data-mobile-pane="session"] #chat-input{outline:2px solid var(--v3-cyan)}}
+--- antes/tests/art-experience.test.js
++++ depois/tests/art-experience.test.js
+@@ -5,7 +5,7 @@
+ import crypto from 'node:crypto';
+ const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
+ const flush=()=>new Promise(r=>setImmediate(r));
+-function runtime(){const c={console,document:{readyState:'loading',addEventListener(){},body:{dataset:{}}},addEventListener(){},innerWidth:390,innerHeight:844};c.window=c;vm.createContext(c);return c;}
++function runtime(){const c={console,document:{readyState:'loading',addEventListener(){},body:{dataset:{},classList:{contains:()=>false,toggle(){}}}},addEventListener(){},innerWidth:390,innerHeight:844};c.window=c;vm.createContext(c);return c;}
+ test('miniaturas: jogador recebe somente suas fichas e Mestre recebe participantes da mesa',()=>{
+  const c=runtime();vm.runInContext(read('js/table-sheets.js'),c);
+  const players=[{id:'mine',userId:'u1'},{id:'other',userId:'u2'},{id:'npc',isNPC:true,userId:'u1'},{id:'alias',sourceOwnerId:'p1'}];
+@@ -76,7 +76,7 @@
+ });
+ function floatingRuntime(){
+  const c=runtime(),all=[];
+- function node(){const events={},children=[],queries=new Map();const n={children,style:{},dataset:{},hidden:false,offsetWidth:60,offsetHeight:60,textContent:'',setAttribute(k,v){this[k]=v;},focus(){},setPointerCapture(){},addEventListener(k,fn){events[k]=fn;},fire(k,extra={}){return events[k]?.({button:0,pointerId:1,clientX:100,clientY:100,preventDefault(){},...extra});},getBoundingClientRect(){return {left:parseFloat(this.style.left)||0,top:parseFloat(this.style.top)||0,right:(parseFloat(this.style.left)||0)+60};},append(...items){for(const x of items){x.parent=this;children.push(x);}},appendChild(x){this.append(x);},remove(){this.removed=true;for(const x of children)x.remove();},querySelector(s){if(!queries.has(s))queries.set(s,node());return queries.get(s);},querySelectorAll(){return []}};all.push(n);return n;}
++ function node(){const events={},children=[],queries=new Map();const n={children,classList:{contains:()=>false,toggle(){}},style:{},dataset:{},hidden:false,offsetWidth:60,offsetHeight:60,textContent:'',setAttribute(k,v){this[k]=v;},focus(){},setPointerCapture(){},addEventListener(k,fn){events[k]=fn;},fire(k,extra={}){return events[k]?.({button:0,pointerId:1,clientX:100,clientY:100,preventDefault(){},...extra});},getBoundingClientRect(){return {left:parseFloat(this.style.left)||0,top:parseFloat(this.style.top)||0,right:(parseFloat(this.style.left)||0)+60};},append(...items){for(const x of items){x.parent=this;children.push(x);}},appendChild(x){this.append(x);},remove(){this.removed=true;for(const x of children)x.remove();},querySelector(s){if(!queries.has(s))queries.set(s,node());return queries.get(s);},querySelectorAll(){return []}};all.push(n);return n;}
+  const screen=node();screen.id='screen-vtt';screen.classList={contains:()=>true};c.document.createElement=node;c.document.body=node();c.document.getElementById=id=>all.find(n=>!n.removed&&n.id===id)||null;c.sessionStorage={getItem:()=>null,setItem(){}};
+  c.currentUser={id:'u1'};let ctx={table:{id:'t1'},asGM:false,players:[{id:'c1',name:'Raven',isMe:true}]};c.msGetCurrentTableContext=()=>ctx;
+  c.MS_FEATURES={ensureProgression:async()=>true};c.MS_SERVICES={Characters:{view:async()=>({id:'c1',payload:{name:'Raven'}})}};c.MS_PROGRESSION={renderSheet:p=>'FICHA '+p.name};
+@@ -103,3 +103,14 @@
+  assert.match(root.innerHTML,/assets\/art-direction\/portal-threshold.png/);assert.match(root.innerHTML,/EXPLORAR OS MUNDOS/);assert.doesNotMatch(root.innerHTML,/CONTINUAR MINHA MESA|portal-hero-console/);
+  c.currentUser={id:'gm',username:'Mestre',role:'mestre'};c.renderOfficialPortal();assert.match(root.innerHTML,/CONTINUAR MINHA MESA/);assert.match(root.innerHTML,/MINHAS PERSONAGENS/);
+ });
++test('miniaturas ficam dentro do espaço de trabalho, sem cobrir comunicação',()=>{
++ const c=runtime();c.MS_TABLE_SHELL={workspaceBounds:()=>({left:180,top:140,right:980,bottom:740,width:800,height:600})};vm.runInContext(read('js/table-sheets.js'),c);
++ assert.deepEqual(JSON.parse(JSON.stringify(c.MS_TABLE_SHEETS.clamp(4000,4000,360,300))),{x:616,y:436});
++ assert.deepEqual(JSON.parse(JSON.stringify(c.MS_TABLE_SHEETS.clamp(-1,-1,360,300))),{x:184,y:144});
++});
++test('formulário de PEG na Mesa permanece não modal e Escape cancela sem movimentação',async()=>{
++ const r=formRuntime({grant:async()=>{throw new Error('Não deveria executar');}});let shown=0;
++ r.c.document.body.classList.contains=()=>true;r.dialog.show=()=>shown++;r.dialog.showModal=()=>assert.fail('não deve bloquear chat');
++ const result=r.c.MS_POINTS.open('grant',{tableId:'t1',characterId:'c1'});await flush();assert.equal(shown,1);
++ r.dialog.keydown({key:'Escape',preventDefault(){}});assert.equal(await result,null);assert.equal(r.nodes.length,0);
++});
+--- antes/tests/consolidation-runtime.test.js
++++ depois/tests/consolidation-runtime.test.js
+@@ -159,7 +159,7 @@
+   for(const width of [320,390,640,760,761,960,961,1024,1180,1181,1440,1920]){
+     const values=cssValues(css,width);
+     assert.equal(values['#screen-vtt .ms-table-v3-mobile-nav|display'].value,width<=960?'grid':'none');
+-    assert.equal(values['#screen-vtt .ms-table-v3-body|display'].value,width<=960?'block':'grid');
++    assert.equal(values['#screen-vtt .ms-table-v3-body|display'].value,'grid');
+     assert.equal(values['#screen-vtt .ms-table-v3 button|min-height'].value,'44px');
+     assert.equal(values['#screen-vtt .ms-table-v3-head-actions|display'].value,'flex');
+   }
+--- antes/tests/evolution-gradual-v2.10.1.test.js
++++ depois/tests/evolution-gradual-v2.10.1.test.js
+@@ -115,7 +115,7 @@
+ });
+ 
+ test('Central Operacional concentra Personagens Solicitações Treinamentos Ledger e Arconte recebe métricas',()=>{
+-  for(const token of ['PERSONAGENS','SOLICITAÇÕES','TREINAMENTOS','LEDGER','GERENCIAR EVOLUÇÃO','resolveEvidence','resolveUpgrade','resolveTraining','resolveDevelopment'])assert.ok(operational.includes(token),token);
++  for(const token of ['PERSONAGENS','SOLICITAÇÕES','TREINAMENTOS','HISTÓRICO','GERENCIAR EVOLUÇÃO','resolveEvidence','resolveUpgrade','resolveTraining','resolveDevelopment'])assert.ok(operational.includes(token),token);
+   const legacy=read('js/progression-v2.8.9.js');assert.match(legacy,/pronta\(s\) para evoluir/);assert.match(legacy,/pending_evolution_count/);assert.match(legacy,/data-admin-ledger/);assert.match(legacy,/MEMÓRIA DE EVOLUÇÃO/);
+ });
+ 
+--- antes/tests/experience-v2.10.2.test.js
++++ depois/tests/experience-v2.10.2.test.js
+@@ -4,7 +4,7 @@
+ import vm from 'node:vm';
+ const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
+ function context(extra={}){
+- const c={console,setTimeout:()=>0,clearTimeout(){},document:{readyState:'loading',getElementById:()=>null,querySelectorAll:()=>[],addEventListener(){}},addEventListener(){},...extra};c.window=c;vm.createContext(c);return c;
++ const c={console,setTimeout:()=>0,clearTimeout(){},document:{body:{classList:{toggle(){}}},readyState:'loading',getElementById:()=>null,querySelectorAll:()=>[],addEventListener(){}},addEventListener(){},...extra};c.window=c;vm.createContext(c);return c;
+ }
+ test('Mesa móvel alterna painel e seleção acessível sem recriar o conteúdo',()=>{
+  let resizes=0;const buttons=['stage','cards','tools','session'].map(p=>({dataset:{mobilePaneTarget:p},setAttribute(k,v){this[k]=v;}}));
+@@ -48,3 +48,19 @@
+  const version=JSON.parse(read('package.json')).version,c=context();vm.runInContext(read('js/ms-version.js'),c);
+  assert.equal(c.MS_VERSION,version);assert.equal(read('VERSION.txt').trim(),version);assert.ok(read('index.html').includes('Portal Oficial V'+version));
+ });
++test('chat e dados permanecem visíveis ao abrir e fechar iniciativa',()=>{
++ let focusChat=0;const initiative={hidden:true};const c=context();c.document.querySelector=s=>s==='.ms-table-v3-roster-pane'?initiative:null;c.document.getElementById=id=>id==='chat-input'?{focus(){focusChat++;}}:null;
++ vm.runInContext(read('js/table-shell-v3.js'),c);c.MS_TABLE_SHELL.setRightPane('chat');assert.equal(focusChat,1);assert.equal(initiative.hidden,true);
++ c.MS_TABLE_SHELL.setRightPane('initiative');assert.equal(initiative.hidden,false);c.MS_TABLE_SHELL.setRightPane('initiative');assert.equal(initiative.hidden,true);
++});
++test('arranjos reutilizam a janela dos participantes e restauram dimensões do mapa',()=>{
++ const calls=[],buttons=['conduct','follow','prepare'].map(layout=>({dataset:{layout},setAttribute(k,v){this[k]=v;}}));const shell={dataset:{},querySelectorAll:()=>buttons},stage={style:{width:'200px',height:'100px'}};
++ const c=context({requestAnimationFrame(){},MS_TABLE_SHEETS:{dock:x=>calls.push(x),restore:()=>calls.push('restore')}});c.document.getElementById=id=>id==='ms-table-v3'?shell:id==='ms-table-v3-stage'?stage:null;
++ vm.runInContext(read('js/table-shell-v3.js'),c);c.MS_TABLE_SHELL.setLayout('follow');assert.equal(shell.dataset.layout,'follow');assert.equal(stage.style.width,'');assert.equal(buttons[1]['aria-pressed'],'true');assert.deepEqual(calls,[true]);
++ c.MS_TABLE_SHELL.restoreLayout();assert.equal(shell.dataset.layout,'conduct');assert.deepEqual(calls,[true,false,'restore']);
++});
++test('limites das janelas acompanham a área central e são publicados em CSS',()=>{
++ const props={};let reflows=0,resizes=0;const rect={left:180,top:140,right:980,bottom:740,width:800,height:600};const c=context({MS_TABLE_SHEETS:{reflow:()=>reflows++},msResizeVttGrid:()=>resizes++});
++ c.document.body.style={setProperty:(k,v)=>props[k]=v};c.document.getElementById=id=>id==='screen-vtt'?{classList:{contains:()=>true}}:id==='ms-table-v3-desk'?{getBoundingClientRect:()=>rect}:null;
++ vm.runInContext(read('js/table-shell-v3.js'),c);c.MS_TABLE_SHELL.refreshBounds();assert.equal(props['--ms-work-width'],'800px');assert.equal(props['--ms-work-left'],'180px');assert.equal(reflows,1);assert.equal(resizes,1);
++});
+--- antes/tests/operational-control-v2.9.0.test.js
++++ depois/tests/operational-control-v2.9.0.test.js
+@@ -37,7 +37,7 @@
+ });
+ 
+ test('Central Operacional TRIPULAÇÃO contém Participantes Solicitações Evolução e ações de ficha/admissão/PEG',()=>{
+-  for(const token of ['PARTICIPANTES','SOLICITAÇÕES','EVOLUÇÃO','VER FICHA','ACEITAR','RECUSAR','CONCEDER PONTOS','ABASTECER RESERVA','RETIRAR PONTOS']) assert.match(op,new RegExp(token));
++  for(const token of ['PARTICIPANTES','SOLICITAÇÕES','EVOLUÇÃO','VER FICHA','ACEITAR','RECUSAR','CONCEDER PONTOS','ABASTECER RESERVA','DEVOLVER À RESERVA']) assert.match(op,new RegExp(token));
+   assert.match(op,/data-crew-count/);
+   assert.match(shell,/msOpenCrewCenter|ensureOperational/);
+   assert.match(op,/msRefreshCurrentVttRoster/);

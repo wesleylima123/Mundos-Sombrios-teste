@@ -1,0 +1,13 @@
+SITE OFICIAL MS — RELEASE VALIDATION V2.10.6
+
+[OK] Versão canônica: 2.10.6
+[OK] Syntax check: 61 arquivos JavaScript válidos
+[OK] Testes: 304 total / 285 pass / 0 fail / 19 skip
+[OK] npm run build
+[OK] offline-local reconstruído
+[OK] sandbox-offline reconstruído
+[OK] dist preparado pelo build
+[OK] Grid Engine carregado sob demanda com a Mesa
+[OK] Fallback de compatibilidade 16×16
+[OK] Matriz por Cena e sincronização via evento scene
+[OK] Totens dimensionados em células

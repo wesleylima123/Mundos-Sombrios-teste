@@ -1,0 +1,9 @@
+VALIDAÇÃO V2.11.0
+- npm run build: APROVADO
+- JavaScript: 63 arquivos válidos
+- Testes: 316 executados; 297 aprovados; 0 falhas; 19 condicionais/ignorados
+- Offline: reconstruído da árvore canônica V2.11.0
+- SANDBOX: reconstruído da árvore canônica V2.11.0
+- Grid Architect: carregamento sob demanda pela feature Mesa
+- Assets Architect: catálogos locais + mapas/props/tokens
+- Distribuição: dist/ não deve ser incluído nos pacotes completos

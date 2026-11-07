@@ -1,0 +1,11 @@
+SITE OFICIAL MS — V2.10.7
+
+Atualização principal: Preview vivo e não destrutivo da Matriz Tática.
+
+O Mestre vê alterações de formato, dimensões, células, offsets, rotação, estilo, escala e calibração imediatamente sobre o mapa. Presets e tamanho de totens também ficam em rascunho até APLICAR À CENA.
+
+DESCARTAR restaura o estado oficial. Movimento/snap testados durante o editor não são enviados nem persistidos.
+
+Opcionalmente, o Mestre pode compartilhar a pré-visualização com os jogadores por broadcast efêmero, sem registrar cada ajuste no banco.
+
+Validação: 307 testes / 288 aprovados / 0 falhas / 19 condicionais ou ignorados.

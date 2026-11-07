@@ -1,0 +1,5 @@
+Versão 2.11.0
+Build validado antes do empacotamento.
+Testes: 316 total; 297 aprovados; 0 falhas; 19 condicionais/ignorados.
+JavaScript: 63 arquivos válidos.
+Pacote recriado e validado por CRC + extração + SHA-256.

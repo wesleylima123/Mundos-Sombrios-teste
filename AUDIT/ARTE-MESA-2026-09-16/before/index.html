@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mundos Sombrios — Portal Oficial V2.10.2</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="assets/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="assets/favicon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto:wght@300;400;700&family=MedievalSharp&family=Orbitron&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/ms-platform.css">
+    <link rel="stylesheet" href="css/ms-online.css">
+    <link rel="stylesheet" href="css/offline-sandbox.css">
+    <link rel="stylesheet" href="css/table-shell-v3.css">
+    <link rel="stylesheet" href="css/table-studio-v2.8.6.css">
+    <link rel="stylesheet" href="css/world-codices.css">
+    <link rel="stylesheet" href="css/master-room.css">
+    <link rel="stylesheet" href="css/master-tools.css">
+    <link rel="stylesheet" href="css/master-command-center.css">
+    <link rel="stylesheet" href="css/master-shield.css">
+    <link rel="stylesheet" href="css/master-atlas.css">
+    <link rel="stylesheet" href="css/soul-economy.css">
+    <link rel="stylesheet" href="css/operational-control-v2.10.1.css">
+    <link rel="stylesheet" href="css/portal/portal.css">
+    <link rel="stylesheet" href="css/portal/portal-visual-v0.62.css">
+    <link rel="stylesheet" href="css/portal/portal-editorial-v2.2.css">
+
+</head>
+<body class="ms-shell-booting">
+    <div id="particles"></div>
+    
+    <!-- EMBLEMA DE MESTRE (Cristal Divino 3D, Flutuante e Inapagável) -->
+    <div id="master-emblem" style="display:none;" title="Cristal Divino do Mestre (Inapagável)">
+        <div class="divine-crystal">
+            <div class="halo halo-1"></div>
+            <div class="halo halo-2"></div>
+            <div class="halo halo-3"></div>
+            <div class="crystal-core">
+                <div class="crystal-horizontal"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTAINER PARA JANELAS FLUTUANTES DO ADM -->
+    <div id="admin-requests-container" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9500;"></div>
+
+    <div id="app">
+        <!-- PORTAL OFICIAL -->
+        <section id="screen-portal" class="screen active" aria-label="Portal Oficial Mundos Sombrios" aria-hidden="false"></section>
+
+        <!-- TELA -1: LOGIN -->
+        <section id="screen-login" class="screen" data-screen-role="auth-login" aria-hidden="true">
+            <div class="screen-nav-actions auth-login-nav" role="navigation" aria-label="Navegação do acesso">
+                <button class="back-btn" type="button" onclick="returnToOfficialPortal()">&#8592; PÁGINA INICIAL</button>
+            </div>
+            <div class="souls-header">
+                <h1>Mundos Sombrios</h1>
+                <p>O Portal Absoluto. Identifique-se para acessar o Vazio.</p>
+            </div>
+            
+            <div class="login-box" style="background:rgba(20,20,20,0.8); padding:40px; border:1px solid var(--theme-color, #d4af37); border-radius:8px; width:100%; max-width:400px; box-shadow:0 0 30px rgba(0,0,0,0.8);">
+                <div class="form-group">
+                    <label>Usuário ou e-mail:</label>
+                    <input type="text" id="login-user" autocomplete="username" placeholder="Nome de usuário ou e-mail...">
+                </div>
+                <div class="form-group">
+                    <label for="login-pass">Senha:</label>
+                    <div class="login-password-field">
+                        <input type="password" id="login-pass" autocomplete="current-password" placeholder="Sua chave secreta..." aria-describedby="login-status">
+                        <button type="button" id="login-pass-toggle" class="login-password-toggle" aria-pressed="false" aria-label="Mostrar senha" onclick="toggleLoginPassword()">MOSTRAR</button>
+                    </div>
+                </div>
+                <button id="login-submit" class="souls-btn" style="width:100%; margin: 20px 0 10px 0;" onclick="doLogin()">ATRAVESSAR PORTAL</button>
+                <div id="login-status" class="login-status" role="status" aria-live="polite" aria-atomic="true"></div>
+                
+                <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                    <button class="souls-btn small-btn" style="border:none; color:#00ffcc;" onclick="openRegister()">Despertar Conta</button>
+                    <button class="souls-btn small-btn" style="border:none; color:#888;" onclick="openRecover()">Esqueci a Senha</button>
+                </div>
+            <div style="margin-top:14px; text-align:center;">
+                    <button id="btn-initial-setup" class="souls-btn small-btn" style="display:none; border-color:#ff7700; color:#ff9a44;" onclick="openInitialSetup()">CONFIGURAR ADM INICIAL</button>
+                    <div id="offline-login-hint" class="offline-login-hint" hidden></div>
+                    <div id="online-login-hint" style="font-size:.72rem; color:#777; margin-top:8px;">Instalação online: nenhuma senha fica no código. O ADM inicial é criado pelo Supabase Auth + RPC seguro.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TELA 0: SELEÇÃO DE MODO DE JOGO & ANCORAGEM GERAL -->
+        <section id="screen-mode-select" class="screen" aria-hidden="true">
+            <div class="screen-nav-actions" role="navigation" aria-label="Navegação da área de jogo">
+                <button class="back-btn" type="button" onclick="returnToOfficialPortal()">&#8592; PORTAL OFICIAL</button>
+                <button class="back-btn" type="button" onclick="doLogout()" style="color:#ff3333;">&#8592; Desconectar</button>
+            </div>
+            <div class="souls-header">
+                <h1>Mundos Sombrios</h1>
+                <p>Bem-vindo, <span id="display-username" style="color:#d4af37; font-weight:bold;"></span>. Escolha a fenda pela qual sua existência se manifestará.</p>
+            </div>
+            
+            <div class="spheres-container">
+                <div class="sphere-wrapper" onclick="selectGameMode('exodo')">
+                    <div class="sphere tech-sphere">
+                        <div class="sphere-inner"></div>
+                        <div class="orbit-ring ring-1"></div>
+                        <div class="orbit-ring ring-2"></div>
+                    </div>
+                    <div class="sphere-label">
+                        <h3>Êxodo: Assimilação</h3>
+                        <p>Acesse seu Santuário Pessoal (Fichas)</p>
+                    </div>
+                </div>
+
+                <div class="sphere-wrapper" onclick="selectGameMode('ocultatun')">
+                    <div class="sphere paranormal-sphere">
+                        <div class="sphere-inner"></div>
+                        <div class="orbit-ring ring-1"></div>
+                        <div class="orbit-ring ring-2"></div>
+                    </div>
+                    <div class="sphere-label">
+                        <h3>Ocultatun</h3>
+                        <p>Acesse seu Santuário Pessoal (Fichas)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-actions" style="margin-top: 60px; text-align: center; width: 100%; display:flex; flex-direction:column; gap:20px; align-items:center;">
+                <button class="souls-btn" type="button" data-global-sheets="1" onclick="window.MS_FEATURES?.ensureOperational?.().then(()=>window.msOpenQuickSheets?.())" style="border-color:#d4af37;color:#e5cd83;padding:14px 38px;font-size:1.08rem;box-shadow:0 0 18px rgba(212,175,55,.12);">
+                    FICHAS · ACESSO RÁPIDO
+                </button>
+                <button class="souls-btn" onclick="showScreen('screen-ancoragem')" style="border-color:#ff00ff; color:#ff00ff; padding: 20px 50px; font-size: 1.5rem; text-shadow: 0 0 10px #ff00ff; box-shadow: 0 0 20px rgba(255,0,255,0.2);">
+                    ANCORAGEM (SALA DOS MESTRES)
+                </button>
+                <button class="souls-btn" onclick="openCodex()" style="border-color:#7aa7ff; color:#9fc1ff; padding: 12px 35px; font-size: 1.05rem; box-shadow: 0 0 15px rgba(100,150,255,0.15);">
+                    CÓDICE DOS MUNDOS (REGRAS & EXPANSÕES)
+                </button>
+                <button id="btn-admin-panel" class="souls-btn" onclick="openAdminPanel()" style="display:none; border-color:#00ffcc; color:#00ffcc; padding: 10px 30px; font-size: 1rem;">
+                    SISTEMA DO ARCONTE (ADM)
+                </button>
+                <button id="btn-master-shield" class="souls-btn" onclick="openMasterShield()" style="display:none; border-color:#69e8ff; color:#69e8ff; padding: 10px 30px; font-size: 1rem;">
+                    ESCUDO DO MESTRE
+                </button>
+            </div>
+        </section>
+
+        
+        <!-- TELA 0.5: CÓDICE DOS MUNDOS -->
+        <section id="screen-codex" class="screen codex-screen" aria-label="Códices dos Mundos" aria-hidden="true"></section>
+
+        <!-- TELA 1: SANTUÁRIO DAS ALMAS (PRIVADO) -->
+        <section id="screen-char-select" class="screen" aria-hidden="true">
+            <button class="back-btn" onclick="showScreen('screen-mode-select')">&#8592; Voltar à Encruzilhada</button>
+            <div class="souls-header">
+                <h1 id="sanctuary-title">Santuário das Almas</h1>
+                <p id="sanctuary-subtitle">O seu refúgio pessoal. Fichas aqui forjadas são privadas e intransferíveis.</p>
+                <p id="sanctuary-limits" style="color:#888; font-size:0.9rem; margin-top:5px;"></p>
+            </div>
+            <div class="carousel-section" aria-label="Fichas do Santuário">
+                <button id="carousel-prev" class="nav-arrow left-arrow" type="button" onclick="prevCard()" aria-label="Ficha anterior">&#10094;</button>
+                <div id="character-list" class="char-list"></div>
+                <button id="carousel-next" class="nav-arrow right-arrow" type="button" onclick="nextCard()" aria-label="Próxima ficha">&#10095;</button>
+            </div>
+            <div class="menu-actions" style="display:flex; flex-wrap:wrap; justify-content:center;">
+                <button class="souls-btn" type="button" onclick="beginNewCharacter()" id="btn-new-char">DESPERTAR NOVA ALMA</button>
+                <input type="file" id="import-json" accept=".json" style="display:none" onchange="importCharacterJSON(event)">
+                <button class="souls-btn" type="button" onclick="document.getElementById('import-json').click()" style="border-color:#00ffcc; color:#00ffcc;">IMPORTAR ALMA</button>
+            </div>
+        </section>
+
+        <!-- TELA 2: ANCORAGEM / SALA DE REGISTROS -->
+        <section id="screen-ancoragem" class="screen" aria-hidden="true">
+            <div class="screen-nav-actions" role="navigation" aria-label="Navegação da Sala dos Mestres">
+                <button class="back-btn" type="button" onclick="returnToOfficialPortal()">&#8592; PORTAL OFICIAL</button>
+                <button class="back-btn" type="button" onclick="showScreen('screen-mode-select')">&#8592; Retornar à Encruzilhada</button>
+            </div>
+            <div class="souls-header">
+                <h2>Ancoragem</h2>
+                <p>O Nexo entre Mundos e Mesas de RPG</p>
+            </div>
+            <div class="tabs master-tabs" role="tablist" aria-label="Ancoragem">
+                <button type="button" class="tab-btn active" id="tab-btn-player" role="tab" aria-controls="ancoragem-player-tab" onclick="switchAncoragemTab('player')">👁️ Visão do Jogador</button>
+                <button type="button" class="tab-btn" id="tab-btn-gm" role="tab" aria-controls="ancoragem-gm-tab" onclick="switchAncoragemTab('gm')" style="display:none">♛ Sala dos Mestres</button>
+                <button type="button" class="tab-btn" id="tab-btn-directory" role="tab" aria-controls="ancoragem-directory-tab" onclick="switchAncoragemTab('directory')">⌖ Diretório de Fendas</button>
+            </div>
+            <div class="ancoragem-container ancoragem-modern">
+                <div id="ancoragem-player-tab" class="ancoragem-content active" role="tabpanel">
+                    <div class="player-room-intro">
+                        <div><span class="mr-kicker">SALA DE CONEXÕES</span><h3>Atravessar uma Fenda</h3><p>Use o código recebido do Mestre para entrar em uma mesa e escolha a alma que será vinculada à sessão.</p></div>
+                        <button type="button" class="souls-btn" onclick="openJoinTableModal()">ATRAVESSAR VÉU</button>
+                    </div>
+                    <div class="portals-grid" id="player-tables-list"></div>
+                </div>
+                <div id="ancoragem-gm-tab" class="ancoragem-content" style="display:none" role="tabpanel"></div>
+                <div id="ancoragem-directory-tab" class="ancoragem-content" style="display:none" role="tabpanel"><div id="table-directory-root"></div></div>
+            </div>
+        </section>
+
+        <!-- TELA ESCUDO DO MESTRE — integrado ao site original -->
+        <section id="screen-master-shield" class="screen master-shield-screen" aria-hidden="true">
+            <div class="screen-nav-actions" role="navigation" aria-label="Navegação do Escudo do Mestre">
+                <button class="back-btn" id="master-shield-back" type="button" onclick="returnFromMasterShield()">&#8592; VOLTAR</button>
+            </div>
+            <div class="master-shield-head">
+                <div><span class="master-shield-kicker">PROTOCOLO RESTRITO</span><h1>Escudo do Mestre</h1><p>Enciclopédia, mapa, economia, regras e arquivos reunidos em uma página privada para Mestres e ADM.</p></div>
+                <div id="master-shield-role" class="master-shield-badge">ACESSO RESTRITO</div>
+            </div>
+            <div id="master-shield-content">
+                <div class="master-shield-nav" role="tablist">
+                    <button type="button" data-ms-view="linha" class="active">Cronologia</button>
+                    <button type="button" data-ms-view="mapa">Mapa</button>
+                    <button type="button" data-ms-view="economia">Economia</button>
+                    <button type="button" data-ms-view="exodo">Êxodo</button>
+                    <button type="button" data-ms-view="ocultatun">Ocultatun</button>
+                    <button type="button" data-ms-view="ordem">Ordem</button>
+                    <button type="button" data-ms-view="envolto">Envolto</button>
+                    <button type="button" data-ms-view="arvores">Árvores</button>
+                    <button type="button" data-ms-view="historia">Registros Históricos</button>
+                    <button type="button" data-ms-view="arquivos">Arquivos</button>
+                </div>
+                <div class="master-shield-body">
+                    <section id="ms-v-linha" class="ms-view active"></section>
+                    <section id="ms-v-mapa" class="ms-view"></section>
+                    <section id="ms-v-economia" class="ms-view"></section>
+                    <section id="ms-v-exodo" class="ms-view"></section>
+                    <section id="ms-v-ocultatun" class="ms-view"></section>
+                    <section id="ms-v-ordem" class="ms-view"></section>
+                    <section id="ms-v-envolto" class="ms-view"></section>
+                    <section id="ms-v-arvores" class="ms-view"></section>
+                    <section id="ms-v-historia" class="ms-view"></section>
+                    <section id="ms-v-arquivos" class="ms-view"></section>
+                    <div id="ms-tooltip" style="position:fixed;display:none;z-index:99999"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TELA 3: BUILDER AVANÇADO (FICHA) -->
+        <section id="screen-builder" class="screen builder-screen" aria-hidden="true">
+            <div class="builder-header">
+                <button class="back-btn hide-on-pdf" onclick="closeBuilder()">&#8592; Fechar Ficha</button>
+                <h2 id="builder-title">Forja da Alma</h2>
+                <span class="ms-sync-status" data-ms-status="persistence" aria-live="polite"></span>
+                <div class="builder-tools hide-on-pdf">
+                    <button class="souls-btn small-btn" id="btn-toggle-edit" onclick="toggleEditMode()">SALVAR EDIÇÃO</button>
+                    <button class="souls-btn small-btn" onclick="exportCharacterJSON()" style="border-color:#00ffcc; color:#00ffcc;">EXPORTAR JSON</button>
+                    <button class="souls-btn small-btn" type="button" onclick="openCharacterPreview()">PRÉ-VISUALIZAR</button>
+                    <button class="souls-btn small-btn" type="button" onclick="openCharacterHistory()">HISTÓRICO</button>
+                    <button class="souls-btn small-btn" onclick="downloadPDF()">BAIXAR PDF</button>
+                </div>
+            </div>
+            
+            <div class="builder-layout" id="pdf-content">
+                <div class="tabs hide-on-pdf" id="dynamic-tabs">
+                    <button class="tab-btn active" onclick="openTab('tab-identity')">Identidade & Natureza</button>
+                    <button class="tab-btn" id="btn-tab-stats" onclick="openTab('tab-stats')">Atributos & Recursos</button>
+                    <button class="tab-btn" id="btn-tab-skills" onclick="openTab('tab-skills')">Perícias & Talentos</button>
+                    <button class="tab-btn" id="btn-tab-evolution" onclick="openTab('tab-evolution')">Evolução Gradual</button>
+                    <button class="tab-btn" id="btn-tab-powers" onclick="openTab('tab-powers')">Poderes / Potências</button>
+                    <button class="tab-btn" id="btn-tab-alquerino" style="display:none" onclick="openTab('tab-alquerino')">⚗ Laboratório Alquímico</button>
+                    <button class="tab-btn" id="btn-tab-rituals" style="display:none" onclick="openTab('tab-rituals')">◈ Códice Hermético</button>
+                    <button class="tab-btn" id="btn-tab-equipment" onclick="openTab('tab-equipment')">⚙️ Dispositivos & Equipamentos</button>
+                </div>
+
+                <form id="char-form" onsubmit="saveCharacter(event)">
+                    <div id="character-validation-panel" class="ms-validation-panel" data-valid="true" aria-live="polite" hidden></div>
+                    <input type="hidden" id="char-mode" name="mode">
+                    
+                    <div id="tab-identity" class="tab-content active">
+                        <div class="form-group">
+                            <label>Nome da Entidade / Personagem:</label>
+                            <input type="text" id="char-name" required placeholder="Digite o nome verdadeiro..." style="font-size:1.5rem; text-align:center;">
+                        </div>
+
+                        <section class="ms-concept-panel" aria-labelledby="concept-title">
+                            <div class="ms-section-heading"><span>CONCEITO</span><h3 id="concept-title">Quem existia antes da ficha?</h3><p id="concept-mode-help">Registre a origem, os vínculos e aquilo que mantém esta pessoa em movimento.</p></div>
+                            <div class="ms-concept-grid">
+                                <div class="form-group"><label>Origem / Nacionalidade</label><input type="text" id="char-origin" placeholder="Lugar, comunidade ou linhagem"></div>
+                                <div class="form-group"><label>Ocupação / Função anterior</label><input type="text" id="char-occupation" placeholder="O que fazia antes da campanha"></div>
+                                <div class="form-group"><label>Vínculo institucional</label><input type="text" id="char-institution" placeholder="Organização, célula, corporação ou grupo"></div>
+                                <div class="form-group"><label>Situação / Estatuto</label><input type="text" id="char-status" placeholder="Tratado, designação, dívida, licença..."></div>
+                                <div class="form-group ms-span-2"><label>Vínculos pessoais</label><textarea id="char-bonds" placeholder="Pessoas, lugares, promessas e relações importantes"></textarea></div>
+                                <div class="form-group ms-span-2"><label>Motivação</label><textarea id="char-motivation" placeholder="O que este personagem quer, teme ou precisa provar"></textarea></div>
+                                <div class="form-group ms-span-2"><label>Relação com o mundo</label><textarea id="char-world-relation" placeholder="Como enxerga o cenário, suas instituições e seus conflitos"></textarea></div>
+                            </div>
+                        </section>
+
+                        <div class="form-group" style="margin-top: 30px;">
+                            <h3 style="color:var(--theme-color, #d4af37); font-family: 'Cinzel', serif; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px;">I. A Natureza da Alma (Expansão)</h3>
+                            <p style="color:#aaa; font-size:0.85rem; margin-bottom:15px;">Escolha a origem do seu poder. Isto define seus recursos e a estética da sua ficha.</p>
+                            <p style="color:#666; font-size:0.75rem; margin-top:-6px;">Repositório pessoal: suas fichas ficam separadas por conta e só aparecem em mesas nas quais foram vinculadas por código.</p>
+                            <input type="hidden" id="char-nature">
+                            <div id="nature-grid" class="choice-grid"></div>
+                            <div id="nature-description" class="desc-box" style="display:none; margin-top:15px; font-size:1rem;"></div>
+                        </div>
+
+                        <div class="form-group" id="class-container" style="display:none; margin-top: 40px;">
+                            <h3 style="color:var(--theme-color, #d4af37); font-family: 'Cinzel', serif; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px;">II. Casta de Atuação (Classe)</h3>
+                            <p style="color:#aaa; font-size:0.85rem; margin-bottom:15px;">A forma como você age e combate no mundo. Define atributos base e perícias vitais.</p>
+                            <input type="hidden" id="char-class">
+                            <div id="class-grid" class="choice-grid"></div>
+                            <div id="subclass-description" class="desc-box" style="display:none; margin-top:15px; font-size:1rem;"></div>
+                        </div>
+                        
+                        <div class="image-upload-section" style="margin-top:40px;">
+                            <h3 style="color:var(--theme-color, #d4af37);">III. Retrato e Galeria da Alma</h3>
+                            <div class="form-group hide-on-pdf-inputs" id="upload-avatar-group">
+                                <label>Imagem de Preview (Card do Santuário / Mesa):</label>
+                                <input type="file" id="input-avatar" class="hide-on-view" accept="image/*" onchange="previewAvatar(event)">
+                                <div id="avatar-preview-container" class="preview-box">
+                                    <span style="color:#666; font-size:0.8rem;">Nenhum retrato</span>
+                                </div>
+                            </div>
+                            <div class="form-group" id="upload-gallery-group">
+                                <label class="hide-on-view">Galeria de Imagens (Máx 10):</label>
+                                <input type="file" id="input-gallery" class="hide-on-view" accept="image/*" onchange="addGalleryImages(event)">
+                                <div id="gallery-container" class="gallery-grid"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-stats" class="tab-content">
+                        <div id="theme-stats-container">
+                            <div class="resource-panel" id="resource-panel"></div>
+                            <div class="points-tracker hide-on-view" id="points-tracker">
+                                Pontos Livres (Treinamento / LHL / XP): <input type="number" id="pts-count" value="0" class="small-input">
+                            </div>
+                            <div class="attr-grid">
+                                <div><label>FOR</label><input type="number" id="attr-for" class="attr-input" value="0" min="-2" max="10" onchange="recalculateStats()"></div>
+                                <div><label>VIG</label><input type="number" id="attr-vig" class="attr-input" value="0" min="-2" max="10" onchange="recalculateStats()"></div>
+                                <div><label>AGI</label><input type="number" id="attr-agi" class="attr-input" value="0" min="-2" max="10" onchange="recalculateStats()"></div>
+                                <div><label>INT</label><input type="number" id="attr-int" class="attr-input" value="0" min="-2" max="10" onchange="recalculateStats()"></div>
+                                <div><label>PRN</label><input type="number" id="attr-prn" class="attr-input" value="0" min="-2" max="10" onchange="recalculateStats()"></div>
+                                <div><label>PRE</label><input type="number" id="attr-pre" class="attr-input" value="0" min="-2" max="10" onchange="recalculateStats()"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-skills" class="tab-content">
+                        <div class="selection-panel hide-on-view">
+                            <div style="display:flex; gap:10px; width:100%;">
+                                <select id="select-skill-type" onchange="updateSkillSelects()">
+                                    <option value="Perícia">Perícia</option>
+                                    <option value="Vantagem">Vantagem</option>
+                                    <option value="Talento">Talento</option>
+                                </select>
+                                <select id="select-skill-name" onchange="updateSkillDesc()"></select>
+                                <input type="number" id="select-skill-grau" placeholder="Grau" min="1" max="5" value="1" style="width: 80px;">
+                            </div>
+                            <div id="skill-desc-box" class="desc-box" style="margin-top:10px;">Selecione algo.</div>
+                            <button type="button" class="souls-btn small-btn" onclick="addSkillFromSelect()" style="width:100%; margin-top:10px;">ADICIONAR CARACTERÍSTICA</button>
+                        </div>
+                        <div class="dynamic-list" id="skills-list"></div>
+                    </div>
+
+                    <div id="tab-evolution" class="tab-content">
+                        <section class="ms-evolution-panel">
+                            <div class="ms-section-heading"><span>EVOLUÇÃO GRADUAL</span><h3>Registro de prática e reconhecimento</h3><p>Documente o que foi exercitado em jogo. O avanço só é marcado como autorizado quando reconhecido pelo Mestre.</p></div>
+                            <div class="ms-evolution-form hide-on-view">
+                                <div class="form-group"><label>Sessão / Marco</label><input id="evolution-session" placeholder="Ex.: Sessão 07 — A Queda de Belém"></div>
+                                <div class="form-group"><label>Capacidade exercitada</label><input id="evolution-capability" placeholder="Perícia, atributo, poder ou técnica"></div>
+                                <div class="form-group"><label>Sucessos relevantes</label><input id="evolution-successes" type="number" min="0" value="0"></div>
+                                <label class="ms-check-row"><input id="evolution-authorized" type="checkbox"> Avanço autorizado pelo Mestre</label>
+                                <div class="form-group ms-span-2"><label>Registro da prática</label><textarea id="evolution-notes" placeholder="O que aconteceu e por que esta prática foi significativa"></textarea></div>
+                                <button type="button" class="souls-btn small-btn ms-span-2" onclick="addEvolutionEntry()">REGISTRAR EVOLUÇÃO</button>
+                            </div>
+                            <div id="evolution-list" class="ms-evolution-list"></div>
+                        </section>
+                    </div>
+
+                    <div id="tab-powers" class="tab-content">
+                        <div class="selection-panel power-panel hide-on-view" id="power-selection-panel">
+                            <div class="form-group">
+                                <label>Nome do Poder/Ritual/Artefato:</label>
+                                <input type="text" id="pb-name" placeholder="Ex: Sopro de Incinerador">
+                            </div>
+                            <div class="form-group">
+                                <label>Modificadores e Custos Gerais:</label>
+                                <input type="text" id="pb-mod" placeholder="Ex: Amplo (+2 CÊ), Causador de Dor (-1 CÊ)">
+                            </div>
+                            <div class="ms-power-structure">
+                                <div class="form-group"><label>Efeito</label><input id="pb-effect" placeholder="O que o poder faz mecanicamente"></div>
+                                <div class="form-group"><label>Alcance</label><input id="pb-range" placeholder="Pessoal, toque, 12 m..."></div>
+                                <div class="form-group"><label>Duração</label><input id="pb-duration" placeholder="Instantânea, 3 rodadas..."></div>
+                                <div class="form-group"><label>Alvos / Área</label><input id="pb-targets" placeholder="1 alvo, cone de 6 m..."></div>
+                                <div class="form-group"><label>Custo</label><input id="pb-cost" placeholder="CÊ, Estamina, risco, preparação..."></div>
+                                <div class="form-group"><label>Teste</label><input id="pb-test" placeholder="Atributo + Perícia, CD, oposição..."></div>
+                                <div class="form-group ms-span-2"><label>Consequências / Falha</label><textarea id="pb-consequence" placeholder="Riscos, efeitos colaterais, estresse, corrupção..."></textarea></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Descrição autoral:</label>
+                                <textarea id="pb-desc" placeholder="Descreva aparência, ritual, ficção e particularidades..."></textarea>
+                            </div>
+                            <div class="sub-panel" style="border: 1px dashed var(--theme-color, #d4af37); padding: 10px; margin-bottom: 10px;">
+                                <label>Anexar Potências ao Poder:</label>
+                                <div style="display:flex; gap:10px;">
+                                    <select id="pb-potency-name" onchange="updatePowerDesc()"></select>
+                                    <input type="number" id="pb-potency-cap" min="1" max="10" value="1" style="width: 80px;">
+                                    <button type="button" onclick="addPotencyToDraft()" class="souls-btn small-btn">+</button>
+                                </div>
+                                <div id="power-desc-box" class="desc-box" style="margin-top:10px;"></div>
+                                <ul id="pb-draft-list" style="margin-top: 10px; padding-left: 20px; color:var(--theme-color, #00ffcc);"></ul>
+                            </div>
+                            <button type="button" class="souls-btn small-btn" onclick="commitPower()" style="width:100%; margin-top:10px;">FINALIZAR PODER E ANEXAR À FICHA</button>
+                        </div>
+                        <div class="dynamic-list" id="powers-list"></div>
+                    </div>
+                    
+                    <div id="tab-alquerino" class="tab-content alquerino-lab-tab" style="display:none">
+    <div class="alquimia-laboratorio">
+        <header class="alchemy-header">
+            <div class="lab-retort" aria-hidden="true">
+                <div class="retort-neck"></div><div class="retort-bulb"><span>☿</span></div>
+                <div class="retort-liquid"></div>
+            </div>
+            <div class="alchemy-heading">
+                <span class="eyebrow">OCULTATUN · ALQUERINO · ALQUIMIA INTRÍNSECA</span>
+                <h3>Laboratório de Síntese</h3>
+                <p>Uma bancada de vidro vivo para preparar poções, decifrar fórmulas, combinar ingredientes e construir Caminhos. O laboratório separa o que é cânone do livro-base do que nasce na mesa.</p>
+            </div>
+            <div class="alchemy-stat-panel">
+                <span>Preparos / descanso <b id="alquerino-prep-capacity">0</b></span>
+                <span>ES máxima <b id="alquerino-es-total">0</b></span>
+                <span>Fadiga Alquímica <b id="alquerino-fadiga-total">0</b></span>
+            </div>
+        </header>
+
+        <div class="alchemy-lab-nav" role="tablist" aria-label="Laboratório do Alquerino">
+            <button type="button" class="alchemy-nav-btn active" data-alchemy-panel="bench" onclick="switchAlchemyPanel('bench')">⚗ BANCADA</button>
+            <button type="button" class="alchemy-nav-btn" data-alchemy-panel="paths" onclick="switchAlchemyPanel('paths')">✦ CAMINHOS OFICIAIS</button>
+            <button type="button" class="alchemy-nav-btn" data-alchemy-panel="formulas" onclick="switchAlchemyPanel('formulas')">⌬ FÓRMULAS</button>
+            <button type="button" class="alchemy-nav-btn" data-alchemy-panel="ingredients" onclick="switchAlchemyPanel('ingredients')">◈ INGREDIENTES</button>
+            <button type="button" class="alchemy-nav-btn" data-alchemy-panel="forge" onclick="switchAlchemyPanel('forge')">✧ NOVO CAMINHO</button>
+        </div>
+
+        <section id="alchemy-panel-bench" class="alchemy-panel active">
+            <div class="alchemy-bench-grid">
+                <section class="glass-card alchemy-bench-console">
+                    <div class="glass-card-title"><span>⌬</span> Preparação da Bancada</div>
+                    <div class="alchemy-fields-grid">
+                        <div class="form-group"><label>Patamar do Alquerino</label><select id="spec-alquerino-patamar" onchange="renderAlquerinoLab()"><option value="1">I · Recruta</option><option value="2">II · Operador</option><option value="3">III · Elite</option><option value="4">IV · Mestre</option></select></div>
+                        <div class="form-group"><label>Grau em Ocultismo</label><input type="number" id="spec-alquerino-ocultismo-grau" value="0" min="0" max="5" onchange="renderAlquerinoLab()"></div>
+                        <div class="form-group"><label>Fórmulas conhecidas</label><input type="number" id="spec-alquerino-formulas-known" value="0" min="0" max="999" onchange="renderAlquerinoLab()"></div>
+                        <div class="form-group"><label>Filtro de raridade</label><select id="alchemy-rarity-filter" onchange="renderAlchemyIngredients()"><option value="all">Todas as raridades</option><option value="R1">R1 · Comum</option><option value="R2">R2 · Incomum</option><option value="R3">R3 · Anômalo</option><option value="R4">R4 · Raro</option><option value="R5">R5 · Singular</option><option value="R6">R6 · Conceitual</option><option value="R7">R7 · Divino</option></select></div>
+                    </div>
+                    <div class="alchemy-rule-ledger">
+                        <div><b>Preparo Livre</b><span>Use uma Fórmula conhecida e combine Poderes, Forma, Função, Capacidade e Estabilidade.</span></div>
+                        <div><b>Preparo de Caminho</b><span>Cada receita canônica usa três ingredientes. A combinação correta desbloqueia a etapa.</span></div>
+                        <div><b>CD de Síntese</b><span>10 + maior Capacidade utilizada; duas ou mais Potências de Cap. 6+ recebem +2 CD.</span></div>
+                    </div>
+                </section>
+
+                <section class="glass-card synthesis-vessel-card">
+                    <div class="glass-card-title"><span>⚗</span> Câmara de Combinação</div>
+                    <div class="vessel-stage">
+                        <div class="reagent-flask" data-slot="0"><span class="flask-index">A</span><div class="flask-bulb"><b>+</b><small>vazio</small></div></div>
+                        <div class="vessel-arrow">+</div>
+                        <div class="reagent-flask" data-slot="1"><span class="flask-index">B</span><div class="flask-bulb"><b>+</b><small>vazio</small></div></div>
+                        <div class="vessel-arrow">+</div>
+                        <div class="reagent-flask" data-slot="2"><span class="flask-index">C</span><div class="flask-bulb"><b>+</b><small>vazio</small></div></div>
+                    </div>
+                    <div id="alchemy-combination-status" class="alchemy-combination-status">Selecione até 3 ingredientes abaixo. O laboratório procura fórmulas oficiais que coincidam exatamente.</div>
+                    <div class="alchemy-combine-actions">
+                        <label class="alchemy-consume-toggle"><input type="checkbox" id="alchemy-consume-reagents" checked> Consumir 1 de cada reagente ao sintetizar</label>
+                        <button type="button" class="souls-btn small-btn" onclick="clearAlchemyCombination()">LIMPAR VIDRARIA</button>
+                        <button type="button" class="souls-btn small-btn" onclick="combineAlchemyIngredients()">⚗ SINTETIZAR</button>
+                    </div>
+                    <div id="alchemy-unlocked-formula" class="formula-result-card"></div>
+                </section>
+            </div>
+
+            <div class="alchemy-two-column">
+                <section class="glass-card">
+                    <div class="glass-card-title"><span>◈</span> Ingredientes na bancada</div>
+                    <input id="alchemy-ingredient-search" class="alchemy-search" type="search" placeholder="Pesquisar ingrediente..." oninput="renderAlchemyIngredients()">
+                    <div id="alchemy-ingredient-grid" class="ingredient-grid"></div>
+                </section>
+                <section class="glass-card">
+                    <div class="glass-card-title"><span>⌁</span> Fórmula Livre · Poção Menor</div>
+                    <div class="alchemy-free-form-grid">
+                        <div class="form-group"><label>Nome da fórmula</label><input id="alchemy-free-name" placeholder="Ex.: Elixir da Vigília Fraturada"></div>
+                        <div class="form-group"><label>Tipo</label><select id="alchemy-free-type"><option>Poção</option><option>Bomba</option><option>Remédio</option><option>Veneno</option><option>Gás</option><option>Injetável</option><option>Solução</option></select></div>
+                        <div class="form-group"><label>Forma</label><select id="alchemy-free-form"><option>Líquido</option><option>Pó</option><option>Gás</option><option>Cristal</option><option>Metal</option><option>Fluido</option><option>Tecido</option><option>Luz condensada</option></select></div>
+                        <div class="form-group"><label>Capacidade</label><input id="alchemy-free-cap" type="number" min="1" max="10" value="2"></div>
+                        <div class="form-group"><label>Complexidade</label><select id="alchemy-free-complexity"><option value="0">Matéria comum · +0</option><option value="2">Matéria anômala · +2</option><option value="3">Propriedade física · +3</option><option value="4">Emoção/estado mental · +4</option><option value="5">Memória · +5</option><option value="6">Conceito · +6</option><option value="8">Conceito existencial · +8</option><option value="10">Conceito divino · +10</option></select></div>
+                        <div class="form-group"><label>Função</label><input id="alchemy-free-function" placeholder="O que a substância faz"></div>
+                        <div class="form-group full"><label>Estabilidade / duração</label><input id="alchemy-free-stability" placeholder="Ex.: 1 cena, 1 hora, até ser acionado..."></div>
+                    </div>
+                    <div class="alchemy-free-meta"><span>Reagentes usados: <b id="alchemy-free-reagent-count">0/3</b></span><span>CD estimada: <b id="alchemy-free-cd">12</b></span></div>
+                    <button type="button" class="souls-btn small-btn full-btn" onclick="saveFreeAlchemyFormula()">✧ GRAVAR FÓRMULA NA BIBLIOTECA</button>
+                </section>
+            </div>
+
+            <section class="glass-card formula-rack-card">
+                <div class="glass-card-title"><span>♜</span> Frascos já sintetizados nesta ficha</div>
+                <div id="alquerino-preparos-list" class="alchemy-prep-rack"></div>
+            </section>
+        </section>
+
+        <section id="alchemy-panel-paths" class="alchemy-panel">
+            <div class="panel-intro"><div><span class="eyebrow">CÂNON OCULTATON · CAPÍTULO IX</span><h4>Caminhos da Ordem Celestial</h4><p>Os três Caminhos documentados para o Alquerino são o Profeta, o Penitente e o Arcanjo. Cada etapa possui Capacidade, CD, efeito e uma fórmula de três ingredientes.</p></div><div class="path-legend"><span>R2–R7</span><small>Raridade dos ingredientes</small></div></div>
+            <div id="alquerino-official-paths" class="official-path-grid"></div>
+            <section class="glass-card hidden-path-card"><div class="glass-card-title"><span>☾</span> Caminhos Ocultos documentados</div><p class="alchemy-warning">O livro-base inicia o Caminho Oculto pelo Enforcado e apresenta as três primeiras etapas do conjunto. O restante não está desenvolvido no material analisado; por isso o site não inventa etapas ausentes.</p><div id="alquerino-hidden-paths"></div></section>
+        </section>
+
+        <section id="alchemy-panel-formulas" class="alchemy-panel">
+            <div class="panel-intro"><div><span class="eyebrow">CÓDICE DE FÓRMULAS</span><h4>Biblioteca Completa</h4><p>Pesquise e abra qualquer fórmula documentada. As fórmulas oficiais mostram exatamente os três reagentes necessários para a combinação.</p></div></div>
+            <div class="formula-toolbar"><input id="alchemy-formula-search" class="alchemy-search" type="search" placeholder="Buscar fórmula, Caminho, ingrediente ou efeito..." oninput="renderAlchemyFormulaLibrary()"><select id="alchemy-formula-filter" onchange="renderAlchemyFormulaLibrary()"><option value="all">Todas</option><option value="official">Oficiais</option><option value="hidden">Ocultas documentadas</option><option value="custom">Criadas na mesa</option></select></div>
+            <div id="alchemy-formula-library" class="formula-library-grid"></div>
+        </section>
+
+        <section id="alchemy-panel-ingredients" class="alchemy-panel">
+            <div class="panel-intro"><div><span class="eyebrow">CÂPÍTULO VIII · INGREDIENTES</span><h4>Almoxarifado de Reagentes</h4><p>Todos os ingredientes nomeados nas fórmulas de Caminho verificadas no livro-base, além dos reagentes explicitamente exemplificados na descrição da Alquimia Intrínseca. Ingredientes sem raridade atribuída pela fonte ficam marcados como “Mencionado”.</p></div></div>
+            <div class="ingredient-library-toolbar"><input id="alchemy-ingredient-library-search" class="alchemy-search" type="search" placeholder="Buscar ingrediente..." oninput="renderAlchemyIngredientLibrary()"><select id="alchemy-ingredient-library-filter" onchange="renderAlchemyIngredientLibrary()"><option value="all">Todas as raridades</option><option value="R1">R1</option><option value="R2">R2</option><option value="R3">R3</option><option value="R4">R4</option><option value="R5">R5</option><option value="R6">R6</option><option value="R7">R7</option></select></div>
+            <div id="alchemy-ingredient-library" class="ingredient-library-grid"></div>
+        </section>
+
+        <section id="alchemy-panel-forge" class="alchemy-panel">
+            <div class="panel-intro"><div><span class="eyebrow">LABORATÓRIO ABERTO</span><h4>Forjar um Caminho Novo</h4><p>Esta área é deliberadamente livre. O Mestre pode criar Caminhos novos sem alterar o conteúdo canônico. Cada etapa pode receber uma fórmula própria de três ingredientes.</p></div></div>
+            <div class="alchemy-new-path-grid">
+                <section class="glass-card">
+                    <div class="glass-card-title"><span>✧</span> Identidade do Caminho</div>
+                    <div class="form-group"><label>Nome do Caminho</label><input id="alchemy-new-path-name" placeholder="Ex.: Caminho do Vidro Negro"></div>
+                    <div class="form-group"><label>Filosofia</label><textarea id="alchemy-new-path-philosophy" rows="4" placeholder="O princípio que orienta o Caminho..."></textarea></div>
+                    <div class="form-group"><label>Etapa</label><select id="alchemy-new-path-seq"><option value="1">I · Despertar</option><option value="2">II · Assimilação</option><option value="3">III · Transfiguração</option><option value="4">IV · Ascensão</option><option value="5">V · Conceito</option><option value="6">VI · Arquétipo</option><option value="7">VII · Apoteose</option></select></div>
+                    <div class="alchemy-new-path-grid2"><div class="form-group"><label>Capacidade</label><input id="alchemy-new-path-cap" type="number" min="1" max="10" value="2"></div><div class="form-group"><label>CD</label><input id="alchemy-new-path-cd" type="number" min="1" max="50" value="13"></div></div>
+                    <div class="form-group"><label>Nome da habilidade</label><input id="alchemy-new-path-ability" placeholder="Ex.: Vidro Respirante"></div>
+                    <div class="form-group"><label>Efeito</label><textarea id="alchemy-new-path-effect" rows="5" placeholder="Descreva o efeito mecânico e narrativo..."></textarea></div>
+                    <button type="button" class="souls-btn small-btn full-btn" onclick="saveNewAlchemyPathNode()">✧ GRAVAR ETAPA</button>
+                </section>
+                <section class="glass-card">
+                    <div class="glass-card-title"><span>⚗</span> Reagentes da nova etapa</div>
+                    <p class="alchemy-warning">Selecione três ingredientes na bancada de combinação antes de gravar a etapa. Isso cria a fórmula do novo Caminho.</p>
+                    <div id="alchemy-new-path-reagents" class="selected-reagent-stack"></div>
+                    <div class="custom-path-list-title">Caminhos criados nesta ficha</div>
+                    <div id="alchemy-custom-path-list" class="custom-path-list"></div>
+                </section>
+            </div>
+        </section>
+    </div>
+</div>
+
+                    <div id="tab-rituals" class="tab-content ritual-codex-tab" style="display:none">
+                        <div class="ritual-codex-head">
+                            <div>
+                                <span class="eyebrow">OCULTATUN · HERMÉTICO · CÓDICE DE SIMETRIA</span>
+                                <h3>Grimório de Campo</h3>
+                                <p>Os 33 rituais numerados do Códice podem ser conhecidos e sintonizados. A seleção é persistida junto da ficha.</p>
+                            </div>
+                            <div class="ritual-counter-row">
+                                <span>Conhecidos <b id="hermetic-known-count">0/0</b></span>
+                                <span>Sintonizados <b id="hermetic-sync-count">0/0</b></span>
+                            </div>
+                        </div>
+                        <div class="ritual-toolbar hide-on-view">
+                            <input id="hermetic-ritual-search" type="search" placeholder="Buscar por nome, material, gesto, palavra ou efeito..." oninput="renderHermeticRituals()">
+                            <select id="hermetic-ritual-filter" onchange="renderHermeticRituals()">
+                                <option value="all">Todos os rituais</option>
+                                <option value="known">Conhecidos</option>
+                                <option value="synchronized">Sintonizados</option>
+                                <option value="available">Ainda não selecionados</option>
+                            </select>
+                        </div>
+                        <div id="hermetic-ritual-grid" class="ritual-grid"></div>
+                    </div>
+
+                    <div id="tab-equipment" class="tab-content">
+                        <div class="equipment-sheet-panel">
+                            <div class="equipment-sheet-head">
+                                <div><span class="eyebrow" id="equipment-sheet-eyebrow">ARSENAL</span><h3 id="equipment-sheet-title">Dispositivos & Equipamentos</h3><p id="equipment-sheet-subtitle">A estrutura desta janela acompanha o modo de jogo e a natureza da ficha.</p></div>
+                                <div class="equipment-head-actions hide-on-view"><button type="button" class="souls-btn small-btn" onclick="openEquipmentAddModal()">+ ADICIONAR ITEM</button><button type="button" class="souls-btn small-btn" id="btn-forge-sheet-item" onclick="openForgeForCurrentSheet()">⚒ FORJAR ITEM</button></div>
+                            </div>
+                            <div id="equipment-sheet-profile" class="equipment-sheet-profile"></div><div id="equipment-sheet-list" class="equipment-sheet-list"></div>
+                        </div>
+                    </div>
+
+                    <div id="tab-specific" class="tab-content">
+                        <div id="specific-content-container"></div>
+                    </div>
+
+                    <div class="ms-immortalize-minimum hide-on-view" role="note"><strong>PRÉ-REQUISITOS PARA IMORTALIZAR</strong><span>Nome · Categoria · Expansão · Classe</span><small>Todos os demais campos são opcionais e podem ser preenchidos ou revisados depois.</small></div>
+                    <button type="submit" id="btn-final-save" class="souls-btn submit-btn hide-on-view" style="margin-top: 30px; width:100%;">IMORTALIZAR FICHA</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- TELA VTT (VIRTUAL TABLETOP) -->
+        <section id="screen-vtt" class="screen" data-theme="default">
+            <div class="vtt-header">
+                <h2 id="vtt-table-name" class="vtt-font" style="margin-bottom:0; font-size:1.1rem; color:#888;">Nome da Mesa</h2>
+                <div class="vtt-toolbar-buttons">
+                    <button class="souls-btn small-btn" onclick="toggleVttWindow('vtt-cards-window')">🎴 Almas</button>
+                    <button class="souls-btn small-btn" onclick="toggleVttWindow('vtt-grid-window')">🗺️ Grid</button>
+                    <button class="souls-btn small-btn" onclick="toggleVttWindow('vtt-gallery-window')">🖼️ Galeria</button>
+                    <button class="souls-btn small-btn" onclick="toggleVttWindow('vtt-dice-box')">🎲 Dados</button>
+                    <button class="souls-btn small-btn" onclick="toggleVttWindow('vtt-chat-box')">💬 Chat</button>
+                    <button class="souls-btn small-btn" onclick="openVttEquipmentWindow()">⚙️ Equipamentos</button>
+                    <button class="souls-btn small-btn gm-only-btn" onclick="openEquipmentShop()" style="display:none; border-color:#d4af37; color:#d4af37;">🛒 Loja de Arsenal</button>
+                    <button class="souls-btn small-btn gm-only-btn" onclick="openForgeWindow()" style="display:none; border-color:#ff00ff; color:#ff00ff;">⚒️ Forja de Itens</button>
+                    
+                    <button class="souls-btn small-btn gm-only-btn" onclick="openThemeEditor()" style="display:none; border-color:#ff00ff; color:#ff00ff;">Tema</button>
+                    <button class="souls-btn small-btn gm-only-btn" onclick="toggleNPCHealthVisibility()" style="display:none;">HP: <span id="npc-hp-status">Público</span></button>
+                    <button class="souls-btn small-btn gm-only-btn" onclick="openManagePlayers()" style="display:none; border-color:#ff5500; color:#ff5500;">Gerenciar</button>
+                    <button class="souls-btn small-btn gm-only-btn" id="btn-save-table" onclick="saveDraftTable()" style="display:none; border-color:#a8ff00; color:#a8ff00; box-shadow:0 0 10px #a8ff00;">SALVAR FENDA</button>
+                    <button class="souls-btn small-btn" onclick="leaveVTT()" style="border-color:#ff3333; color:#ff3333;">SAIR DA MESA</button>
+                </div>
+            </div>
+
+            <div class="vtt-quick-access" id="vtt-quick-access"></div>
+            <div class="ms-vtt-presence" role="status" aria-live="polite"><span class="mr-kicker">CONEXÕES ATIVAS</span><div data-ms-table-presence><span class="ms-presence-empty">Conectando participantes…</span></div></div>
+
+            <div id="vtt-cards-window" class="vtt-floating-window" style="display:flex;">
+                <div class="vtt-window-header" id="cards-window-header">
+                    <span class="vtt-font">Almas Presentes na Fenda</span>
+                    <button class="win-close-btn" onclick="toggleVttWindow('vtt-cards-window')">X</button>
+                </div>
+                <div class="vtt-window-body" style="width: 80vw; max-width: 1000px;">
+                    <div id="vtt-active-cards-container" class="vtt-cards-container"></div>
+                </div>
+            </div>
+
+            <div id="vtt-grid-window" class="vtt-floating-window" style="width: 90vw; height: 80vh; display:none;">
+                <div class="vtt-window-header" id="grid-window-header">
+                    <span class="vtt-font">Mapa de Batalha (Grid) - <span id="vtt-table-name-display">Nome da Mesa</span></span>
+                    <button class="win-close-btn" onclick="toggleVttWindow('vtt-grid-window')">X</button>
+                </div>
+                <div class="vtt-window-body" style="display:flex; flex-direction:row; padding:0; height:calc(100% - 40px);">
+                    <div class="vtt-grid-tools" style="width:160px; border-right:1px solid var(--vtt-border); padding:10px; overflow-y:auto; background:rgba(0,0,0,0.5);">
+                        <b class="vtt-font" style="color:var(--vtt-accent); font-size:0.9rem;">Movimento</b>
+                        <button class="vtt-tool-btn" onclick="canvasSetMode('select')">👆 Seta (Mover)</button>
+                        <button class="vtt-tool-btn" onclick="canvasAddPCToken()">+ Meu Totem</button>
+                        <div class="gm-only-btn" style="display:none; flex-direction:column; gap:5px; margin-top:5px;">
+                            <hr style="border-color:#333; margin:5px 0;">
+                            <b class="vtt-font" style="color:#ff3333; font-size:0.9rem;">Mestre</b>
+                            <button class="vtt-tool-btn" style="border-color:#ff3333; color:#ff3333;" onclick="canvasAddNPCToken()">+ Totem NPC</button>
+                            <input type="file" id="grid-bg-upload" accept="image/*" style="display:none;" onchange="canvasSetBackground(event)">
+                            <button class="vtt-tool-btn" onclick="document.getElementById('grid-bg-upload').click()">+ Fundo</button>
+                        </div>
+                        <hr style="border-color:#333; margin: 10px 0;">
+                        <b class="vtt-font" style="color:var(--vtt-accent); font-size:0.9rem;">Medição</b>
+                        <button class="vtt-tool-btn" onclick="canvasAddShape('cone')">📐 Cone</button>
+                        <button class="vtt-tool-btn" onclick="canvasAddShape('line')">➖ Linha</button>
+                        <button class="vtt-tool-btn" onclick="canvasAddShape('radius')">⭕ Raio</button>
+                        <label class="vtt-scale-control">Escala / célula <span><input id="vtt-grid-scale" type="number" min="0.1" step="0.1" value="1.5"> m</span></label>
+                        <button id="vtt-ruler-btn" class="vtt-tool-btn" onclick="canvasToggleRuler()">📏 Régua</button>
+                        <div id="vtt-ruler-status" class="vtt-ruler-status" aria-live="polite">Régua desligada</div>
+                        <button class="vtt-tool-btn" style="border-color:red; color:red; margin-top:15px;" onclick="canvasDeleteSelected()">Apagar Sel.</button>
+                    </div>
+                    <div style="flex:1; overflow:hidden; background:#1a1a1a;" id="canvas-wrapper">
+                        <canvas id="vtt-canvas" width="640" height="460"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div id="vtt-gallery-window" class="vtt-floating-window" style="width: 70vw; height: 70vh; display:none;">
+                <div class="vtt-window-header" id="gallery-window-header">
+                    <span class="vtt-font">Galeria da Campanha</span>
+                    <button class="win-close-btn" onclick="toggleVttWindow('vtt-gallery-window')">X</button>
+                </div>
+                <div class="vtt-window-body" style="overflow-y:auto; height:calc(100% - 40px); background:var(--vtt-bg);">
+                    <div class="form-group gm-only-btn" style="display:none; text-align:center;">
+                        <input type="file" id="input-camp-gallery" accept="image/*" style="display:none" onchange="addCampGalleryImage(event)">
+                        <button class="souls-btn small-btn" onclick="document.getElementById('input-camp-gallery').click()">ADICIONAR IMAGEM (MESTRE)</button>
+                    </div>
+                    <div id="camp-gallery-container" class="gallery-grid" style="justify-content:center;"></div>
+                </div>
+            </div>
+
+            <div id="vtt-dice-box" class="vtt-floating-window" style="width: 450px; display:none;">
+                <div class="vtt-window-header" id="dice-box-header">
+                    <span class="vtt-font">Rolagem de Dados</span>
+                    <button class="win-close-btn" onclick="toggleVttWindow('vtt-dice-box')">X</button>
+                </div>
+                <div class="vtt-window-body" style="text-align:center; max-height:80vh; overflow-y:auto;">
+                    <div id="dice-3d-container" class="dice-container dice-stage" aria-live="polite">
+                        <canvas id="dice-3d-canvas" width="260" height="260" aria-label="Modelo tridimensional do dado"></canvas>
+                        <div id="dice-3d-overlay" class="dice-3d-overlay"><small>D20</small><strong>?</strong></div>
+                    </div>
+                    <div style="margin-top:25px; display:flex; gap:5px; justify-content:center; flex-wrap:wrap;">
+                        <button class="souls-btn small-btn" onclick="roll3DDice('d4')">d4</button>
+                        <button class="souls-btn small-btn" onclick="roll3DDice('d6')">d6</button>
+                        <button class="souls-btn small-btn" onclick="roll3DDice('d8')">d8</button>
+                        <button class="souls-btn small-btn" onclick="roll3DDice('d10')">d10</button>
+                        <button class="souls-btn small-btn" onclick="roll3DDice('d12')">d12</button>
+                        <button class="souls-btn small-btn" onclick="roll3DDice('d20')">d20</button>
+                    </div>
+                    <p id="dice-result-text" style="margin-top:10px; font-weight:bold; color:var(--vtt-accent); font-size:1.8rem; text-shadow: 0 0 10px var(--vtt-accent);">--</p>
+                    
+                    <div id="dice-history-section" style="margin-top:20px; border-top:1px solid #333; padding-top:10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <b class="vtt-font" style="color:#aaa;">Histórico de Rolagens</b>
+                            <button class="souls-btn small-btn gm-only-btn" style="display:none; padding:2px 5px; font-size:0.7rem; border-color:red; color:red;" onclick="clearDiceHistory()">Limpar Tudo</button>
+                        </div>
+                        <ul id="dice-history-list" style="list-style:none; padding:0; text-align:left; font-size:0.85rem; max-height:150px; overflow-y:auto;"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="vtt-equipment-window" class="vtt-floating-window" style="width:760px; max-width:94vw; max-height:82vh; display:none;">
+                <div class="vtt-window-header" id="equipment-window-header"><span class="vtt-font">Arsenal da Fenda</span><button class="win-close-btn" onclick="toggleVttWindow('vtt-equipment-window')">X</button></div>
+                <div class="vtt-window-body" style="overflow-y:auto;">
+                    <div id="vtt-equipment-list" class="vtt-equipment-list"></div>
+                </div>
+            </div>
+
+            <div id="vtt-chat-box" class="vtt-floating-window" style="width: 400px; height: 500px; display:none;">
+                <div class="vtt-window-header" id="chat-box-header">
+                    <span class="vtt-font">Comunicações</span>
+                    <div>
+                        <button id="btn-lock-chat" class="gm-only-btn" style="display:none; background:none; border:none; color:red; cursor:pointer; margin-right:10px;" onclick="toggleChatLock()">🔓</button>
+                        <button class="win-close-btn" onclick="toggleVttWindow('vtt-chat-box')">X</button>
+                    </div>
+                </div>
+                <div class="vtt-window-body" style="display:flex; flex-direction:column; height: calc(100% - 40px); padding:0;">
+                    <div id="chat-messages" style="flex:1; overflow-y:auto; padding:10px; font-size:0.9rem;"></div>
+                    <div style="display:flex; border-top:1px solid #333;">
+                        <input type="text" id="chat-input" placeholder="Mensagem..." style="flex:1; background:transparent; border:none; color:#fff; padding:10px; outline:none;" onkeypress="if(event.key==='Enter') sendChatMessage()">
+                        <button class="souls-btn small-btn" style="border:none; border-left:1px solid #333;" onclick="sendChatMessage()">ENVIAR</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- MODAIS DO SISTEMA DE CONTAS -->
+
+        <div id="register-modal" class="modal">
+            <div class="modal-content" style="max-width: 400px;">
+                <h3 style="color: #00ffcc; font-family: 'Cinzel', serif; margin-bottom: 15px;">Despertar Nova Conta</h3>
+                <div class="form-group">
+                    <input type="text" id="reg-user" placeholder="Nome de Usuário (Ex: Corvo_Negro)" style="margin-bottom:10px;">
+                    <input type="email" id="reg-email" placeholder="E-mail (Para recuperação)" style="margin-bottom:10px;">
+                    <input type="password" id="reg-pass" placeholder="Senha Forte" style="margin-bottom:10px;">
+                </div>
+                <div class="form-group" style="text-align:left; background:rgba(255,0,255,0.1); padding:10px; border:1px solid rgba(255,0,255,0.5); border-radius:5px;">
+                    <label style="display:flex; align-items:center; gap:10px; color:#ff00ff; cursor:pointer; margin:0; font-size:0.9rem;">
+                        <input type="checkbox" id="reg-req-master" style="width:auto; transform:scale(1.5);">
+                        <span>Solicitar Elevação para Mestre da Fenda (Permite criar mesas)</span>
+                    </label>
+                </div>
+                <div class="modal-actions">
+                    <button class="souls-btn small-btn" style="border-color:#00ffcc; color:#00ffcc;" onclick="doRegister()">Criar Conta</button>
+                    <button class="souls-btn small-btn" style="border-color: #ff3333; color: #ff3333;" onclick="closeRegister()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <div id="recover-modal" class="modal">
+            <div class="modal-content" style="max-width: 400px;">
+                <h3 style="color: #aaa; font-family: 'Cinzel', serif; margin-bottom: 15px;">Recuperar Fragmentos (Senha)</h3>
+                <p style="font-size:0.8rem; color:#888; margin-bottom:15px;">Insira seu e-mail. A recuperação é gerenciada pelo Supabase Auth; nenhuma senha é armazenada pelo cliente.</p>
+                <div class="form-group">
+                    <input type="email" id="rec-email" placeholder="E-mail de registro...">
+                </div>
+                <div class="modal-actions">
+                    <button class="souls-btn small-btn" style="border-color:#aaa; color:#aaa;" onclick="doRecover()">Recuperar</button>
+                    <button class="souls-btn small-btn" style="border-color: #ff3333; color: #ff3333;" onclick="closeRecover()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="portal-admin-modal" class="portal-admin-modal" aria-hidden="true"></div>
+
+        <div id="character-preview-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="character-preview-title">
+            <div class="modal-content character-preview-shell">
+                <div class="character-preview-head"><h3 id="character-preview-title">Manifestação da Alma</h3><button type="button" class="souls-btn small-btn" onclick="closeCharacterPreview()" aria-label="Fechar pré-visualização">Fechar</button></div>
+                <div id="character-preview-content" class="character-preview-content"></div>
+            </div>
+        </div>
+
+        <div id="admin-panel-modal" class="modal">
+            <div class="modal-content admin-arconte-shell">
+                <div class="admin-arconte-head">
+                    <div>
+                        <span class="admin-arconte-kicker">∆ SISTEMA DO ARCONTE</span>
+                        <h3>Gestão de Almas</h3>
+                        <p>Acesso irrestrito aos registros akáshicos e à economia SoulDrakma.</p>
+                    </div>
+                    <button type="button" class="souls-btn small-btn" style="border-color:#ff3333;color:#ff7777" onclick="document.getElementById('admin-panel-modal').style.display='none'">Fechar</button>
+                </div>
+                <nav class="admin-arconte-tabs" aria-label="Áreas administrativas">
+                    <button type="button" class="active" data-admin-tab="users" onclick="switchAdminPanelTab('users')">USUÁRIOS</button>
+                    <button type="button" data-admin-tab="soul" onclick="switchAdminPanelTab('soul')">SOULDRΔKMA</button>
+                </nav>
+                <div class="admin-arconte-body">
+                    <section id="admin-users-panel" class="admin-arconte-panel active" data-admin-panel="users">
+                        <div class="admin-users-scroll">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Usuário</th>
+                                        <th>Permissão</th>
+                                        <th>Ações</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-users-list"><!-- Injetado via JS --></tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section id="admin-soul-panel" class="admin-arconte-panel" data-admin-panel="soul">
+                        <div class="admin-soul-placeholder">Carregando Controle SoulDrakma…</div>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <!-- OUTROS MODAIS DA MESA -->
+        <div id="join-modal" class="modal" style="z-index: 9000;">
+            <div class="modal-content">
+                <h3 style="color: #d4af37; font-family: 'Cinzel', serif; margin-bottom: 15px;">Escolha a Alma para a Fenda</h3>
+                <input type="text" id="join-code-input" placeholder="Insira o Código da Mesa..." style="width:100%; padding:10px; margin-bottom:15px; background:#111; color:#fff; border:1px solid #00ffcc; text-align:center; font-weight:bold; letter-spacing:2px;">
+                <select id="join-char-select-vtt" style="width:100%; padding:10px; margin-bottom:20px; background:#111; color:#fff; border:1px solid #d4af37;"></select>
+                <div class="modal-actions">
+                    <button class="souls-btn small-btn" onclick="confirmJoinTable()">Atravessar</button>
+                    <button class="souls-btn small-btn" style="border-color: #ff3333; color: #ff3333;" onclick="document.getElementById('join-modal').style.display='none'">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="create-table-modal" class="modal create-table-modal">
+            <div class="modal-content create-table-dialog create-table-v286" role="dialog" aria-modal="true" aria-labelledby="create-table-title">
+                <header class="create-table-head-v286">
+                    <div class="create-table-head-copy">
+                        <span class="mr-kicker">FORJA DE FENDAS · CONFIGURAÇÃO DE CAMPANHA</span>
+                        <h3 id="create-table-title">Fundar uma nova mesa</h3>
+                        <p>Construa a campanha por camadas. Identidade, regras, recrutamento e contexto ficam disponíveis para revisão antes de abrir a Fenda.</p>
+                    </div>
+                    <div class="create-table-head-actions-v286"><span class="create-table-draft-status" data-create-draft-status>RASCUNHO LOCAL</span><button type="button" class="win-close-btn" aria-label="Fechar" onclick="document.getElementById('create-table-modal').style.display='none'">×</button></div>
+                </header>
+                <div class="create-table-workspace-v286">
+                    <aside class="create-table-outline-v286" aria-label="Etapas da criação">
+                        <button type="button" class="active" data-create-jump="identity"><b>01</b><span>Identidade<small>Nome, premissa e estética</small></span></button>
+                        <button type="button" data-create-jump="structure"><b>02</b><span>Estrutura<small>Tom, foco e época</small></span></button>
+                        <button type="button" data-create-jump="recruitment"><b>03</b><span>Recrutamento<small>Modo, vagas e classes</small></span></button>
+                        <button type="button" data-create-jump="world"><b>04</b><span>Mundo<small>Contexto e condições</small></span></button>
+                        <div class="create-table-preview-v286"><span>PRÉVIA</span><strong data-create-preview-name>Fenda sem nome</strong><small data-create-preview-mode>ÊXODO · 6 vagas</small><i data-create-preview-theme>CLÁSSICO / OURO</i></div>
+                    </aside>
+                    <div class="create-table-scroll">
+                        <section class="create-table-section-v286" data-create-section="identity">
+                            <header><span>01</span><div><h4>Identidade da Fenda</h4><p>O que os jogadores verão primeiro.</p></div></header>
+                            <div class="form-group"><label>Nome da campanha / sessão</label><input type="text" id="new-table-name" maxlength="90" placeholder="Ex.: O Cântico do Vazio"></div>
+                            <div class="form-group"><label>Premissa</label><textarea id="new-table-description" placeholder="Resuma o conflito central, o tipo de experiência e o que move a campanha."></textarea></div>
+                            <div class="ms-table-meta-grid"><div class="form-group"><label>Região</label><input id="new-table-region" placeholder="Cidade, país, setor ou plano"></div><div class="form-group"><label>Tema visual</label><select id="new-table-theme"><option value="default">Clássico / Ouro</option><option value="cyber">Cyberpunk / Neon</option><option value="gothic">Gótico / Sangue</option><option value="cosmic">Horror Cósmico / Vazio</option></select></div></div>
+                        </section>
+                        <section class="create-table-section-v286" data-create-section="structure">
+                            <header><span>02</span><div><h4>Estrutura narrativa</h4><p>Defina o ritmo e a pressão inicial da campanha.</p></div></header>
+                            <div class="ms-table-meta-grid master-foundation-grid"><div class="form-group"><label>Tom</label><select id="new-table-tone"><option>Horror e investigação</option><option>Ação tática</option><option>Conspiração</option><option>Sobrevivência</option><option>Política e guerra</option><option>Exploração</option><option>Híbrido</option></select></div><div class="form-group"><label>Foco</label><select id="new-table-focus"><option>Investigação</option><option>Operações</option><option>Guerra</option><option>Sobrevivência</option><option>Intriga</option><option>Exploração</option></select></div><div class="form-group"><label>Sigilo</label><select id="new-table-secrecy"><option>Absoluto</option><option>Alto</option><option>Instável</option><option>Rompido</option></select></div><div class="form-group"><label>Pressão inicial</label><select id="new-table-threat"><option>Baixa</option><option>Média</option><option>Alta</option><option>Crítica</option></select></div></div>
+                            <div class="ms-table-meta-grid"><div class="form-group"><label>Marco histórico</label><select id="new-table-history"><option value="y80-100">Ano 100 · Presente</option><option value="y41-70">Anos 41–70 · Grande Silêncio</option><option value="y16-40">Anos 16–40 · Era Fria</option><option value="y11-16">Anos 11–16 · Tratado das Fronteiras</option><option value="y6-10">Anos 6–10 · Grande Fratura</option><option value="y3-5">Anos 3–5 · Protheus</option><option value="y2">Ano 2 · Cisão das Potências</option><option value="y1b">Ano 1 · Segundo semestre</option><option value="y1a">Ano 1 · Primeiro semestre</option></select></div><div class="form-group"><label>Época</label><input id="new-table-era" placeholder="Ex.: 2038 / Pós-Colheita"></div></div>
+                        </section>
+                        <section class="create-table-section-v286" data-create-section="recruitment">
+                            <header><span>03</span><div><h4>Recrutamento e regras de entrada</h4><p>Escolha quem pode atravessar a Fenda.</p></div></header>
+                            <div class="form-group"><label>Modo permitido</label><div class="fenda-mode-buttons create-mode-buttons"><button type="button" data-create-mode="exodo" class="active">ÊXODO</button><button type="button" data-create-mode="ocultatun">OCULTATUN</button><button type="button" data-create-mode="hybrid">HÍBRIDA</button></div><select id="new-table-mode" onchange="updateCreateTableModeGuide()" hidden><option value="exodo">Êxodo</option><option value="ocultatun">Ocultatun</option><option value="hybrid">Híbrida</option></select></div>
+                            <div class="create-access-grid-v286"><label class="create-capacity-v286">VAGAS<input id="new-table-max-players" type="number" min="1" max="20" value="6"><small>1–20 jogadores</small></label><label class="create-switch-v286"><input id="new-table-published" type="checkbox" checked><span></span><b>Visível no Diretório<small>Permite descoberta pública da mesa.</small></b></label><label class="create-switch-v286"><input id="new-table-accepting" type="checkbox" checked><span></span><b>Aceitar solicitações<small>Jogadores elegíveis podem pedir entrada.</small></b></label></div>
+                            <div class="form-group"><label>Expansões / Naturezas permitidas</label><small>Sem seleção = todas as opções do modo.</small><div id="new-table-expansion-grid" class="fenda-select-grid"></div><input id="new-table-expansions" type="hidden"></div>
+                            <div class="form-group"><label>Classes permitidas</label><small>Sem seleção = todas as classes disponíveis.</small><div id="new-table-class-grid" class="fenda-select-grid"></div><input id="new-table-classes" type="hidden"></div>
+                        </section>
+                        <section class="create-table-section-v286" data-create-section="world">
+                            <header><span>04</span><div><h4>Estado do mundo</h4><p>Contexto que alimenta o Centro de Comando e a sessão inicial.</p></div></header>
+                            <div class="form-group"><label>Condições iniciais</label><textarea id="new-table-initial" placeholder="Estado do mundo, recursos, alertas e condições de abertura"></textarea></div>
+                            <div class="form-group"><label>Regras específicas da mesa</label><textarea id="new-table-rules" placeholder="House rules, limites, segurança e exceções"></textarea></div>
+                            <div id="new-table-exodo-profile" class="master-mode-profile"><span class="eyebrow">ÊXODO · FUNDAÇÃO GEOPOLÍTICA</span><div class="ms-table-meta-grid"><div class="form-group"><label>Postura diante do T.S.I.N.</label><select id="new-table-tsin"><option>Pró-Nexo</option><option>Ambígua / Cinza</option><option>Ant-Nexo</option></select></div><div class="form-group"><label>Escala tecnológica</label><select id="new-table-tech"><option>Urbana / comum</option><option>Biotecnologia avançada</option><option>Black Ops / Eras Perdidas</option><option>Orbital / Ápice</option></select></div></div></div>
+                            <div id="new-table-ocultatun-profile" class="master-mode-profile" hidden><span class="eyebrow">OCULTATUN · PROTOCOLO DE CONTENÇÃO</span><div class="ms-table-meta-grid"><div class="form-group"><label>Exposição pública ao paranormal</label><select id="new-table-exposure"><option>Sigilo absoluto</option><option>Rumores controlados</option><option>Vazamentos recorrentes</option><option>Ruptura iminente</option></select></div><div class="form-group"><label>Vínculo operacional</label><select id="new-table-institution"><option>Sala Branca / Ocultatun</option><option>Célula independente</option><option>Protheus / Nova Ordem</option><option>Ordem dos Sete</option><option>Outro / ambíguo</option></select></div></div></div>
+                        </section>
+                    </div>
+                </div>
+                <footer class="create-table-actions-v286"><div><span>Ao forjar, você entra primeiro em um rascunho da mesa.</span><small>A mesa só é persistida quando “Salvar Fenda” for confirmado dentro do VTT.</small></div><button class="souls-btn small-btn" type="button" onclick="document.getElementById('create-table-modal').style.display='none'">CANCELAR</button><button class="souls-btn small-btn primary-create-v286" id="btn-confirm-create-table" type="button" onclick="confirmCreateTable()">ABRIR RASCUNHO</button></footer>
+            </div>
+        </div>
+
+        <div id="equipment-shop-modal" class="modal" style="z-index:10020;">
+            <div class="modal-content equipment-modal-content">
+                <div class="equipment-modal-head"><div><span class="eyebrow" id="equipment-shop-eyebrow">SALA BRANCA · ARSENAL</span><h3 id="equipment-shop-title">Loja de Dispositivos & Equipamentos</h3><p id="equipment-shop-subtitle">Catálogo filtrado pelo modo de jogo da mesa.</p></div><button class="win-close-btn" onclick="closeEquipmentShop()">X</button></div>
+                <div id="equipment-shop-list" class="shop-grid"></div>
+            </div>
+        </div>
+
+        <div id="forge-modal" class="modal" style="z-index:10021;">
+            <div class="modal-content equipment-modal-content">
+                <div class="equipment-modal-head"><div><span class="eyebrow" id="forge-eyebrow">ENGENHARIA DE CONSTRUÇÃO · PE</span><h3 id="forge-title">Forja de Itens</h3><p id="forge-subtitle">A estrutura da forja acompanha o sistema de equipamento do modo.</p></div><button class="win-close-btn" onclick="closeForgeWindow()">X</button></div>
+                <div id="forge-grid" class="forge-grid">
+                    <div class="form-group"><label>Nome do item</label><input id="forge-name" placeholder="Ex.: Lâmina da Agonia Veloz"></div>
+                    <div class="form-group"><label>Chassi</label><select id="forge-chassis" onchange="updateForgeCost()"><option value="Ligeiro" data-pe="2">Ligeiro — 2 PE</option><option value="Padrão" data-pe="5">Padrão — 5 PE</option><option value="Massivo" data-pe="8">Massivo — 8 PE</option><option value="Proteção" data-pe="4">Proteção — 4 PE</option><option value="Utilitário" data-pe="3">Utilitário — 3 PE</option></select></div>
+                    <div class="form-group"><label>Categoria</label><select id="forge-category" onchange="updateForgeCost()"><option value="Ritualístico">Ritualístico — -5 PE</option><option value="Anômalo">Anômalo — custo integral</option></select></div>
+                    <div class="form-group"><label>Estágio (1–10)</label><input id="forge-stage" type="number" min="1" max="10" value="1" onchange="updateForgeCost()"></div>
+                    <div class="form-group"><label>Vetores de Manifestação</label><select id="forge-vectors" multiple size="5" onchange="updateForgeCost()"><option value="Destrutiva">Destrutiva</option><option value="Fissura">Fissura</option><option value="Manipulação">Manipulação</option><option value="Protetiva">Protetiva</option><option value="Restauração">Restauração</option></select><small>O custo de cada vetor é definido pelo sistema selecionado.</small></div>
+                    <div id="forge-exodo-fields" class="forge-special-fields" style="display:none">
+                        <div class="form-group"><label>MCP · Graduação de Multiataques</label><input id="forge-mcp-multi" type="number" min="0" max="10" value="0" oninput="updateForgeCost()"><small>Fórmula oficial: max(10, 3 × Multi) + 2 × Efeito.</small></div>
+                        <div class="form-group"><label>MCP · Graduação do Efeito</label><input id="forge-mcp-effect" type="number" min="0" max="10" value="0" oninput="updateForgeCost()"></div>
+                        <div class="form-group"><label>PE Extras / customizações</label><input id="forge-extras" type="number" min="0" value="0" oninput="updateForgeCost()"></div>
+                    </div>
+                    <div id="forge-envolto-fields" class="forge-special-fields" style="display:none">
+                        <div class="form-group"><label>Resíduo Ontológico</label><select id="forge-residue" onchange="updateForgeCost()"><option value="">Nenhum — 0 PE</option><option value="Carne Estática" data-pe="4">Carne Estática — 4 PE</option><option value="Escória Euclidiana" data-pe="6">Escória Euclidiana — 6 PE</option><option value="Pulmão Cego" data-pe="5">Pulmão Cego — 5 PE</option></select></div>
+                        <div class="form-group"><label>Válvula de Potência</label><select id="forge-valve" onchange="updateForgeCost()"><option value="0">Sem válvula — 0 PE</option><option value="1">Tier 1 · Capacidades 1–3 — 6 PE</option><option value="2">Tier 2 · Capacidades 4–6 — 12 PE</option></select></div>
+                        <div class="form-group"><label>Gatilho de Falha / Maldição (-5 PE)</label><select id="forge-curse" onchange="updateForgeCost()"><option value="">Nenhum — 0 PE</option><option value="A Fome de Carne">A Fome de Carne — 1 ou 2 natural: morde o usuário, 1d8 dano</option><option value="O Dreno do Vazio">O Dreno do Vazio — se guardado sem tirar uma vida: drena 5 EE</option><option value="A Traição da Estática">A Traição da Estática — falha crítica avaria organicamente e exige 1 Ação Padrão para realinhar</option></select><small>Qualquer maldição reduz o custo final em 5 PE.</small></div>
+                    </div>
+                    <div id="forge-ordem-fields" class="forge-special-fields" style="display:none">
+                        <div class="form-group"><label>Propósito Sagrado</label><input id="forge-purpose" placeholder="Ex.: Purificar, Proteger o Portador, Ferir apenas o mal" oninput="updateForgeCost()"><small>Uma Dádiva exige Propósito; Recordação mínima de 25% e teste de Forja.</small></div>
+                    </div>
+                    <div class="form-group"><label>Destino</label><select id="forge-recipient"></select></div>
+                    <div class="forge-preview" id="forge-preview">Custo estimado: 0 PE</div>
+                    <div class="form-group forge-notes"><label>Efeito / VF / observações</label><textarea id="forge-effect" rows="4" placeholder="Descreva o efeito mundano, VF e particularidades."></textarea></div>
+                </div>
+                <div id="forge-exodo-message" class="forge-mode-message" style="display:none"></div>
+                <div class="modal-actions"><button class="souls-btn small-btn" onclick="forgeItemForTable()">FORJAR E ENTREGAR</button><button class="souls-btn small-btn" style="border-color:#ff3333;color:#ff3333" onclick="closeForgeWindow()">Cancelar</button></div>
+            </div>
+        </div>
+
+        <div id="equipment-add-modal" class="modal" style="z-index:10022;">
+            <div class="modal-content equipment-add-content" style="max-width:560px"><div class="equipment-modal-head"><div><span class="eyebrow" id="equipment-add-eyebrow">ARSENAL</span><h3 id="equipment-add-title" style="color:#d4af37;font-family:Cinzel,serif">Adicionar ao Arsenal</h3><p id="equipment-add-subtitle"></p></div><button class="win-close-btn" onclick="document.getElementById('equipment-add-modal').style.display='none'">X</button></div><div class="form-group"><label id="sheet-eq-name-label">Nome</label><input id="sheet-eq-name" placeholder="Nome do dispositivo/equipamento"></div><div class="form-group"><label id="sheet-eq-type-label">Categoria / tipo</label><input id="sheet-eq-type" placeholder="Tipo do item"></div><div class="form-group"><label id="sheet-eq-meta-label">Dados do modo</label><input id="sheet-eq-meta" placeholder="Dados específicos do modo"></div><div class="form-group"><label id="sheet-eq-effect-label">Efeito / descrição</label><textarea id="sheet-eq-effect" rows="4"></textarea></div><div class="modal-actions"><button class="souls-btn small-btn" onclick="addEquipmentToCurrentSheet()">Adicionar</button><button class="souls-btn small-btn" style="border-color:#ff3333;color:#ff3333" onclick="document.getElementById('equipment-add-modal').style.display='none'">Cancelar</button></div></div>
+        </div>
+
+        <div id="manage-players-modal" class="modal" style="z-index:9999;">
+            <div class="modal-content">
+                <h3 style="color: #ff5500; font-family: 'Cinzel', serif; margin-bottom: 15px;">Gerenciar Almas na Fenda</h3>
+                <div id="manage-players-list" style="text-align:left; max-height:300px; overflow-y:auto; margin-bottom:20px;"></div>
+                <div class="modal-actions">
+                    <button class="souls-btn small-btn" onclick="document.getElementById('manage-players-modal').style.display='none'">Fechar</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL DE CORTE (CROPPER) -->
+    <div id="crop-modal" class="modal" style="z-index:9999;">
+        <div class="modal-content" style="max-width: 650px;">
+            <h3 style="color: #d4af37; font-family: 'Cinzel', serif; margin-bottom: 15px;">Ajustar Imagem</h3>
+            <div class="img-container" style="height: 420px; display:flex; justify-content:center; align-items:center; background:#080808; border:1px solid #333; overflow:hidden;">
+                <canvas id="crop-canvas" width="620" height="420" aria-label="Área de corte da imagem"></canvas>
+            </div>
+            <div class="crop-toolbar" style="margin-top: 15px; margin-bottom: 15px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                <button type="button" class="souls-btn small-btn" style="padding: 5px 10px;" onclick="setAspectRatio(1)">1:1</button>
+                <button type="button" class="souls-btn small-btn" style="padding: 5px 10px;" onclick="setAspectRatio(16/9)">16:9</button>
+                <button type="button" class="souls-btn small-btn" style="padding: 5px 10px;" onclick="setAspectRatio(NaN)">Livre</button>
+                <button type="button" class="souls-btn small-btn" style="padding: 5px 10px;" onclick="rotateCrop(-90)">&#8634; Girar</button>
+                <button type="button" class="souls-btn small-btn" style="padding: 5px 10px;" onclick="rotateCrop(90)">Girar &#8635;</button>
+                <button type="button" class="souls-btn small-btn" style="padding: 5px 10px;" onclick="zoomCrop(0.1)">Zoom +</button>
+                <button type="button" class="souls-btn small-btn" style="padding: 5px 10px;" onclick="zoomCrop(-0.1)">Zoom -</button>
+                <button type="button" class="souls-btn small-btn" style="padding: 5px 10px; border-color: #ff3333; color:#ff3333;" onclick="resetCrop()">Resetar</button>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="souls-btn small-btn" onclick="confirmCrop()">Confirmar Corte</button>
+                <button type="button" class="souls-btn small-btn" style="border-color: #ff3333; color: #ff3333;" onclick="cancelCrop()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITOR DE TEMA -->
+    <div id="theme-modal" class="modal" style="z-index:9999;">
+        <div class="modal-content">
+            <h3 style="color: #d4af37; font-family: 'Cinzel', serif; margin-bottom: 15px;">Editar Design da Mesa</h3>
+            <div class="form-group">
+                <label>Tema Estético:</label>
+                <select id="vtt-theme-select" onchange="previewVttTheme()">
+                    <option value="default">Clássico / Ouro</option>
+                    <option value="cyber">Cyberpunk / Neon</option>
+                    <option value="gothic">Gótico / Sangue</option>
+                    <option value="cosmic">Horror Cósmico / Vazio</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Fonte dos Títulos:</label>
+                <select id="vtt-font-select" onchange="previewVttTheme()">
+                    <option value="'Cinzel', serif">Cinzel (Clássica)</option>
+                    <option value="'Orbitron', sans-serif">Orbitron (Ficção)</option>
+                    <option value="'MedievalSharp', cursive">MedievalSharp (Fantasia)</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="souls-btn small-btn" onclick="applyVttTheme()">Aplicar Tema</button>
+                <button class="souls-btn small-btn" style="border-color: #ff3333; color: #ff3333;" onclick="cancelVttTheme()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="fs-modal" class="modal" onclick="closeFullscreen()" style="z-index:10000;">
+        <img id="fs-img" src="" alt="Fullscreen">
+    </div>
+
+    <script src="js/ms-version.js"></script>
+    <script src="js/ms-platform.js"></script>
+    <script src="js/codex-catalog.js"></script>
+    <script src="js/world-codices.js"></script>
+    <script src="js/portal/portal-content.js"></script>
+    <script src="js/portal/portal-media.js"></script>
+    <script src="js/portal/portal-core.js"></script>
+    <script src="js/portal/portal-admin.js"></script>
+    <script src="js/archetype-art-direction.js"></script>
+    <script src="js/asset-loader.js"></script>
+    <script src="js/vendor-loader.js"></script>
+    <script src="js/ms-runtime-config.js"></script>
+    <script src="js/ms-config.js"></script>
+    <script src="js/offline-db-loader.js"></script>
+    <script src="js/supabase-db.js"></script>
+    <script src="js/ms-services.js"></script>
+    <script src="js/ms-realtime.js"></script>
+    <script src="js/table-session-engine.js"></script>
+    <script src="js/table-shell-v3.js"></script>
+    <script src="js/master-shield-loader.js"></script>
+    <script src="js/feature-loader.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/master-command-center.js"></script>
+    <script src="js/master-room.js"></script>
+    <script src="js/table-directory.js"></script>
+    <script src="js/master-tools.js"></script>
+    <script src="js/ms-online-ui.js"></script>
+    <script src="js/soul-economy.js"></script>
+    <script src="js/offline-sandbox-ui-loader.js"></script>
+
+
+    <!-- MODAL GLOBAL: configuração inicial do ADM; mantido fora de qualquer .screen para evitar sobreposição/stacking context -->
+    <div id="initial-setup-modal" class="modal">
+            <div class="modal-content" style="max-width: 450px;">
+                <h3 style="color:#ff9a44; font-family:'Cinzel',serif; margin-bottom:15px;">Configuração Inicial do Arconte</h3>
+                <p style="font-size:.82rem; color:#aaa; margin-bottom:15px;">Crie manualmente o primeiro ADM desta instalação. A senha nunca é exibida novamente e é gerenciada pelo Supabase Auth nesta instalação.</p>
+                <div class="form-group"><input id="setup-admin-user" type="text" placeholder="Usuário ADM"></div>
+                <div class="form-group"><input id="setup-admin-email" type="email" placeholder="E-mail do ADM"></div>
+                <div class="form-group"><input id="setup-admin-pass" type="password" placeholder="Senha forte (mín. 10 caracteres)" autocomplete="new-password"></div>
+                <div class="modal-actions">
+                    <button class="souls-btn small-btn" style="border-color:#ff9a44;color:#ff9a44;" onclick="createInitialAdmin()">CRIAR ADM</button>
+                    <button class="souls-btn small-btn" style="border-color:#777;color:#aaa;" onclick="closeInitialSetup()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+</body>
+</html>

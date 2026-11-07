@@ -1,0 +1,60 @@
+{
+  "date": "2026-09-17",
+  "version": "2.10.2",
+  "changed_sources": [
+    {
+      "file": "js/evolution-gradual-v2.10.1.js",
+      "sha256": "4c0a33dc1713193ec692575403dc969023d2b13d90bdf69a8a160a51b2811804"
+    },
+    {
+      "file": "js/operational-control-v2.10.1.js",
+      "sha256": "600f0dc1c3e52e85eeaaf7c9260aa5cf2f6be9defd36ea5ce3e0d69dab4495e8"
+    },
+    {
+      "file": "js/points-ui.js",
+      "sha256": "175e8ebdb3b61c061361afe1b94a39716bcdf1b48af42984101ff630d21e124a"
+    },
+    {
+      "file": "js/table-sheets.js",
+      "sha256": "66341948f36be6c8b73241ec172b1584141d892aaff14cbcee111ff72c34bcfc"
+    },
+    {
+      "file": "js/table-shell-v3.js",
+      "sha256": "542159507683c74bb927add4244df5ed5b7678b4b8e188ecd3e1e73764e595ee"
+    },
+    {
+      "file": "css/table-sheets.css",
+      "sha256": "e7fd03142107f2ba6111fe716b9f146166fd591a96d288ecba7bf9a315cc2051"
+    },
+    {
+      "file": "css/table-shell-v3.css",
+      "sha256": "044c74321d4e30ca5aa0d16c511cb527ba4ffdf413aa7742223fce05f6430235"
+    },
+    {
+      "file": "tests/art-experience.test.js",
+      "sha256": "a0c262064e71926f3535d8246569fb9c26700af6e9771e961ac240845d0fa332"
+    },
+    {
+      "file": "tests/consolidation-runtime.test.js",
+      "sha256": "ad0ec225d113d56e79184bba9c36335a677c641a57a5193f7031781691f94fac"
+    },
+    {
+      "file": "tests/evolution-gradual-v2.10.1.test.js",
+      "sha256": "9a94200b2efb178ee15a8379fd0a5cba301c8972c5c3de36b9ca29daa0c2f96c"
+    },
+    {
+      "file": "tests/experience-v2.10.2.test.js",
+      "sha256": "28cfa3fdf5de272d65886c79dd759147b7a681cc241d1b9a7f16c8fb6014ff52"
+    },
+    {
+      "file": "tests/operational-control-v2.9.0.test.js",
+      "sha256": "bd9399c3a7f962303f36547b84d001eb18423b6fafb5b653af13e955d075f891"
+    }
+  ],
+  "tests": {
+    "total": 273,
+    "passed": 254,
+    "failed": 0,
+    "skipped": 19
+  }
+}

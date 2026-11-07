@@ -1,0 +1,16 @@
+SITE OFICIAL MUNDOS SOMBRIOS — V2.11.0
+
+Integração nativa do Mundos Sombrios Grid Architect v0.10 ao VTT.
+O site continua responsável por contas, personagens, mesas, campanhas e backend; o Architect assume o espaço tático da Cena.
+
+Principais recursos:
+- Grid quadrado, hex horizontal, hex vertical, isométrico e livre.
+- Câmera, zoom e pan.
+- Paredes, portas, colisão e intenção de movimento validada pelo Mestre.
+- Fog of war, iluminação, escuridão e POV/visão com bloqueio por paredes.
+- Objetos 2D/2.5D, ambientes e tokens artísticos do catálogo Architect.
+- Notas, gatilhos e interação de jogador.
+- Mixer de duas ambiências procedurais.
+- Estado rico em scene.vtt e migração automática de cenas antigas.
+- Importação/exportação .msgrid.json.
+- Assets Architect otimizados de ~44 MB para ~16,4 MB.

@@ -1,0 +1,15 @@
+SITE OFICIAL MS — RELEASE VALIDATION V2.10.7
+
+[OK] Versão canônica: 2.10.7
+[OK] Syntax check: 61 arquivos JavaScript válidos
+[OK] Testes: 307 total / 288 pass / 0 fail / 19 skip
+[OK] npm run build
+[OK] offline-local reconstruído
+[OK] sandbox-offline reconstruído
+[OK] dist preparado pelo build
+[OK] Preview local separado do scene.gridConfig oficial
+[OK] Atualização visual por input/requestAnimationFrame
+[OK] Calibração O/X/Y sincronizada com o painel
+[OK] Snap/movimento/tamanho de totens não destrutivos durante edição
+[OK] Broadcast grid_preview efêmero opcional
+[OK] Commit oficial continua via evento scene

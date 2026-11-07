@@ -1,0 +1,13 @@
+CONFIGURAÇÃO RÁPIDA — MUNDOS SOMBRIOS V2.10.1
+
+1) Execute supabase-install-completo-v2.10.1.sql no projeto Supabase escolhido.
+2) Edite js/ms-runtime-config.js.
+3) Preencha somente:
+   url: 'https://SEU-PROJETO.supabase.co'
+   publishableKey: 'SUA_CHAVE_PUBLICA'
+4) Nunca use service_role, secret key ou senha do banco no frontend.
+5) Publique no GitHub Pages ou em qualquer hospedagem estática.
+
+Sem URL/chave, a aplicação usa o adaptador local/offline.
+
+V2.10.1 hotfix online: supabase-progression-v2.10.1-live-compat.sql

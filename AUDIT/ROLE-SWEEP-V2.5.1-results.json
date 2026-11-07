@@ -1,0 +1,173 @@
+{
+  "jogador": {
+    "setup": {
+      "applied": true,
+      "user": {
+        "id": "qa-jogador",
+        "authUserId": "qa-jogador",
+        "username": "QA jogador",
+        "email": "jogador@qa.local",
+        "role": "jogador",
+        "banned": false,
+        "status": "active"
+      }
+    },
+    "access": {
+      "admin": "none",
+      "gm": "none",
+      "shield": "none",
+      "orbHidden": false
+    },
+    "limits": {
+      "chars": 3,
+      "tables": 0,
+      "base": true,
+      "aprimorador": false,
+      "envolto": false
+    },
+    "orb3d": {
+      "nonempty": true,
+      "changed": true,
+      "artAnimation": "soulFloat",
+      "haloAnimation": "soulHaloA",
+      "canvas": [
+        144,
+        144
+      ]
+    },
+    "harvest": {
+      "active": true,
+      "label": "COLHEITA ATIVA",
+      "clock": "10:00"
+    },
+    "store": {
+      "buttons": [
+        "character_slot",
+        "exp_aprimorador",
+        "exp_player",
+        "exp_linhagem",
+        "exp_envolto",
+        "exp_ordem"
+      ],
+      "hasTable": false,
+      "hasExp": true
+    },
+    "purchase": {
+      "before": 90000,
+      "after": 40000,
+      "unlocked": true,
+      "tx": 1
+    }
+  },
+  "mestre": {
+    "setup": {
+      "applied": true,
+      "user": {
+        "id": "qa-mestre",
+        "authUserId": "qa-mestre",
+        "username": "QA mestre",
+        "email": "mestre@qa.local",
+        "role": "mestre",
+        "banned": false,
+        "status": "active"
+      }
+    },
+    "access": {
+      "admin": "none",
+      "gm": "block",
+      "shield": "block",
+      "orbHidden": false
+    },
+    "limits": {
+      "chars": 5,
+      "tables": 3,
+      "base": true,
+      "aprimorador": true,
+      "envolto": true
+    },
+    "orb3d": {
+      "nonempty": true,
+      "changed": true,
+      "artAnimation": "soulFloat",
+      "haloAnimation": "soulHaloA",
+      "canvas": [
+        144,
+        144
+      ]
+    },
+    "harvest": {
+      "active": true,
+      "label": "COLHEITA ATIVA",
+      "clock": "09:57"
+    },
+    "tableModal": {
+      "display": "flex",
+      "top": 100.5,
+      "bottom": 960.5,
+      "height": 860,
+      "viewport": 1041,
+      "inside": true,
+      "overflow": "auto"
+    },
+    "store": {
+      "buttons": [
+        "character_slot",
+        "master_table_slot"
+      ],
+      "hasTable": true,
+      "hasExp": false
+    }
+  },
+  "admin": {
+    "setup": {
+      "applied": true,
+      "user": {
+        "id": "qa-admin",
+        "authUserId": "qa-admin",
+        "username": "QA admin",
+        "email": "admin@qa.local",
+        "role": "admin",
+        "banned": false,
+        "status": "active"
+      }
+    },
+    "access": {
+      "admin": "block",
+      "gm": "block",
+      "shield": "block",
+      "orbHidden": false
+    },
+    "limits": {
+      "chars": null,
+      "tables": null,
+      "base": true,
+      "aprimorador": true,
+      "envolto": true
+    },
+    "orb3d": {
+      "nonempty": true,
+      "changed": true,
+      "artAnimation": "soulFloat",
+      "haloAnimation": "soulHaloA",
+      "canvas": [
+        144,
+        144
+      ]
+    },
+    "harvest": {
+      "active": true,
+      "label": "COLHEITA ATIVA",
+      "clock": "10:00"
+    },
+    "adminPanel": {
+      "ok": true,
+      "display": "flex",
+      "console": true,
+      "unlimited": true
+    },
+    "store": {
+      "arconte": "ARCONTESlots e expansões ilimitados. Nenhuma compra é necessária.",
+      "buyCount": 0
+    }
+  }
+}

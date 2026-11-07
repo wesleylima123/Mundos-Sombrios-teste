@@ -1,0 +1,394 @@
+[
+  {
+    "id": "gen_wall_gothic",
+    "name": "Mural Gótico Industrial",
+    "universe": "generic",
+    "category": "wall",
+    "file": "assets/props/generic/wall.webp",
+    "tags": [
+      "parede",
+      "estrutura",
+      "gótico"
+    ],
+    "defaults": {
+      "widthCells": 2.6,
+      "heightCells": 1.35,
+      "rotation": 0,
+      "opacity": 1,
+      "shadow": 0.55
+    },
+    "behavior": {
+      "interactive": false,
+      "blocksMovement": true,
+      "blocksSight": true,
+      "openable": false,
+      "locked": false
+    },
+    "description": "Segmento modular de parede para bloquear movimento e visão.",
+    "thumbnail": "assets/thumbs/props/generic/wall.webp"
+  },
+  {
+    "id": "gen_door_gothic",
+    "name": "Porta Gótica Reforçada",
+    "universe": "generic",
+    "category": "door",
+    "file": "assets/props/generic/door.webp",
+    "tags": [
+      "porta",
+      "estrutura",
+      "metal"
+    ],
+    "defaults": {
+      "widthCells": 1.5,
+      "heightCells": 1.65,
+      "rotation": 0,
+      "opacity": 1,
+      "shadow": 0.6
+    },
+    "behavior": {
+      "interactive": true,
+      "blocksMovement": true,
+      "blocksSight": true,
+      "openable": true,
+      "locked": false
+    },
+    "description": "Porta pesada interativa com estados aberta, fechada e trancada.",
+    "thumbnail": "assets/thumbs/props/generic/door.webp"
+  },
+  {
+    "id": "gen_clue_dossier",
+    "name": "Dossiê de Investigação",
+    "universe": "generic",
+    "category": "clue",
+    "file": "assets/props/generic/clue.webp",
+    "tags": [
+      "pista",
+      "investigação",
+      "dossiê"
+    ],
+    "defaults": {
+      "widthCells": 0.85,
+      "heightCells": 0.85,
+      "rotation": 0,
+      "opacity": 1,
+      "shadow": 0.45
+    },
+    "behavior": {
+      "interactive": true,
+      "blocksMovement": false,
+      "blocksSight": false,
+      "openable": false,
+      "locked": false
+    },
+    "description": "Pista investigável capaz de revelar um handout.",
+    "thumbnail": "assets/thumbs/props/generic/clue.webp"
+  },
+  {
+    "id": "gen_safe_gothic",
+    "name": "Cofre Gótico",
+    "universe": "generic",
+    "category": "safe",
+    "file": "assets/props/generic/safe.webp",
+    "tags": [
+      "cofre",
+      "segredo",
+      "contêiner"
+    ],
+    "defaults": {
+      "widthCells": 1.05,
+      "heightCells": 1.05,
+      "rotation": 0,
+      "opacity": 1,
+      "shadow": 0.6
+    },
+    "behavior": {
+      "interactive": true,
+      "blocksMovement": true,
+      "blocksSight": false,
+      "openable": true,
+      "locked": true
+    },
+    "description": "Cofre interativo para conteúdo, senha e pistas.",
+    "thumbnail": "assets/thumbs/props/generic/safe.webp"
+  },
+  {
+    "id": "exo_wall_biomech",
+    "name": "Parede Biomecânica",
+    "universe": "exodo",
+    "category": "wall",
+    "file": "assets/props/exodo/wall_biomech.webp",
+    "tags": [
+      "parede",
+      "biomecânica",
+      "nexo"
+    ],
+    "defaults": {
+      "widthCells": 2.8,
+      "heightCells": 1.35,
+      "rotation": 0,
+      "opacity": 1,
+      "shadow": 0.62
+    },
+    "behavior": {
+      "interactive": false,
+      "blocksMovement": true,
+      "blocksSight": true,
+      "openable": false,
+      "locked": false
+    },
+    "description": "Estrutura viva e industrial de Êxodo.",
+    "thumbnail": "assets/thumbs/props/exodo/wall_biomech.webp"
+  },
+  {
+    "id": "exo_door_biomech",
+    "name": "Porta de Contenção Nexo",
+    "universe": "exodo",
+    "category": "door",
+    "file": "assets/props/exodo/door_biomech.webp",
+    "tags": [
+      "porta",
+      "contenção",
+      "biomecânica"
+    ],
+    "defaults": {
+      "widthCells": 1.65,
+      "heightCells": 1.75,
+      "rotation": 0,
+      "opacity": 1,
+      "shadow": 0.65
+    },
+    "behavior": {
+      "interactive": true,
+      "blocksMovement": true,
+      "blocksSight": true,
+      "openable": true,
+      "locked": false
+    },
+    "description": "Porta biomecânica reforçada de contenção.",
+    "thumbnail": "assets/thumbs/props/exodo/door_biomech.webp"
+  },
+  {
+    "id": "exo_clue_dossier",
+    "name": "Dossiê de Assimilação",
+    "universe": "exodo",
+    "category": "clue",
+    "file": "assets/props/exodo/clue_dossier.webp",
+    "tags": [
+      "pista",
+      "assimilação",
+      "biometria"
+    ],
+    "defaults": {
+      "widthCells": 0.9,
+      "heightCells": 0.9,
+      "rotation": 0,
+      "opacity": 1,
+      "shadow": 0.48
+    },
+    "behavior": {
+      "interactive": true,
+      "blocksMovement": false,
+      "blocksSight": false,
+      "openable": false,
+      "locked": false
+    },
+    "description": "Arquivo biométrico e documental investigável.",
+    "thumbnail": "assets/thumbs/props/exodo/clue_dossier.webp"
+  },
+  {
+    "id": "exo_safe_biometric",
+    "name": "Cofre Biométrico Nexo",
+    "universe": "exodo",
+    "category": "safe",
+    "file": "assets/props/exodo/safe_biometric.webp",
+    "tags": [
+      "cofre",
+      "biometria",
+      "nexo"
+    ],
+    "defaults": {
+      "widthCells": 1.1,
+      "heightCells": 1.1,
+      "rotation": 0,
+      "opacity": 1,
+      "shadow": 0.62
+    },
+    "behavior": {
+      "interactive": true,
+      "blocksMovement": true,
+      "blocksSight": false,
+      "openable": true,
+      "locked": true
+    },
+    "description": "Contêiner de segurança biométrica de Êxodo.",
+    "thumbnail": "assets/thumbs/props/exodo/safe_biometric.webp"
+  },
+  {
+    "id": "exo_terminal_biotech",
+    "name": "Terminal Biotecnológico",
+    "universe": "exodo",
+    "category": "terminal",
+    "file": "assets/props/exodo/terminal_biotech.webp",
+    "tags": [
+      "terminal",
+      "biotecnologia",
+      "controle"
+    ],
+    "defaults": {
+      "widthCells": 1.05,
+      "heightCells": 1.5,
+      "rotation": 0,
+      "opacity": 1,
+      "shadow": 0.6
+    },
+    "behavior": {
+      "interactive": true,
+      "blocksMovement": true,
+      "blocksSight": false,
+      "openable": true,
+      "locked": false
+    },
+    "description": "Terminal de análise, segurança e controle ambiental.",
+    "thumbnail": "assets/thumbs/props/exodo/terminal_biotech.webp"
+  },
+  {
+    "id": "ocu_wall_occult",
+    "name": "Mural de Contenção Oculta",
+    "universe": "ocultatun",
+    "category": "wall",
+    "file": "assets/props/ocultatun/wall_occult.webp",
+    "tags": [
+      "parede",
+      "ritual",
+      "contenção"
+    ],
+    "defaults": {
+      "widthCells": 2.5,
+      "heightCells": 1.4,
+      "rotation": 0,
+      "opacity": 1,
+      "shadow": 0.62
+    },
+    "behavior": {
+      "interactive": false,
+      "blocksMovement": true,
+      "blocksSight": true,
+      "openable": false,
+      "locked": false
+    },
+    "description": "Mural ritual-industrial de contenção de Ocultatun.",
+    "thumbnail": "assets/thumbs/props/ocultatun/wall_occult.webp"
+  },
+  {
+    "id": "ocu_door_containment",
+    "name": "Porta de Contenção Ritual",
+    "universe": "ocultatun",
+    "category": "door",
+    "file": "assets/props/ocultatun/door_containment.webp",
+    "tags": [
+      "porta",
+      "ritual",
+      "arquivo"
+    ],
+    "defaults": {
+      "widthCells": 1.55,
+      "heightCells": 1.8,
+      "rotation": 0,
+      "opacity": 1,
+      "shadow": 0.65
+    },
+    "behavior": {
+      "interactive": true,
+      "blocksMovement": true,
+      "blocksSight": true,
+      "openable": true,
+      "locked": false
+    },
+    "description": "Porta de contenção com selo ritual e travas mecânicas.",
+    "thumbnail": "assets/thumbs/props/ocultatun/door_containment.webp"
+  },
+  {
+    "id": "ocu_clue_occult",
+    "name": "Dossiê Anômalo",
+    "universe": "ocultatun",
+    "category": "clue",
+    "file": "assets/props/ocultatun/clue_occult.webp",
+    "tags": [
+      "pista",
+      "anomalia",
+      "investigação"
+    ],
+    "defaults": {
+      "widthCells": 0.9,
+      "heightCells": 0.9,
+      "rotation": 0,
+      "opacity": 1,
+      "shadow": 0.48
+    },
+    "behavior": {
+      "interactive": true,
+      "blocksMovement": false,
+      "blocksSight": false,
+      "openable": false,
+      "locked": false
+    },
+    "description": "Dossiê anômalo para investigação e handouts.",
+    "thumbnail": "assets/thumbs/props/ocultatun/clue_occult.webp"
+  },
+  {
+    "id": "ocu_safe_arcane",
+    "name": "Cofre Arcano",
+    "universe": "ocultatun",
+    "category": "safe",
+    "file": "assets/props/ocultatun/safe_arcane.webp",
+    "tags": [
+      "cofre",
+      "arcano",
+      "contenção"
+    ],
+    "defaults": {
+      "widthCells": 1.1,
+      "heightCells": 1.1,
+      "rotation": 0,
+      "opacity": 1,
+      "shadow": 0.62
+    },
+    "behavior": {
+      "interactive": true,
+      "blocksMovement": true,
+      "blocksSight": false,
+      "openable": true,
+      "locked": true
+    },
+    "description": "Cofre ritual para artefatos e evidências anômalas.",
+    "thumbnail": "assets/thumbs/props/ocultatun/safe_arcane.webp"
+  },
+  {
+    "id": "ocu_terminal_anomaly",
+    "name": "Terminal de Investigação Anômala",
+    "universe": "ocultatun",
+    "category": "terminal",
+    "file": "assets/props/ocultatun/terminal_anomaly.webp",
+    "tags": [
+      "terminal",
+      "arquivo",
+      "anomalia"
+    ],
+    "defaults": {
+      "widthCells": 1.4,
+      "heightCells": 1.2,
+      "rotation": 0,
+      "opacity": 1,
+      "shadow": 0.62
+    },
+    "behavior": {
+      "interactive": true,
+      "blocksMovement": true,
+      "blocksSight": false,
+      "openable": true,
+      "locked": false
+    },
+    "description": "Console de arquivo, monitoramento e contenção anômala.",
+    "thumbnail": "assets/thumbs/props/ocultatun/terminal_anomaly.webp"
+  }
+]

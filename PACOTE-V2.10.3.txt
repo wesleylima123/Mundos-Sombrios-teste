@@ -1,0 +1,4 @@
+MUNDOS SOMBRIOS V2.10.3 — COMPLETO COM SANDBOX
+Inclui sandbox-offline reconstruído a partir do mesmo runtime canônico.
+O diretório dist/ não é incluído porque é gerado automaticamente por `npm run build` e pelo workflow do GitHub Pages.
+Validação: 292 testes; 273 aprovados, 0 falhas, 19 ignorados/condicionais.

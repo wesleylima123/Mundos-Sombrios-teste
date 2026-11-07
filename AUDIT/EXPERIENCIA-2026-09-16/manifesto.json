@@ -1,0 +1,187 @@
+[
+  {
+    "path": "README-GITHUB-SUPABASE.md",
+    "before_sha256": "d57344a324d37f180eb7ec7dcfc0235e024e1a988d2c1571229470ae685e2873",
+    "after_sha256": "93ad35348511879dfd6f60a4286bb9d680cbdbbee28783b303efe6113cfebd14"
+  },
+  {
+    "path": "VERSION.txt",
+    "before_sha256": "d12baae7db73730500abbed9720ecff513f402e94b63f39118b14f2dd4b12df3",
+    "after_sha256": "84f27c707b57cc7e76deafc6b146d42a740d60aaff92934a40c23307ecac8ab2"
+  },
+  {
+    "path": "css/evolution-gradual-v2.10.1.css",
+    "before_sha256": "f2294d0b1609a2ac808dee074abacfce5a5ab5b2e52ee24df5c04dda07bf0b8f",
+    "after_sha256": "28a438b27bab2da687ba7025c998ffc4e4609f149d287148a1c4da53079c7c81"
+  },
+  {
+    "path": "css/forja-overhaul-v2.8.10.css",
+    "before_sha256": "d89d4b6216a9fc97f658715f54ae18e6d0f771000c0cae3e7cbd0a472be7cd07",
+    "after_sha256": "8b38f27171ac967eb325650f795c80bb948e00b80f295c99fc688acd62458381"
+  },
+  {
+    "path": "css/ms-online.css",
+    "before_sha256": "562645a7daa30da44f5628d731bb6607e424527c4145ff53aefb7a8b0f65934a",
+    "after_sha256": "80b5cce01fcf0fafe58017d46009c0e17f2e5f65df348cdd64767469f00f6692"
+  },
+  {
+    "path": "css/offline-sandbox.css",
+    "before_sha256": "9355353fcc7f28f7ad34fc9df63554f0d24399e6c9dbb8ef95051f06fb84fd8f",
+    "after_sha256": "a560930946eed27d6c2471a2cf9ba1f9eeba33e459adb5bb4492f2a64190fdb5"
+  },
+  {
+    "path": "css/operational-control-v2.10.1.css",
+    "before_sha256": "e823cf55fdfe14efada2f85bc4709ec3335a42e20d542b1822b76784e1ce6354",
+    "after_sha256": "5e3e920e0e322be8a89e1f479e3b28af71edfcb0816f57ebde19c1b72a26dc98"
+  },
+  {
+    "path": "css/portal/portal-editorial-v2.2.css",
+    "before_sha256": "d215aa0dcd13ba3ac1f42a58fa6b7fa412ad0ce569e93b9d17a3a9affe556235",
+    "after_sha256": "f8bbd3391b59ef5c8cc81a7f135dfbb904aed09bf557be17455c9842a14275a3"
+  },
+  {
+    "path": "css/table-shell-v3.css",
+    "before_sha256": "dadd6e0e23301d9e7c70ad7fd8a8415142d9388d44068dfed96d4ca8079025ef",
+    "after_sha256": "9c5840128a6309b6c0ff253ff5cef8328a98e3d89f074c70e34b882fa93743ca"
+  },
+  {
+    "path": "css/table-studio-v2.8.6.css",
+    "before_sha256": "0d2034ce7338356d304e765ad960a97a5d27178bb3189cde13baa6f7cb3829de",
+    "after_sha256": "2db94fbfb63cd6b8d769953f875e27e97c1756d76927700b102d5e316120bc8c"
+  },
+  {
+    "path": "index.html",
+    "before_sha256": "b18a4cdb08907ac43e8858227e2fa9908cc6aa7a3d9d5fb2b6f18ba4c38b7e44",
+    "after_sha256": "918738da6b79468f6773a86616443501ac718f4c83fd3fcdaf786752186fe26d"
+  },
+  {
+    "path": "js/alquerino-lab.js",
+    "before_sha256": null,
+    "after_sha256": "5aff0de17e4b6a30c9ec5fa790538c6e15423730b2cf955d936cac143d427d60"
+  },
+  {
+    "path": "js/feature-loader.js",
+    "before_sha256": "dfca55068adca5218605ea56f13d23b97f2b873c7b20c0e4da23e1bf429618aa",
+    "after_sha256": "030776f37a36cbde90221c65690621403e9f5630a81d30e04ad872e925b49fe3"
+  },
+  {
+    "path": "js/ms-config.js",
+    "before_sha256": "ac4cb51b1a452bd337c3d0b1c2dd5beee5ca579fb165e694d2b2fea4b4b99195",
+    "after_sha256": "8f4348f69749c29250330f6caaf0c7c33e55e26274e0c3ffd46b7e421a05863f"
+  },
+  {
+    "path": "js/ms-consolidation-v2.10.1.js",
+    "before_sha256": "3b192e4e0e856e32cd17acd5bc13aedaa234b07f09eaacec7eee1b1ea0574223",
+    "after_sha256": "72654fe6ff2bb0bd20a5b45051dcdc4bf97b880ac8deb64e2282180b166049da"
+  },
+  {
+    "path": "js/ms-online-ui.js",
+    "before_sha256": "185413ea7146dda0bc5d80f4a2ab7f11bd26c3e30975375e0df896aeeef9a248",
+    "after_sha256": "2d2a166d7331c8d1196e91203696292c1e7ab15768b077a68cd9c17557341038"
+  },
+  {
+    "path": "js/ms-runtime-config.js",
+    "before_sha256": "63032085254faa3482f31bc56bad396411fdd4c23131484b1d563bd324c534f0",
+    "after_sha256": "b9af93a66739c86853722b4e25265734a74e21dfac1ea00c6d48de1b0b7eb386"
+  },
+  {
+    "path": "js/ms-services.js",
+    "before_sha256": "aa9b07921119ad0e87b9b4110c39994c9d25613334c6a604bdfc522a578fa272",
+    "after_sha256": "4ef365b649caf8bdb0fd640b75ea1134554dc01138656d1fe456bcccd71773b4"
+  },
+  {
+    "path": "js/ms-version.js",
+    "before_sha256": null,
+    "after_sha256": "74a96be1a0e4c0509e575ae98fd5500e1aa6bd297ea1989e0fdebaba00aed439"
+  },
+  {
+    "path": "js/offline-sandbox-ui.js",
+    "before_sha256": "856ab8b9c99c78308bc5ddd7288d9d413d62eb164f814274b8fc2c4717de2648",
+    "after_sha256": "23f429cbebe25be085f3daef71a8cdd4dffb53a99cb3e338949b85cce3d7d09f"
+  },
+  {
+    "path": "js/portal/portal-content.js",
+    "before_sha256": "2067d5c1f8084a576ab4e32de1a7d666eb1575e4703bdb582f446110e667083a",
+    "after_sha256": "648c954b656aee7dc4f781cec2b161814212be0e7de11abeb8ca23895eb5bd45"
+  },
+  {
+    "path": "js/portal/portal-core.js",
+    "before_sha256": "aa6ac050dd834c033636a6f6eee7dc7edc41dbcbb7d8a70d680138eebc9ade84",
+    "after_sha256": "a8e30e67f8c98b2ef4d6c556090ace77b54178b8927d384d3aadc964bc268485"
+  },
+  {
+    "path": "js/script.js",
+    "before_sha256": "07891bcdc1f77804c072dcaa2535c95f779eedd27d5c5ddfba99014175eae3bc",
+    "after_sha256": "0318cf4e509de01f1ffb4572eb8676ca28c348145145d5d32fd1db15774fa3b8"
+  },
+  {
+    "path": "js/table-shell-v3.js",
+    "before_sha256": "7477728a264656cc3e9a740969177d408c83b14ae39fd0280c8d8825f913971e",
+    "after_sha256": "142776c4513cbe61eb33bf9b099d522168c2ea4676149a4daaef76bc4162ec83"
+  },
+  {
+    "path": "package.json",
+    "before_sha256": "ceb702a1f7d92e6da10034e615f4d6896f082d2f3e0a263c303e539d1f8e795b",
+    "after_sha256": "f1f968cad539c3be4215a3a2e9b54f05c20bf48047f32e47a7e30da9ba774291"
+  },
+  {
+    "path": "scripts/build-sandbox.mjs",
+    "before_sha256": "4bacf30ff19aa4a821b032c6ee6fcb41b4c7b7c6a95efb3ea277761ac1fddf7a",
+    "after_sha256": "ebd9ce8cc5f91877a552191b23d80300bf57b1681ca90c6f79da7e6f1882eced"
+  },
+  {
+    "path": "scripts/build-site.mjs",
+    "before_sha256": "dba906caafa89f5c26492e49a9f297189f4f06c279c029a255bb885cc173133a",
+    "after_sha256": "3beb742bd9b4990131ef11a39c8edaa4e0605e2d958123e7d58650a5d673ecbc"
+  },
+  {
+    "path": "scripts/sync-version.mjs",
+    "before_sha256": null,
+    "after_sha256": "5cf607900f87375742786d1ba60dc35ca5797711286602803c83fe02c343691b"
+  },
+  {
+    "path": "tests/bugfix-v2.8.2.test.js",
+    "before_sha256": "7eb1e0d256d1c20327a1089f1af5b0eef7a6f4a35a588149551c1585009d9682",
+    "after_sha256": "2935daca2530cba59cbc6db1bf3d1a7c2c669f5da1150608661f5f3bee4b6efc"
+  },
+  {
+    "path": "tests/consolidation-runtime.test.js",
+    "before_sha256": "4f82ea7bdde09f3c7038e0d98a7198d49dc081e9d8d5d5a8a655d7ca05e9904c",
+    "after_sha256": "6d99f1fd851bb396b149b973b7bb5338533dba067070990ce460b98cf00c3ff0"
+  },
+  {
+    "path": "tests/consolidation-v2.8.3.test.js",
+    "before_sha256": "5ce624ab828d88d96fd455756d7953c2c75c0c288fcc777fcc165d731352deaa",
+    "after_sha256": "2610eb0c23b93fcb2f0b9a0b30a343ec55674668c3458a8559793e5fa7486681"
+  },
+  {
+    "path": "tests/consolidation-v2.9.0.test.js",
+    "before_sha256": "845cecf37be4b0b0bad2b2e72a14238a75615c1c16470b9e6bc9aa64c6c46d9c",
+    "after_sha256": "b16f8c5a36b287887b994435eb4ae0bf211b98cdc8fe918669cbf6101cf68da1"
+  },
+  {
+    "path": "tests/experience-v2.10.2.test.js",
+    "before_sha256": null,
+    "after_sha256": "6d83534763147dbe18c1c086fa8d6ff29eb8c411b017bb50f2d7a48b23ec61c4"
+  },
+  {
+    "path": "tests/fenda-studio-v2.8.6.test.js",
+    "before_sha256": "560a4e02809c902cc127ec7bffdde9e3ae866bba932a9f3fa2fae61b2ebb37d3",
+    "after_sha256": "4b1ca9a8babc382c3c585d9fe02fc6b45db8a129d420d32992b9d1383d3ecc10"
+  },
+  {
+    "path": "tests/forja-categories-v2.8.8.test.js",
+    "before_sha256": "51f5defb11673bacb4560f316c08152f2c3cccce4720e620f9d1563161e1c9c2",
+    "after_sha256": "ba685e7b899b3c8c53d28204eb1e0a6721226293d547961e57b77fc2c68d480a"
+  },
+  {
+    "path": "tests/operational-control-v2.9.0.test.js",
+    "before_sha256": "f2595ba9d2efa8225717ff817452014894ea0df72422e782ca1444d3dc245cd1",
+    "after_sha256": "64ad18316c92609de64e691ebe5518008818b0a196e6750755e677ee6423f9b1"
+  },
+  {
+    "path": "tests/player-vtt-v2.8.test.js",
+    "before_sha256": "9cc844ab9d656cd89e205fce7298b25260594c216d2227d14d3e86e8d20c1120",
+    "after_sha256": "56b1dce1794fa94fd3003f58c1defde071c9686f9c8ddf8ad5728ff975d8ffec"
+  }
+]

@@ -1,0 +1,26 @@
+<!doctype html><meta charset="utf-8"><title>QA Grid 2.11.2</title>
+<style>html,body{margin:0;background:#101217}.wrap{position:relative;width:800px;height:600px;margin:20px;border:1px solid #555}#canvas-wrapper{position:absolute;inset:0;width:800px;height:600px}.ms-architect-stage,.ms-architect-interaction{position:absolute;inset:0;width:100%;height:100%}.ms-architect-interaction{pointer-events:none}.ms-architect-interaction.is-active{pointer-events:auto}</style>
+<div class="wrap"><div id="canvas-wrapper"></div></div><pre id="qa">waiting</pre>
+<script>
+window.__msVttIsGM=true;window.currentUser={id:'gm',authUserId:'gm'};
+window.MS_PLATFORM={toast(){},on(){}};
+window.MasterTools={getSceneContext(){return null},async saveArchitectState(){return true}};
+window.MS_GRID_ENGINE={version:'2.11.2',normalize:x=>x};
+window.__strokeCount=0;const _stroke=CanvasRenderingContext2D.prototype.stroke;CanvasRenderingContext2D.prototype.stroke=function(){window.__strokeCount++;return _stroke.apply(this,arguments)};
+</script>
+<script src="js/grid-architect-core.js"></script>
+<script>
+(async()=>{
+  const a=window.MS_GRID_ARCHITECT;a.boot();
+  await new Promise(r=>setTimeout(r,80));
+  const ic=document.querySelector('.ms-architect-interaction');
+  function click(x,y){ic.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,clientX:20+x,clientY:20+y,pointerId:1}));ic.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,clientX:20+x,clientY:20+y,pointerId:1}))}
+  a.queueProp({id:'qa-prop',name:'QA Prop',file:'',defaults:{widthCells:1,heightCells:1},behavior:{}});click(240,180);
+  a.queueToken({id:'qa-token',name:'QA Token',file:''});click(400,300);
+  await new Promise(r=>setTimeout(r,250));
+  const s=a.state();
+  const result={strokes:window.__strokeCount,interactives:s.interactives.length,tokens:s.tokens.length,grid:s.grid.showGrid,gridType:s.grid.type,canvas:[document.querySelector('.ms-architect-stage').width,document.querySelector('.ms-architect-stage').height]};
+  document.getElementById('qa').textContent=JSON.stringify(result);
+  document.body.dataset.qa=(result.strokes>10&&result.interactives===1&&result.tokens===1&&result.canvas[0]>0&&result.canvas[1]>0)?'PASS':'FAIL';
+})();
+</script>

@@ -43,6 +43,16 @@ create table if not exists public.tables (
   settings jsonb not null default '{}'::jsonb
 );
 
+-- status da mesa: usado por funções logo abaixo (antes só existia no live-compat V2.10.1).
+alter table public.tables add column if not exists status text not null default 'active';
+do $$ begin
+  if not exists (
+    select 1 from pg_constraint where conname='tables_status_check' and conrelid='public.tables'::regclass
+  ) then
+    alter table public.tables add constraint tables_status_check check (status in ('active','paused','archived'));
+  end if;
+end $$;
+
 -- 3) characters
 create table if not exists public.characters (
   id text primary key,
@@ -492,8 +502,7 @@ revoke all on function public.admin_set_user_banned(text,boolean) from public;
 grant execute on function public.admin_set_user_banned(text,boolean) to authenticated;
 revoke all on function public.create_table_secure(text,text,text,text,text,jsonb) from public;
 grant execute on function public.create_table_secure(text,text,text,text,text,jsonb) to authenticated;
-revoke all on function public.join_table_secure(text,text) from public;
-grant execute on function public.join_table_secure(text,text) to authenticated;
+-- join_table_secure: permissões aplicadas logo após a criação da função (mais abaixo).
 revoke all on function public.leave_table_secure(text) from public;
 grant execute on function public.leave_table_secure(text) to authenticated;
 
@@ -537,57 +546,115 @@ begin
   end loop;
 end $$;
 
+create or replace function public.current_profile_is_active_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists(
+    select 1 from public.profiles
+    where auth_user_id = auth.uid() and role = 'admin' and banned = false
+  );
+$$;
+revoke all on function public.current_profile_is_active_admin() from public;
+grant execute on function public.current_profile_is_active_admin() to anon, authenticated;
+
+drop policy if exists ms_profiles_select on public.profiles;
 create policy ms_profiles_select on public.profiles for select using (
-  auth_user_id=auth.uid() or exists(select 1 from public.profiles me where me.auth_user_id=auth.uid() and me.role='admin' and me.banned=false)
+  auth_user_id = auth.uid() or public.current_profile_is_active_admin()
 );
+drop policy if exists ms_profiles_insert on public.profiles;
 create policy ms_profiles_insert on public.profiles for insert with check (auth_user_id=auth.uid() and role='jogador');
+drop policy if exists ms_profiles_update on public.profiles;
 create policy ms_profiles_update on public.profiles for update using (auth_user_id=auth.uid()) with check (auth_user_id=auth.uid() and role=public.current_profile_role());
 
+drop policy if exists ms_characters_select on public.characters;
 create policy ms_characters_select on public.characters for select using (
   user_id=auth.uid()::text or exists(select 1 from public.table_members tm join public.tables tb on tb.id=tm.table_id where tm.user_id=auth.uid() and tm.status='active' and (characters.id=tm.character_id or tb.owner_id=auth.uid()::text))
 );
+drop policy if exists ms_characters_insert on public.characters;
 create policy ms_characters_insert on public.characters for insert with check (user_id=auth.uid()::text);
+drop policy if exists ms_characters_update on public.characters;
 create policy ms_characters_update on public.characters for update using (user_id=auth.uid()::text) with check (user_id=auth.uid()::text);
+drop policy if exists ms_characters_delete on public.characters;
 create policy ms_characters_delete on public.characters for delete using (user_id=auth.uid()::text);
 
+drop policy if exists ms_tables_select on public.tables;
 create policy ms_tables_select on public.tables for select using (
   owner_id=auth.uid()::text or exists(select 1 from public.table_members tm where tm.table_id=tables.id and tm.user_id=auth.uid() and tm.status='active') or public.current_profile_role()='admin'
 );
+drop policy if exists ms_tables_update on public.tables;
 create policy ms_tables_update on public.tables for update using (owner_id=auth.uid()::text or public.current_profile_role()='admin');
+drop policy if exists ms_tables_delete on public.tables;
 create policy ms_tables_delete on public.tables for delete using (owner_id=auth.uid()::text or public.current_profile_role()='admin');
 
+-- Dono da mesa sem passar pela RLS de tables (evita recursão tables <-> table_members).
+create or replace function public.current_user_owns_table(p_table_id text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists(select 1 from public.tables tb where tb.id=p_table_id and tb.owner_id=auth.uid()::text);
+$$;
+revoke all on function public.current_user_owns_table(text) from public;
+grant execute on function public.current_user_owns_table(text) to anon, authenticated;
+
+drop policy if exists ms_table_members_select on public.table_members;
 create policy ms_table_members_select on public.table_members for select using (
-  user_id=auth.uid() or exists(select 1 from public.tables tb where tb.id=table_members.table_id and tb.owner_id=auth.uid()::text) or public.current_profile_role()='admin'
+  user_id=auth.uid() or public.current_user_owns_table(table_members.table_id) or public.current_profile_role()='admin'
 );
 
+drop policy if exists ms_table_state_select on public.table_state;
 create policy ms_table_state_select on public.table_state for select using (
   exists(select 1 from public.table_members tm where tm.table_id=table_state.table_id and tm.user_id=auth.uid() and tm.status='active') or exists(select 1 from public.tables tb where tb.id=table_state.table_id and tb.owner_id=auth.uid()::text)
 );
+drop policy if exists ms_table_state_update on public.table_state;
 create policy ms_table_state_update on public.table_state for insert with check (exists(select 1 from public.tables tb where tb.id=table_state.table_id and tb.owner_id=auth.uid()::text));
+drop policy if exists ms_table_state_upsert on public.table_state;
 create policy ms_table_state_upsert on public.table_state for update using (exists(select 1 from public.tables tb where tb.id=table_state.table_id and tb.owner_id=auth.uid()::text));
 
+drop policy if exists ms_table_events_select on public.table_events;
 create policy ms_table_events_select on public.table_events for select using (
   exists(select 1 from public.table_members tm where tm.table_id=table_events.table_id and tm.user_id=auth.uid() and tm.status='active') or exists(select 1 from public.tables tb where tb.id=table_events.table_id and tb.owner_id=auth.uid()::text)
 );
+drop policy if exists ms_table_events_insert on public.table_events;
 create policy ms_table_events_insert on public.table_events for insert with check (
   actor_id=auth.uid() and (exists(select 1 from public.table_members tm where tm.table_id=table_events.table_id and tm.user_id=auth.uid() and tm.status='active') or exists(select 1 from public.tables tb where tb.id=table_events.table_id and tb.owner_id=auth.uid()::text))
 );
 
+drop policy if exists ms_admin_requests_select on public.admin_requests;
 create policy ms_admin_requests_select on public.admin_requests for select using (user_id=auth.uid()::text or public.current_profile_role()='admin');
+drop policy if exists ms_admin_requests_insert on public.admin_requests;
 create policy ms_admin_requests_insert on public.admin_requests for insert with check (user_id=auth.uid()::text);
+drop policy if exists ms_admin_requests_update on public.admin_requests;
 create policy ms_admin_requests_update on public.admin_requests for update using (public.current_profile_role()='admin');
 
+drop policy if exists ms_site_content_select on public.site_content;
 create policy ms_site_content_select on public.site_content for select using (true);
+drop policy if exists ms_site_content_write on public.site_content;
 create policy ms_site_content_write on public.site_content for all using (public.current_profile_role()='admin') with check (public.current_profile_role()='admin');
+drop policy if exists ms_posts_select on public.posts;
 create policy ms_posts_select on public.posts for select using (published=true or public.current_profile_role()='admin');
+drop policy if exists ms_posts_write on public.posts;
 create policy ms_posts_write on public.posts for all using (public.current_profile_role()='admin') with check (public.current_profile_role()='admin');
+drop policy if exists ms_site_settings_select on public.site_settings;
 create policy ms_site_settings_select on public.site_settings for select using (true);
+drop policy if exists ms_site_settings_write on public.site_settings;
 create policy ms_site_settings_write on public.site_settings for all using (public.current_profile_role()='admin') with check (public.current_profile_role()='admin');
 
+drop policy if exists ms_gm_notes_all on public.gm_notes;
 create policy ms_gm_notes_all on public.gm_notes for all using (exists(select 1 from public.tables tb where tb.id=gm_notes.table_id and tb.owner_id=auth.uid()::text)) with check (exists(select 1 from public.tables tb where tb.id=gm_notes.table_id and tb.owner_id=auth.uid()::text));
+drop policy if exists ms_gm_npcs_all on public.gm_npcs;
 create policy ms_gm_npcs_all on public.gm_npcs for all using (exists(select 1 from public.tables tb where tb.id=gm_npcs.table_id and tb.owner_id=auth.uid()::text)) with check (exists(select 1 from public.tables tb where tb.id=gm_npcs.table_id and tb.owner_id=auth.uid()::text));
+drop policy if exists ms_gm_files_select on public.gm_files;
 create policy ms_gm_files_select on public.gm_files for select using (exists(select 1 from public.tables tb where tb.id=gm_files.table_id and tb.owner_id=auth.uid()::text));
+drop policy if exists ms_gm_files_insert on public.gm_files;
 create policy ms_gm_files_insert on public.gm_files for insert with check (exists(select 1 from public.tables tb where tb.id=gm_files.table_id and tb.owner_id=auth.uid()::text));
+drop policy if exists ms_gm_files_delete on public.gm_files;
 create policy ms_gm_files_delete on public.gm_files for delete using (exists(select 1 from public.tables tb where tb.id=gm_files.table_id and tb.owner_id=auth.uid()::text));
 
 -- 12) Storage privado para arquivos do Mestre.
@@ -596,8 +663,11 @@ insert into storage.buckets(id, name, public) values ('gm-assets','gm-assets',fa
 drop policy if exists ms_gm_assets_select on storage.objects;
 drop policy if exists ms_gm_assets_insert on storage.objects;
 drop policy if exists ms_gm_assets_delete on storage.objects;
+drop policy if exists ms_gm_assets_select on storage.objects;
 create policy ms_gm_assets_select on storage.objects for select using (bucket_id='gm-assets' and (name like auth.uid()::text || '/%' or exists(select 1 from public.tables tb where tb.owner_id=auth.uid()::text and name like auth.uid()::text || '/' || tb.id || '/%')));
+drop policy if exists ms_gm_assets_insert on storage.objects;
 create policy ms_gm_assets_insert on storage.objects for insert with check (bucket_id='gm-assets' and name like auth.uid()::text || '/%' and exists(select 1 from public.tables tb where tb.owner_id=auth.uid()::text and name like auth.uid()::text || '/' || tb.id || '/%'));
+drop policy if exists ms_gm_assets_delete on storage.objects;
 create policy ms_gm_assets_delete on storage.objects for delete using (bucket_id='gm-assets' and name like auth.uid()::text || '/%');
 
 -- 13) Realtime: habilitar eventos necessários.
@@ -686,8 +756,11 @@ on conflict (id) do update set public=true;
 drop policy if exists ms_portal_media_select on storage.objects;
 drop policy if exists ms_portal_media_insert on storage.objects;
 drop policy if exists ms_portal_media_delete on storage.objects;
+drop policy if exists ms_portal_media_select on storage.objects;
 create policy ms_portal_media_select on storage.objects for select using (bucket_id='portal-media');
+drop policy if exists ms_portal_media_insert on storage.objects;
 create policy ms_portal_media_insert on storage.objects for insert with check (bucket_id='portal-media' and public.current_profile_role()='admin');
+drop policy if exists ms_portal_media_delete on storage.objects;
 create policy ms_portal_media_delete on storage.objects for delete using (bucket_id='portal-media' and public.current_profile_role()='admin');
 
 -- ================================================================
@@ -754,23 +827,29 @@ drop policy if exists ms_campaigns_write on public.campaigns;
 drop policy if exists ms_game_sessions_select on public.game_sessions;
 drop policy if exists ms_game_sessions_write on public.game_sessions;
 
+drop policy if exists ms_table_invites_select on public.table_invites;
 create policy ms_table_invites_select on public.table_invites for select using (
   exists(select 1 from public.tables tb where tb.id=table_invites.table_id and (tb.owner_id=auth.uid()::text or public.current_profile_role()='admin'))
 );
+drop policy if exists ms_character_versions_select on public.character_versions;
 create policy ms_character_versions_select on public.character_versions for select using (
   owner_id=auth.uid() or exists(select 1 from public.table_members tm join public.tables tb on tb.id=tm.table_id where tm.character_id=character_versions.character_id and tm.status='active' and tb.owner_id=auth.uid()::text)
 );
+drop policy if exists ms_campaigns_select on public.campaigns;
 create policy ms_campaigns_select on public.campaigns for select using (
   exists(select 1 from public.tables tb where tb.id=campaigns.table_id and (tb.owner_id=auth.uid()::text or public.current_profile_role()='admin' or exists(select 1 from public.table_members tm where tm.table_id=tb.id and tm.user_id=auth.uid() and tm.status='active')))
 );
+drop policy if exists ms_campaigns_write on public.campaigns;
 create policy ms_campaigns_write on public.campaigns for all using (
   exists(select 1 from public.tables tb where tb.id=campaigns.table_id and (tb.owner_id=auth.uid()::text or public.current_profile_role()='admin'))
 ) with check (
   exists(select 1 from public.tables tb where tb.id=campaigns.table_id and (tb.owner_id=auth.uid()::text or public.current_profile_role()='admin'))
 );
+drop policy if exists ms_game_sessions_select on public.game_sessions;
 create policy ms_game_sessions_select on public.game_sessions for select using (
   exists(select 1 from public.tables tb where tb.id=game_sessions.table_id and (tb.owner_id=auth.uid()::text or public.current_profile_role()='admin' or exists(select 1 from public.table_members tm where tm.table_id=tb.id and tm.user_id=auth.uid() and tm.status='active')))
 );
+drop policy if exists ms_game_sessions_write on public.game_sessions;
 create policy ms_game_sessions_write on public.game_sessions for all using (
   exists(select 1 from public.tables tb where tb.id=game_sessions.table_id and (tb.owner_id=auth.uid()::text or public.current_profile_role()='admin'))
 ) with check (
@@ -923,13 +1002,16 @@ grant execute on function public.create_table_invite(text,timestamptz,integer) t
 create or replace function public.join_table_secure(p_code text, p_character_id text default null)
 returns public.tables language plpgsql security definer set search_path=public
 as $$
-declare v_table public.tables; v_code text; v_user text; v_char_name text;
+declare v_table public.tables; v_code text; v_invite_table_id text; v_user text; v_char_name text;
 begin
   if auth.uid() is null then raise exception 'AUTH_REQUIRED'; end if;
   select tb.* into v_table from public.tables tb where tb.code=upper(trim(p_code)) limit 1 for update;
   if v_table.id is null then
-    select ti.code, tb.* into v_code, v_table from public.table_invites ti join public.tables tb on tb.id=ti.table_id
+    select ti.code, ti.table_id into v_code, v_invite_table_id from public.table_invites ti
     where ti.code=upper(trim(p_code)) and ti.active=true and (ti.expires_at is null or ti.expires_at>now()) and (ti.max_uses=0 or ti.uses<ti.max_uses) limit 1 for update;
+    if v_invite_table_id is not null then
+      select tb.* into v_table from public.tables tb where tb.id=v_invite_table_id for update;
+    end if;
     if v_table.id is null then raise exception 'TABLE_NOT_FOUND'; end if;
     update public.table_invites set uses=uses+1, active=case when max_uses>0 and uses+1>=max_uses then false else active end where code=upper(trim(p_code));
   end if;
@@ -1072,11 +1154,13 @@ grant execute on function public.update_table_settings_secure(text,jsonb) to aut
 
 -- RLS de mesas passa a reconhecer os dois formatos de owner_id também em operações diretas.
 drop policy if exists ms_tables_update on public.tables;
+drop policy if exists ms_tables_update on public.tables;
 create policy ms_tables_update on public.tables for update to authenticated using (
   public.current_profile_role()='admin'
   or owner_id=auth.uid()::text
   or owner_id=(select p.id from public.profiles p where p.auth_user_id=auth.uid() limit 1)
 );
+drop policy if exists ms_tables_delete on public.tables;
 drop policy if exists ms_tables_delete on public.tables;
 create policy ms_tables_delete on public.tables for delete to authenticated using (
   public.current_profile_role()='admin'
@@ -1277,7 +1361,9 @@ $$;
 -- Estado estrutural e acervo privado: Co-Mestre pode colaborar; Observador permanece somente leitura pública da mesa.
 drop policy if exists ms_table_state_update on public.table_state;
 drop policy if exists ms_table_state_upsert on public.table_state;
+drop policy if exists ms_table_state_update on public.table_state;
 create policy ms_table_state_update on public.table_state for insert with check (public.can_manage_table(table_id));
+drop policy if exists ms_table_state_upsert on public.table_state;
 create policy ms_table_state_upsert on public.table_state for update using (public.can_manage_table(table_id)) with check (public.can_manage_table(table_id));
 
 drop policy if exists ms_gm_notes_all on public.gm_notes;
@@ -1285,10 +1371,15 @@ drop policy if exists ms_gm_npcs_all on public.gm_npcs;
 drop policy if exists ms_gm_files_select on public.gm_files;
 drop policy if exists ms_gm_files_insert on public.gm_files;
 drop policy if exists ms_gm_files_delete on public.gm_files;
+drop policy if exists ms_gm_notes_all on public.gm_notes;
 create policy ms_gm_notes_all on public.gm_notes for all using (public.can_manage_table(table_id)) with check (public.can_manage_table(table_id));
+drop policy if exists ms_gm_npcs_all on public.gm_npcs;
 create policy ms_gm_npcs_all on public.gm_npcs for all using (public.can_manage_table(table_id)) with check (public.can_manage_table(table_id));
+drop policy if exists ms_gm_files_select on public.gm_files;
 create policy ms_gm_files_select on public.gm_files for select using (public.can_manage_table(table_id));
+drop policy if exists ms_gm_files_insert on public.gm_files;
 create policy ms_gm_files_insert on public.gm_files for insert with check (public.can_manage_table(table_id));
+drop policy if exists ms_gm_files_delete on public.gm_files;
 create policy ms_gm_files_delete on public.gm_files for delete using (public.can_manage_table(table_id));
 
 commit;
@@ -2313,11 +2404,13 @@ grant execute on function public.update_table_settings_secure(text,jsonb) to aut
 
 -- RLS de mesas passa a reconhecer os dois formatos de owner_id também em operações diretas.
 drop policy if exists ms_tables_update on public.tables;
+drop policy if exists ms_tables_update on public.tables;
 create policy ms_tables_update on public.tables for update to authenticated using (
   public.current_profile_role()='admin'
   or owner_id=auth.uid()::text
   or owner_id=(select p.id from public.profiles p where p.auth_user_id=auth.uid() limit 1)
 );
+drop policy if exists ms_tables_delete on public.tables;
 drop policy if exists ms_tables_delete on public.tables;
 create policy ms_tables_delete on public.tables for delete to authenticated using (
   public.current_profile_role()='admin'
@@ -2448,6 +2541,7 @@ create unique index if not exists idx_table_join_requests_pending_v28 on public.
 alter table public.table_join_requests enable row level security;
 revoke all on public.table_join_requests from anon, authenticated;
 grant select on public.table_join_requests to authenticated;
+drop policy if exists ms_join_requests_read_v28 on public.table_join_requests;
 create policy ms_join_requests_read_v28 on public.table_join_requests for select to authenticated
 using (user_id=(select auth.uid()) or public.can_manage_table(table_id) or public.current_profile_role()='admin');
 
@@ -2827,6 +2921,7 @@ grant execute on function public.join_table_secure(text,text) to authenticated;
 -- ---------------------------------------------------------------------------
 drop policy if exists ms_tables_select on public.tables;
 drop policy if exists ms_tables_select_v27 on public.tables;
+drop policy if exists ms_tables_select_v28 on public.tables;
 create policy ms_tables_select_v28 on public.tables for select to authenticated using (
   owner_id=(select p.id from public.profiles p where p.auth_user_id=(select auth.uid()) limit 1)
   or public.current_profile_role()='admin'
@@ -2891,6 +2986,7 @@ grant execute on function public.fetch_table_roster(text) to authenticated;
 -- 14) Lobby privado para invalidar o diretório. Somente leitura do cliente.
 --     Não criamos objetos no schema realtime; apenas política permitida pela plataforma.
 -- ---------------------------------------------------------------------------
+drop policy if exists ms_realtime_lobby_select_v28 on realtime.messages;
 drop policy if exists ms_realtime_lobby_select_v28 on realtime.messages;
 create policy ms_realtime_lobby_select_v28 on realtime.messages for select to authenticated using (
   (select realtime.topic())='ms:lobby'
@@ -3752,6 +3848,8 @@ end; $$;
 revoke all on function public.progression_resolve_resource(uuid,boolean) from public;
 grant execute on function public.progression_resolve_resource(uuid,boolean) to authenticated;
 
+-- reexecução segura: a versão final (mais abaixo) muda o tipo de retorno.
+drop function if exists public.progression_admin_tables();
 create or replace function public.progression_admin_tables()
 returns table(table_id text,table_name text,game_mode text,status text,owner_username text,balance integer,lifetime_purchased integer,lifetime_admin_granted integer,lifetime_distributed integer)
 language plpgsql security definer set search_path=public,private as $$

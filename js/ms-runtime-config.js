@@ -14,8 +14,8 @@
     environment: 'production',
     storageNamespace: 'ms-local-v2100',
     supabase: {
-      url: 'https://xhcunksjrksdzdtabfxt.supabase.co',
-      publishableKey: 'sb_publishable_Yq3SDfQEaX_vxdZKvADyMQ_evvVDqdi',
+      url: 'https://cfjgelbcjqxewiiglpbj.supabase.co',
+      publishableKey: 'sb_publishable_zHfBCjLgdyt-fjJBlUELtw_ccdnNUOD',
       environment: 'production'
     }
   };

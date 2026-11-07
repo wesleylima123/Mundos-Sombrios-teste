@@ -124,7 +124,11 @@ window.MS_DB_READY = (async function () {
             const { data, error } = await supabase.auth.signUp({
                 email: String(email || '').trim(),
                 password: String(password || ''),
-                options: { data: { username: String(username || '').trim(), request_master: !!requestMaster } }
+                options: {
+                    data: { username: String(username || '').trim(), request_master: !!requestMaster },
+                    // Volta para a página do site (inclui o caminho do GitHub Pages), não só para o domínio.
+                    emailRedirectTo: window.location.href.split('#')[0].split('?')[0]
+                }
             });
             if (!error && data?.user && data.user.identities?.length === 0) {
                 return { data, error: new Error('Este e-mail já possui uma conta.') };

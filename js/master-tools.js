@@ -318,6 +318,23 @@
       window.MS_PLATFORM?.emit('table:roster-refreshed',{tableId:currentTableData.id,count:tablePlayers.length});
     }catch(e){console.warn('[Mundos Sombrios] refresh roster:',e);}
   }
+  // O Mestre é o autor do snapshot: ignorar o próprio aviso evita sobrescrever edições em andamento.
+  // Avisos em rajada (cada movimento salva o estado) viram uma única leitura.
+  let remoteStateTimer=null;
+  function scheduleRemoteStateRefresh(){
+    if(isVttGM())return;
+    clearTimeout(remoteStateTimer);
+    remoteStateTimer=setTimeout(()=>{
+      remoteStateTimer=null;const id=currentTableData?.id;if(!id)return;
+      window.MS_DB?.fetchTableState?.(id).then(r=>{
+        if(!r?.data||String(currentTableData?.id)!==String(id)||isVttGM())return;
+        const next=window.MS_TABLE_SESSION?.normalizeState?.(r.data)||r.data;
+        // Chat e dados vêm do log de eventos; o snapshot do Mestre não deve reescrevê-los.
+        next.chat=online.vtt?.chat||next.chat||[];next.dice=online.vtt?.dice||next.dice||[];
+        online.vtt=next;restoreVttState();restoreGrid(window.vttCanvas||vttCanvas);
+      }).catch(()=>{});
+    },350);
+  }
   function applyRemoteEvent(event){
     if(!event||!event.event_type)return; const p=event.payload||{};
     if(event.event_type==='table_deleted'){
@@ -327,7 +344,7 @@
     if(event.event_type==='table_refresh'){
       if(p.entity==='table_members') verifyCurrentMembership().then(ok=>{if(ok)refreshTableRoster();});
       if(p.entity==='table'&&String(p.status||'')==='archived'){window.MS_PLATFORM?.toast('Esta Fenda foi arquivada. A sessão será encerrada.','error');setTimeout(()=>window.leaveVTT?.({force:true,reason:'table_archived'}),30);return;}
-      if(p.entity==='table_state') window.MS_DB?.fetchTableState?.(currentTableData?.id).then(r=>{if(r?.data){online.vtt=window.MS_TABLE_SESSION?.normalizeState?.(r.data)||r.data;restoreVttState();}}).catch(()=>{});
+      if(p.entity==='table_state') scheduleRemoteStateRefresh();
       if(p.entity==='game_sessions') window.MS_PLATFORM?.emit('table:sessions-changed',{tableId:currentTableData?.id});
       return;
     }

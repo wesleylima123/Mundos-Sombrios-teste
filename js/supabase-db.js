@@ -594,6 +594,11 @@ window.MS_DB_READY = (async function () {
 
         async saveTableState(tableId, state) {
             const { data, error } = await supabase.from(tableNames.table_state).upsert({ table_id: String(tableId), state: state || {} }, { onConflict: 'table_id' }).select().maybeSingle();
+            if (!error) {
+                // Aviso imediato aos jogadores; o gatilho do banco repete com atraso como reserva.
+                const live = activeRealtimeChannels.get(String(tableId))?.channel;
+                if (live) Promise.resolve(live.send({ type: 'broadcast', event: 'table:refresh', payload: { entity: 'table_state', tableId: String(tableId) } })).catch(() => {});
+            }
             return { data, error };
         },
 

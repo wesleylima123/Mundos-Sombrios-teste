@@ -322,16 +322,20 @@
   // Avisos em rajada (cada movimento salva o estado) viram uma única leitura.
   let remoteStateTimer=null;
   function scheduleRemoteStateRefresh(){
-    if(isVttGM())return;
+    // Quem pode gravar o snapshot (dono, co-mestre ou ADM) é autor dele: reagir ao próprio
+    // aviso recarregaria a cena e poderia gravar de novo, em ciclo.
+    if(isVttGM()||gm())return;
     clearTimeout(remoteStateTimer);
     remoteStateTimer=setTimeout(()=>{
       remoteStateTimer=null;const id=currentTableData?.id;if(!id)return;
       window.MS_DB?.fetchTableState?.(id).then(r=>{
-        if(!r?.data||String(currentTableData?.id)!==String(id)||isVttGM())return;
+        if(!r?.data||String(currentTableData?.id)!==String(id)||isVttGM()||gm())return;
         const next=window.MS_TABLE_SESSION?.normalizeState?.(r.data)||r.data;
         // Chat e dados vêm do log de eventos; o snapshot do Mestre não deve reescrevê-los.
         next.chat=online.vtt?.chat||next.chat||[];next.dice=online.vtt?.dice||next.dice||[];
-        online.vtt=next;restoreVttState();restoreGrid(window.vttCanvas||vttCanvas);
+        // Só cena/matriz/arquitetura. Totens já chegam por eventos próprios; recarregar o canvas
+        // inteiro apagaria réguas e arrastes em andamento.
+        online.vtt=next;restoreVttState();
       }).catch(()=>{});
     },350);
   }

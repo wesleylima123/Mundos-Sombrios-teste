@@ -4019,7 +4019,7 @@ function saveGlobalJoinedTables() {
     msRefreshLegacyJoinedUnion(currentUser.id);
 }
 
-function openCreateTableModal() {
+async function openCreateTableModal() {
     window.MS_FEATURES?.ensureProgression?.().catch(()=>{});
     if (!currentUser) {
         alert('Faça login antes de forjar uma fenda.');
@@ -4034,6 +4034,9 @@ function openCreateTableModal() {
         window.MS_SOUL?.openVault?.('store','master_table_slot');
         return;
     }
+    // O estilo do formulário vive no pacote CSS da mesa, que só carrega ao entrar numa mesa.
+    // Sem isso, quem nunca abriu uma mesa na sessão vê o formulário cru e quebrado.
+    try { await window.MS_FEATURES?.ensureTableStyles?.(); } catch (_) {}
     document.getElementById('new-table-name').value = '';
     currentDraftIdentity = null;
     msDraftSavePromise = null;

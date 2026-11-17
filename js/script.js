@@ -2430,7 +2430,6 @@ async function initVttGrid() {
         vttCanvas = new fabric.Canvas('vtt-canvas', {width:container.clientWidth,height:container.clientHeight,selection:false});
         window.vttCanvas=vttCanvas;
         drawGridLines();
-        msInstallTokenSelection(vttCanvas);
 
         let moveTimer = null;
         vttCanvas.on('object:moving', function(e) {
@@ -2448,7 +2447,7 @@ async function initVttGrid() {
         });
         vttCanvas.on('object:added',e=>{
             const target=e.target;if(window.MS_GRID_ENGINE?.isPreviewing?.()||window.__msRestoringGrid||window.__msApplyingRemoteToken||!target?.msTokenId)return;
-            const props=['owner','ownerId','ownerAuthId','characterId','msTokenId','borderColor','isGridLine','isRuler','msTokenWidthCells','msTokenHeightCells','msTokenName','msTokenColor','msHp','msMaxHp'];
+            const props=['owner','ownerId','ownerAuthId','characterId','msTokenId','borderColor','isGridLine','isRuler','msTokenWidthCells','msTokenHeightCells'];
             if(currentTableData?.id) window.MS_TABLE_SESSION?.send?.('token_add',{tokenId:String(target.msTokenId),characterId:target.characterId||null,token:target.toObject(props)}).catch(err=>window.MS_PLATFORM?.toast?.(err?.message||'Totem não foi compartilhado.','error'));
             if(isVttGM&&window.MasterTools?.saveGrid) window.MasterTools.saveGrid(vttCanvas);
         });
@@ -2530,10 +2529,7 @@ function canvasAddNPCToken() {
     if(!vttCanvas||!window.fabric){window.MS_PLATFORM?.toast?.('Abra o Mapa & Grid antes de criar o totem.','error');return;}
     const name=(prompt('Nome do Monstro/NPC:','Goblin Abissal')||'').trim();if(!name)return;
     const color=(prompt('Cor do totem (Ex: red, #ff00ff):','#ff3333')||'').trim()||'#ff3333';
-    const hpRaw=(prompt('PV do NPC (deixe vazio para não usar):','')||'').trim();
-    const circle=new fabric.Circle({radius:25,fill:color,stroke:'#000',strokeWidth:2,shadow:new fabric.Shadow({color:'rgba(0,0,0,0.8)',blur:10,offsetX:5,offsetY:5})});const group=createTokenGroup(circle,name,'gm',color,null,null,currentUser?.id||null,currentUser?.authUserId||null,1,1);
-    const hp=Number(hpRaw);if(hpRaw&&Number.isFinite(hp))msEditToken(group,{hp,maxHp:hp});
-    msOpenTokenEditor(group);
+    const circle=new fabric.Circle({radius:25,fill:color,stroke:'#000',strokeWidth:2,shadow:new fabric.Shadow({color:'rgba(0,0,0,0.8)',blur:10,offsetX:5,offsetY:5})});createTokenGroup(circle,name,'gm',color,null,null,currentUser?.id||null,currentUser?.authUserId||null,1,1);
 }
 function createTokenGroup(mainObj,nameText,owner,color,borderObj=null,characterId=null,ownerId=null,ownerAuthId=null,widthCells=1,heightCells=widthCells,left=100,top=100) {
     const text=new fabric.Text(nameText,{fontSize:12,fill:'#fff',originX:'center',top:30,backgroundColor:'rgba(0,0,0,0.7)'});const objs=borderObj?[mainObj,borderObj,text]:[mainObj,text];
@@ -2541,136 +2537,6 @@ function createTokenGroup(mainObj,nameText,owner,color,borderObj=null,characterI
     window.MS_GRID_ENGINE?.applyTokenSize?.(group,widthCells,heightCells,{silent:true});vttCanvas.add(group);vttCanvas.setActiveObject(group);vttCanvas.requestRenderAll();window.MS_GRID_ARCHITECT?.draw?.();return group;
 }
 window.msCreateTokenGroup=createTokenGroup;
-
-// ===== Edição de totens: nome, cor, PV e exclusão =====
-// Edições viajam no evento 'token_move' (já aceito pelo servidor) no campo 'edit', então
-// funcionam sem migração SQL. Vale para objetos vivos (Fabric/Fabric Lite) e para os
-// serializados no estado da mesa.
-function msTokenChildren(tok){
-    if(Array.isArray(tok?._objects)&&tok._objects.length&&typeof tok._objects[0]?.set==='function')return [tok._objects];
-    const lists=[];if(Array.isArray(tok?.objects))lists.push(tok.objects);if(Array.isArray(tok?._objects)&&tok._objects!==tok.objects)lists.push(tok._objects);return lists;
-}
-function msTokenBaseName(tok){
-    if(tok?.msTokenName)return String(tok.msTokenName);
-    for(const kids of msTokenChildren(tok)){const t=kids.find(k=>k&&(k.type==='text'||k.type==='i-text'||k.type==='textbox'));if(t)return String(t.text||'').replace(/ · PV .*$/,'');}
-    return 'Totem';
-}
-function msTokenLabel(tok){
-    const name=msTokenBaseName(tok),hp=tok?.msHp,max=tok?.msMaxHp;
-    if(hp===null||hp===undefined||hp==='')return name;
-    return `${name} · PV ${hp}${max!==null&&max!==undefined&&max!==''?'/'+max:''}`;
-}
-function msApplyTokenEdit(tok,edit){
-    if(!tok||!edit||typeof edit!=='object')return tok;
-    const put=(o,k,v)=>{if(typeof o.set==='function')o.set(k,v);else o[k]=v;};
-    if(!tok.msTokenName)put(tok,'msTokenName',msTokenBaseName(tok));
-    if(typeof edit.name==='string'&&edit.name.trim())put(tok,'msTokenName',edit.name.trim().slice(0,60));
-    const num=v=>v===null||v===''?null:(Number.isFinite(Number(v))?Math.round(Number(v)):undefined);
-    if('maxHp' in edit){const v=num(edit.maxHp);if(v!==undefined)put(tok,'msMaxHp',v===null?null:Math.max(0,v));}
-    if('hp' in edit){let v=num(edit.hp);if(v!==undefined){if(v!==null&&Number(tok.msMaxHp)>0)v=Math.min(v,Number(tok.msMaxHp));put(tok,'msHp',v===null?null:Math.max(0,v));}}
-    const color=typeof edit.color==='string'&&/^#[0-9a-f]{3,8}$|^[a-z]{3,20}$/i.test(edit.color.trim())?edit.color.trim():null;
-    if(color){put(tok,'msTokenColor',color);put(tok,'borderColor',color);put(tok,'cornerColor',color);}
-    const label=msTokenLabel(tok);
-    for(const kids of msTokenChildren(tok)){
-        kids.forEach((k,i)=>{
-            if(!k)return;
-            if(k.type==='text'||k.type==='i-text'||k.type==='textbox')put(k,'text',label);
-            else if(color&&k.type==='circle'){
-                // Círculo preenchido no início = corpo do totem de NPC; círculo vazado = moldura do retrato.
-                const hollow=!k.fill||k.fill==='transparent';
-                if(hollow)put(k,'stroke',color);else if(i===0)put(k,'fill',color);
-            }
-        });
-    }
-    if(typeof tok.addWithUpdate==='function'&&!window.fabric?.__msLite){try{tok.addWithUpdate();}catch(_){}}
-    put(tok,'dirty',true);
-    return tok;
-}
-window.msApplyTokenEdit=msApplyTokenEdit;
-
-function msEditToken(tok,edit){
-    if(!tok?.msTokenId||!vttCanvas)return false;
-    if(msVttPlayerInteractionBlocked()){window.MS_PLATFORM?.toast?.('A sessão está pausada pelo Mestre.','error');return false;}
-    if(!msVttObjectOwnedByCurrentUser(tok)){window.MS_PLATFORM?.toast?.('Você só pode editar os seus totens.','error');return false;}
-    msApplyTokenEdit(tok,edit);vttCanvas.requestRenderAll();window.MS_GRID_ARCHITECT?.draw?.();
-    const sent={name:tok.msTokenName,color:tok.msTokenColor||null,hp:tok.msHp??null,maxHp:tok.msMaxHp??null};
-    if(currentTableData?.id)window.MS_TABLE_SESSION?.send?.('token_move',{tokenId:String(tok.msTokenId),left:Number(tok.left)||0,top:Number(tok.top)||0,angle:Number(tok.angle)||0,scaleX:Number(tok.scaleX)||1,scaleY:Number(tok.scaleY)||1,msTokenWidthCells:Number(tok.msTokenWidthCells)||null,msTokenHeightCells:Number(tok.msTokenHeightCells)||null,edit:sent})?.catch?.(err=>window.MS_PLATFORM?.toast?.(err?.message||'A edição do totem não foi compartilhada.','error'));
-    if(isVttGM&&window.MasterTools?.saveGrid)window.MasterTools.saveGrid(vttCanvas);
-    msRenderTokenEditor();
-    return true;
-}
-window.msEditToken=msEditToken;
-
-let msTokenEditorTarget=null;
-function msTokenColorHex(tok){
-    const c=String(tok?.msTokenColor||tok?.borderColor||'#ff3333');
-    if(/^#[0-9a-f]{6}$/i.test(c))return c;
-    if(/^#[0-9a-f]{3}$/i.test(c))return '#'+c.slice(1).split('').map(x=>x+x).join('');
-    try{const ctx=document.createElement('canvas').getContext('2d');ctx.fillStyle=c;const v=ctx.fillStyle;if(/^#[0-9a-f]{6}$/i.test(v))return v;}catch(_){}
-    return '#ff3333';
-}
-function msCloseTokenEditor(){msTokenEditorTarget=null;const box=document.getElementById('ms-token-editor');if(box)box.hidden=true;}
-window.msCloseTokenEditor=msCloseTokenEditor;
-function msOpenTokenEditor(tok){
-    if(!tok?.msTokenId){msCloseTokenEditor();return;}
-    msTokenEditorTarget=tok;
-    let box=document.getElementById('ms-token-editor');
-    if(!box){
-        const host=document.querySelector('#vtt-grid-window .ms-grid-stage')||document.body;
-        box=document.createElement('section');box.id='ms-token-editor';box.className='ms-token-editor';box.setAttribute('aria-label','Editar totem');
-        box.innerHTML=`<header><b>Totem</b><button type="button" data-te="close" aria-label="Fechar">×</button></header>
-<label>Nome<input type="text" data-te-field="name" maxlength="60"></label>
-<label class="ms-te-color">Cor<input type="color" data-te-field="color"></label>
-<div class="ms-te-hp"><span>PV</span><input type="number" data-te-field="hp" placeholder="—" aria-label="PV atual"><span>/</span><input type="number" min="0" data-te-field="maxHp" placeholder="máx" aria-label="PV máximo"></div>
-<div class="ms-te-quick"><input type="number" min="1" value="1" data-te-field="amount" aria-label="Quantidade"><button type="button" data-te="damage">− Dano</button><button type="button" data-te="heal">＋ Cura</button></div>
-<div class="ms-te-actions"><button type="button" data-te="save">Salvar</button><button type="button" class="danger" data-te="delete">Excluir totem</button></div>`;
-        host.appendChild(box);
-        const field=k=>box.querySelector(`[data-te-field="${k}"]`);
-        const save=()=>{const t=msTokenEditorTarget;if(!t)return;msEditToken(t,{name:field('name').value,color:field('color').value,hp:field('hp').value,maxHp:field('maxHp').value});window.MS_PLATFORM?.toast?.('Totem atualizado.','success');};
-        box.addEventListener('click',e=>{
-            const act=e.target.closest('[data-te]')?.dataset.te;const t=msTokenEditorTarget;if(!act)return;
-            if(act==='close'){msCloseTokenEditor();return;}if(!t)return;
-            if(act==='save')save();
-            if(act==='damage'||act==='heal'){
-                const amount=Math.max(1,Math.round(Number(field('amount').value)||1));
-                const base=Number(t.msHp??t.msMaxHp??0)||0;
-                msEditToken(t,{hp:act==='damage'?base-amount:base+amount});
-            }
-            if(act==='delete'){
-                if(!msVttObjectOwnedByCurrentUser(t)){window.MS_PLATFORM?.toast?.('Você só pode excluir os seus totens.','error');return;}
-                if(!confirm(`Excluir o totem "${msTokenBaseName(t)}"?`))return;
-                vttCanvas?.discardActiveObject?.();vttCanvas?.remove?.(t);vttCanvas?.requestRenderAll?.();window.MS_GRID_ARCHITECT?.draw?.();msCloseTokenEditor();
-            }
-        });
-        ['name','hp','maxHp'].forEach(k=>field(k).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save();}}));
-        field('color').addEventListener('change',save);
-    }
-    box.hidden=false;msRenderTokenEditor();
-}
-window.msOpenTokenEditor=msOpenTokenEditor;
-function msRenderTokenEditor(){
-    const box=document.getElementById('ms-token-editor'),t=msTokenEditorTarget;if(!box||!t)return;
-    const canEdit=msVttObjectOwnedByCurrentUser(t);
-    const set=(k,v)=>{const el=box.querySelector(`[data-te-field="${k}"]`);if(el&&document.activeElement!==el)el.value=v;};
-    set('name',msTokenBaseName(t));set('color',msTokenColorHex(t));set('hp',t.msHp??'');set('maxHp',t.msMaxHp??'');
-    box.querySelector('header b').textContent=canEdit?'Editar totem':'Totem (somente leitura)';
-    box.querySelectorAll('input,button[data-te]:not([data-te="close"])').forEach(el=>{el.disabled=!canEdit;});
-}
-function msInstallTokenSelection(canvas){
-    if(!canvas||canvas.__msTokenSelectInstalled)return;canvas.__msTokenSelectInstalled=true;
-    canvas.on('mouse:up',opt=>{
-        if(window.__msRulerActive||canvas.isDrawingMode)return;
-        let target=opt?.target||null;
-        if(!target&&window.fabric?.__msLite){
-            // Fabric Lite não informa o alvo: confere se o clique caiu sobre o objeto ativo.
-            const a=canvas.getActiveObject?.(),p=opt?.e?canvas.getPointer(opt.e):null;
-            if(a&&p&&canvas._hit?.(a,p))target=a;else canvas.discardActiveObject?.();
-        }
-        if(target?.msTokenId)msOpenTokenEditor(target);else msCloseTokenEditor();
-    });
-    canvas.on('object:removed',e=>{if(e?.target&&e.target===msTokenEditorTarget)msCloseTokenEditor();});
-}
-window.msRefreshTokenEditor=function(tok){if(tok&&tok===msTokenEditorTarget)msRenderTokenEditor();};
 function canvasSetBackground(e) {
     if(!isVttGM)return;const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(f){fabric.Image.fromURL(f.target.result,function(img){vttCanvas.setBackgroundImage(img,()=>{msFitVttBackground();if(vttCanvas.backgroundImage)vttCanvas.backgroundImage.opacity=0;vttCanvas.renderAll();window.MS_GRID_ARCHITECT?.setMap?.(f.target.result,img.width,img.height,file.name||'Mapa');window.MS_GRID_ARCHITECT?.persist?.({broadcast:true});},{scaleX:vttCanvas.width/img.width,scaleY:vttCanvas.height/img.height});});};reader.readAsDataURL(file);
 }

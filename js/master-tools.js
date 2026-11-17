@@ -160,8 +160,7 @@
     if(!live){window.MS_PLATFORM?.toast?.('Entre ao vivo nesta mesa e abra o Mapa & Grid para colocar o NPC.','error');return false;}
     const color='#ff3333';
     const circle=new window.fabric.Circle({radius:25,fill:color,stroke:'#000',strokeWidth:2});
-    const group=window.msCreateTokenGroup(circle,n.name||'NPC','gm',color,null,null,window.currentUser?.id||null,window.currentUser?.authUserId||null,1,1);
-    if(Number(n.pv)>0)window.msEditToken?.(group,{hp:Number(n.pv),maxHp:Number(n.pv)});
+    window.msCreateTokenGroup(circle,n.name||'NPC','gm',color,null,null,window.currentUser?.id||null,window.currentUser?.authUserId||null,1,1);
     window.MS_PLATFORM?.toast?.(`${n.name||'NPC'} colocado no mapa.`,'success');return true;
   }
   function workbench(){const s=vttState();s.gmWorkbench=s.gmWorkbench||{encounters:[],combat:{round:1,active:0,entries:[]},clues:[],world:[]};s.gmWorkbench.encounters=s.gmWorkbench.encounters||[];s.gmWorkbench.combat=s.gmWorkbench.combat||{round:1,active:0,entries:[]};s.gmWorkbench.clues=s.gmWorkbench.clues||[];s.gmWorkbench.world=s.gmWorkbench.world||[];return s.gmWorkbench;}
@@ -312,7 +311,6 @@
     if(idx<0||!tokenActorAllowed(event,objects[idx]))return;
     if(event.event_type==='token_remove'){objects.splice(idx,1);return;}
     if(event.event_type==='token_move')objects[idx]={...objects[idx],left:Number(p.left)||0,top:Number(p.top)||0,angle:Number(p.angle)||0,scaleX:Number(p.scaleX)||objects[idx].scaleX||1,scaleY:Number(p.scaleY)||objects[idx].scaleY||1,msTokenWidthCells:Number(p.msTokenWidthCells)||objects[idx].msTokenWidthCells||null,msTokenHeightCells:Number(p.msTokenHeightCells)||objects[idx].msTokenHeightCells||null};
-    if(event.event_type==='token_move'&&p.edit)window.msApplyTokenEdit?.(objects[idx],p.edit);
   }
   function tokenActorAllowed(event,obj){
     const p=event?.payload||{};if(p.actorCanManage===true)return true;
@@ -434,7 +432,7 @@
       if(!tokenActorAllowed(event,obj))return;
       window.__msApplyingRemoteToken=true;
       if(event.event_type==='token_remove')canvas?.remove?.(obj);
-      else {obj.set({left:Number(p.left)||0,top:Number(p.top)||0,angle:Number(p.angle)||0,scaleX:Number(p.scaleX)||obj.scaleX,scaleY:Number(p.scaleY)||obj.scaleY,msTokenWidthCells:Number(p.msTokenWidthCells)||obj.msTokenWidthCells||null,msTokenHeightCells:Number(p.msTokenHeightCells)||obj.msTokenHeightCells||null});if(Number(obj.msTokenWidthCells)>0)window.MS_GRID_ENGINE?.applyTokenSize?.(obj,obj.msTokenWidthCells,obj.msTokenHeightCells||obj.msTokenWidthCells,{silent:true});if(p.edit){window.msApplyTokenEdit?.(obj,p.edit);window.msRefreshTokenEditor?.(obj);}}
+      else {obj.set({left:Number(p.left)||0,top:Number(p.top)||0,angle:Number(p.angle)||0,scaleX:Number(p.scaleX)||obj.scaleX,scaleY:Number(p.scaleY)||obj.scaleY,msTokenWidthCells:Number(p.msTokenWidthCells)||obj.msTokenWidthCells||null,msTokenHeightCells:Number(p.msTokenHeightCells)||obj.msTokenHeightCells||null});if(Number(obj.msTokenWidthCells)>0)window.MS_GRID_ENGINE?.applyTokenSize?.(obj,obj.msTokenWidthCells,obj.msTokenHeightCells||obj.msTokenWidthCells,{silent:true});}
       canvas?.renderAll?.();window.__msApplyingRemoteToken=false;applyTokenEventToState(event);if(isVttGM()&&window.MasterTools?.saveGrid)window.MasterTools.saveGrid(canvas);return;
     }
     if(event.event_type==='control'){ if(typeof p.chatLocked==='boolean'){ chatLocked=p.chatLocked; const btn=document.getElementById('btn-lock-chat'); if(btn)btn.innerText=chatLocked?'🔏':'🔓'; } return; }
@@ -489,7 +487,7 @@
     if(scene)scene.vtt=payload;s.scene={...(s.scene||{}),id:scene?.id||s.scene?.id||null,title:scene?.title||s.scene?.title||'',summary:scene?.summary||s.scene?.summary||'',location:scene?.location||s.scene?.location||'',mapUrl:scene?.mapUrl||s.scene?.mapUrl||'',gridConfig:cloneSafe(scene?.gridConfig||s.scene?.gridConfig||getGridConfig()),vtt:payload};saveVtt(s);
     if(options.broadcast!==false&&tableId()!=='draft')await window.MS_TABLE_SESSION?.send?.('scene',{sceneId:s.scene.id,title:s.scene.title,summary:s.scene.summary,location:s.scene.location,mapUrl:s.scene.mapUrl,gridConfig:s.scene.gridConfig,vtt:payload,gridOnly:true});return cloneSafe(payload);
   }
-  function saveGrid(canvas){if(!canvas)return;const s=vttState(),config=getGridConfig();const props=['owner','ownerId','ownerAuthId','characterId','msTokenId','borderColor','isGridLine','isRuler','msTokenWidthCells','msTokenHeightCells','msTokenName','msTokenColor','msHp','msMaxHp'];const objects=canvas.getObjects().filter(o=>!o.isGridLine&&!o.isRuler);const json=canvas.toJSON(props);s.grid={...json,config:cloneSafe(config)};s.grid.objects=objects.map(o=>o.toObject(props));saveVtt(s);}
+  function saveGrid(canvas){if(!canvas)return;const s=vttState(),config=getGridConfig();const props=['owner','ownerId','ownerAuthId','characterId','msTokenId','borderColor','isGridLine','isRuler','msTokenWidthCells','msTokenHeightCells'];const objects=canvas.getObjects().filter(o=>!o.isGridLine&&!o.isRuler);const json=canvas.toJSON(props);s.grid={...json,config:cloneSafe(config)};s.grid.objects=objects.map(o=>o.toObject(props));saveVtt(s);}
   function restoreGrid(canvas){const s=vttState(),cfg=getGridConfig();window.MS_GRID_ENGINE?.applyRemote?.(cfg);if(!canvas||!s.grid||!s.grid.objects?.length){window.MS_GRID_ENGINE?.rescaleManagedTokens?.();return;}try{window.__msRestoringGrid=true;canvas.loadFromJSON({version:s.grid.version||'6.0.0',objects:s.grid.objects},()=>{drawGridLines?.();canvas.getObjects().forEach(o=>o.set('selectable',!o.isGridLine&&!o.isRuler&&(gm()||String(o.ownerId||'')===uid()||String(o.ownerAuthId||'')===String(currentUser?.authUserId||''))));window.MS_GRID_ENGINE?.applyRemote?.(cfg);window.MS_GRID_ENGINE?.rescaleManagedTokens?.();canvas.renderAll();window.__msRestoringGrid=false;});}catch(_){window.__msRestoringGrid=false}}
   window.renderMasterTools=renderMasterTools;
   window.MasterTools={renderMasterTools,mountShield,unmountShield,collapseMemoryPanel:()=>setMemoryPanelOpen(false),toggleMemoryPanel:()=>setMemoryPanelOpen(!!state.shield?.box?.hidden),onVttEnter,restoreVttState,onChatMessage,onDiceRoll,syncDice,saveGalleryImage,removeGalleryImage,saveGrid,restoreGrid,getGridConfig,getSceneContext,activateSceneContext,saveSceneGridConfig,getArchitectState,saveArchitectState,getArchitectLegacyObjects,saveTableControlState,getWorkbench:workbench,persistWorkbench,getNPCs:()=>scoped(NPCS),getContextTable:()=>contextTable,setActiveTool(tool){state.activeTool=tool;const suite=document.querySelector('.gm-tools-suite');if(!suite)return;suite.querySelectorAll('.gm-tools-tab').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool));renderPanel(suite.querySelector('#gm-tools-panel'));}};

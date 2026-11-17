@@ -23,7 +23,7 @@
     map:{src:'',name:'',width:1024,height:1024,opacity:1},
     grid:{type:'square',columns:16,rows:16,cellWidth:64,cellHeight:64,offsetX:0,offsetY:0,rotation:0,snap:true,showGrid:true,showCoordinates:false,showToPlayers:true,lineWidth:1,opacity:.58,color:'#8b969e',unitName:'m',unitsPerCell:1.5},
     terrain:[],fog:[],lights:[],tokens:[],walls:[],doors:[],interactives:[],notes:[],effects:{rain:false,fog:false,sparks:false,anomaly:false,intensity:.55},
-    ambience:{preset:'quiet_room',volume:.28,preset2:'off',volume2:.18,customName:'',customSrc:'',preserveDialogue:true},
+    ambience:{preset:'quiet_room',volume:.28,preset2:'off',volume2:.18,customName:'',customSrc:'',preserveDialogue:true,playing:false},
     darkness:{enabled:false,opacity:.84},toolOptions:{terrainType:'difficult',lightRadius:4,fogMode:'cover',interactiveType:'clue',lightColor:'#ffd38a'},layers:defaultLayers()
   });
   let state=defaultState();
@@ -85,12 +85,12 @@
   function rayHit(origin,angle,maxDist){const dx=Math.cos(angle),dy=Math.sin(angle);let best=maxDist;for(const s of segs()){const x1=s.ax,y1=s.ay,x2=s.bx,y2=s.by,den=dx*(y1-y2)-dy*(x1-x2);if(Math.abs(den)<1e-8)continue;const t=((x1-origin.x)*(y1-y2)-(y1-origin.y)*(x1-x2))/den,u=-((dx*(y1-origin.y)-dy*(x1-origin.x))/den);if(t>=0&&u>=0&&u<=1&&t<best)best=t}return{x:origin.x+dx*best,y:origin.y+dy*best}}
   function visibilityPolygon(token){const max=(token.vision||6)*state.grid.cellWidth,origin={x:token.x,y:token.y},angles=[];for(let i=0;i<96;i++)angles.push(i/96*Math.PI*2);for(const s of segs())for(const pt of [[s.ax,s.ay],[s.bx,s.by]]){const a=Math.atan2(pt[1]-origin.y,pt[0]-origin.x);angles.push(a-0.0005,a,a+0.0005)}angles.sort((a,b)=>a-b);return angles.map(a=>rayHit(origin,a,max))}
   function drawDarkness(ctx){if(gm()||!state.darkness.enabled)return;const uid1=String(window.currentUser?.authUserId||''),uid2=String(window.currentUser?.id||''),mines=state.tokens.filter(t=>t.ownerId&&(t.ownerId===uid1||t.ownerId===uid2)&&t.visionEnabled!==false);ctx.save();ctx.fillStyle=`rgba(0,0,0,${state.darkness.opacity})`;ctx.fillRect(0,0,runtime.host.clientWidth,runtime.host.clientHeight);if(mines.length){ctx.globalCompositeOperation='destination-out';ctx.fillStyle='rgba(0,0,0,1)';for(const mine of mines){const poly=visibilityPolygon(mine).map(boardToScreen);ctx.beginPath();poly.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.fill()}}ctx.restore()}
-  function drawInteraction(now=performance.now()){const ctx=runtime.ictx;if(!ctx)return;ctx.clearRect(0,0,runtime.host.clientWidth,runtime.host.clientHeight);drawEffects(ctx,now);if(runtime.measure){const a=boardToScreen(runtime.measure.a),b=boardToScreen(runtime.measure.b);ctx.strokeStyle='#00ffcc';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();const dist=Math.hypot(runtime.measure.b.x-runtime.measure.a.x,runtime.measure.b.y-runtime.measure.a.y)/Math.max(1,state.grid.cellWidth)*state.grid.unitsPerCell;ctx.fillStyle='#fff';ctx.font='12px system-ui';ctx.fillText(`${dist.toFixed(1)} ${state.grid.unitName}`,b.x+8,b.y-8)}if(runtime.drag){const a=boardToScreen(runtime.drag.a),b=boardToScreen(runtime.drag.b);ctx.strokeStyle=runtime.drag.kind==='door'?'#e1a54d':'#aeb8c1';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}if(runtime.hoverBoard&&(runtime.pendingProp||runtime.pendingToken)){const p=boardToScreen(runtime.hoverBoard),m=renderScale(),item=runtime.pendingProp||runtime.pendingToken,d=item?.defaults||{},wc=Number(d.widthCells)||1,hc=Number(d.heightCells)||1,w=wc*state.grid.cellWidth*m.sx,h=hc*state.grid.cellHeight*m.sy;ctx.save();ctx.translate(p.x,p.y);ctx.globalAlpha=.62;ctx.fillStyle='rgba(212,173,95,.16)';ctx.strokeStyle='#f2ce7d';ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.fillRect(-w/2,-h/2,w,h);ctx.strokeRect(-w/2,-h/2,w,h);ctx.setLineDash([]);ctx.fillStyle='#fff3c9';ctx.font='700 10px system-ui';ctx.textAlign='center';ctx.fillText(item?.name||'POSICIONAR',0,-h/2-8);ctx.restore()}}
+  function drawInteraction(now=performance.now()){const ctx=runtime.ictx;if(!ctx)return;ctx.clearRect(0,0,runtime.host.clientWidth,runtime.host.clientHeight);drawEffects(ctx,now);drawSelection(ctx);if(runtime.measure){const a=boardToScreen(runtime.measure.a),b=boardToScreen(runtime.measure.b);ctx.strokeStyle='#00ffcc';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();const dist=Math.hypot(runtime.measure.b.x-runtime.measure.a.x,runtime.measure.b.y-runtime.measure.a.y)/Math.max(1,state.grid.cellWidth)*state.grid.unitsPerCell;ctx.fillStyle='#fff';ctx.font='12px system-ui';ctx.fillText(`${dist.toFixed(1)} ${state.grid.unitName}`,b.x+8,b.y-8)}if(runtime.drag){const a=boardToScreen(runtime.drag.a),b=boardToScreen(runtime.drag.b);ctx.strokeStyle=runtime.drag.kind==='door'?'#e1a54d':'#aeb8c1';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}if(runtime.hoverBoard&&(runtime.pendingProp||runtime.pendingToken)){const p=boardToScreen(runtime.hoverBoard),m=renderScale(),item=runtime.pendingProp||runtime.pendingToken,d=item?.defaults||{},wc=Number(d.widthCells)||1,hc=Number(d.heightCells)||1,w=wc*state.grid.cellWidth*m.sx,h=hc*state.grid.cellHeight*m.sy;ctx.save();ctx.translate(p.x,p.y);ctx.globalAlpha=.62;ctx.fillStyle='rgba(212,173,95,.16)';ctx.strokeStyle='#f2ce7d';ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.fillRect(-w/2,-h/2,w,h);ctx.strokeRect(-w/2,-h/2,w,h);ctx.setLineDash([]);ctx.fillStyle='#fff3c9';ctx.font='700 10px system-ui';ctx.textAlign='center';ctx.fillText(item?.name||'POSICIONAR',0,-h/2-8);ctx.restore()}}
   function effectsActive(){const e=state.effects||{};return !!(e.rain||e.fog||e.sparks||e.anomaly)}
   function drawEffects(ctx,now=performance.now()){const e=state.effects||{},intensity=clamp(e.intensity,.1,1,.55),w=runtime.width||runtime.host?.clientWidth||640,h=runtime.height||runtime.host?.clientHeight||480;if(!effectsActive())return;ctx.save();if(e.fog){const grad=ctx.createLinearGradient(0,0,w,0),shift=(now*.015)%w;grad.addColorStop(0,'rgba(190,205,215,.02)');grad.addColorStop(.5,`rgba(180,195,205,${.05*intensity})`);grad.addColorStop(1,'rgba(190,205,215,.01)');ctx.fillStyle=grad;ctx.globalAlpha=.75;for(let i=-1;i<2;i++)ctx.fillRect(i*w+shift-w,h*.15,w,h*.7)}if(e.rain){ctx.strokeStyle=`rgba(150,205,235,${.18+.18*intensity})`;ctx.lineWidth=1;const count=Math.round(35+80*intensity),t=now*.35;for(let i=0;i<count;i++){const x=(i*137.5+t*1.7)%w,y=(i*83+t*3.2)%h,len=8+16*intensity;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-4,y+len);ctx.stroke()}}if(e.sparks){ctx.fillStyle=`rgba(255,194,92,${.35+.35*intensity})`;const count=Math.round(5+14*intensity);for(let i=0;i<count;i++){const phase=(now*.003+i*1.77)%(Math.PI*2),x=(Math.sin(i*91.7+now*.0007)*.5+.5)*w,y=(Math.cos(i*43.1+now*.0011)*.5+.5)*h,r=1.2+Math.max(0,Math.sin(phase))*2.4;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}}if(e.anomaly){const pulse=.5+.5*Math.sin(now*.0025),r=Math.min(w,h)*(.12+.06*pulse),g=ctx.createRadialGradient(w*.5,h*.5,0,w*.5,h*.5,r);g.addColorStop(0,`rgba(136,78,190,${.10*intensity*pulse})`);g.addColorStop(1,'rgba(100,40,160,0)');ctx.fillStyle=g;ctx.fillRect(0,0,w,h)}ctx.restore()}
   function animationTick(now){runtime.animationRaf=null;if(document.hidden||!effectsActive())return;if(now-runtime.animationLast>=32){runtime.animationLast=now;drawInteraction(now)}runtime.animationRaf=requestAnimationFrame(animationTick)}
   function syncAnimation(){if(effectsActive()&&!document.hidden){if(!runtime.animationRaf)runtime.animationRaf=requestAnimationFrame(animationTick)}else if(runtime.animationRaf){cancelAnimationFrame(runtime.animationRaf);runtime.animationRaf=null}}
-  function draw(now=performance.now()){if(!ensureCanvas())return;runtime.dirty=false;const live=window.MS_GRID_ENGINE?.active?.();if(live){state.grid=normalizeGrid(live);if(Number(live.boardWidth)>0)state.map.width=Number(live.boardWidth);if(Number(live.boardHeight)>0)state.map.height=Number(live.boardHeight)}const ctx=runtime.ctx;clear(ctx);drawBackground(ctx);drawTerrain(ctx);drawGrid(ctx);drawSegments(ctx);drawProps(ctx);drawLights(ctx);drawTokens(ctx);drawFog(ctx);drawNotes(ctx);drawDarkness(ctx);drawInteraction(now);syncAnimation()}
+  function draw(now=performance.now()){if(!ensureCanvas())return;runtime.dirty=false;const live=window.MS_GRID_ENGINE?.active?.();if(live){state.grid=normalizeGrid(live);if(Number(live.boardWidth)>0)state.map.width=Number(live.boardWidth);if(Number(live.boardHeight)>0)state.map.height=Number(live.boardHeight)}const ctx=runtime.ctx;clear(ctx);drawBackground(ctx);drawTerrain(ctx);drawGrid(ctx);drawSegments(ctx);drawProps(ctx);drawLights(ctx);drawTokens(ctx);drawFog(ctx);drawNotes(ctx);drawDarkness(ctx);drawInteraction(now);syncAnimation();checkZoneTriggers()}
 
   function snapPoint(p){const g=state.grid;if(!g.snap||g.type==='none')return p;const q=rot(p,{x:g.offsetX,y:g.offsetY},-g.rotation);if(g.type==='square'||g.type==='iso'){const x=Math.round((q.x-g.offsetX)/g.cellWidth)*g.cellWidth+g.offsetX,y=Math.round((q.y-g.offsetY)/g.cellHeight)*g.cellHeight+g.offsetY;return rot({x,y},{x:g.offsetX,y:g.offsetY},g.rotation)}return p}
   function ccw(a,b,c){return(c.y-a.y)*(b.x-a.x)>(b.y-a.y)*(c.x-a.x)}
@@ -105,7 +105,7 @@
   function zoomBy(factor){const host=runtime.host;if(!host)return state.camera.zoom;const old=state.camera.zoom,next=clamp(old*factor,.25,4,1),cx=host.clientWidth/2,cy=host.clientHeight/2;state.camera.x=cx-(cx-state.camera.x)*(next/old);state.camera.y=cy-(cy-state.camera.y)*(next/old);state.camera.zoom=next;applyFabricCamera();mark();updatePanel();return next}
   function panBy(dx,dy){state.camera.x+=Number(dx)||0;state.camera.y+=Number(dy)||0;applyFabricCamera();mark();return clone(state.camera)}
   function setInteractionActive(on){if(!runtime.interaction)ensureCanvas();if(!runtime.interaction)return false;runtime.interaction.classList.toggle('is-active',!!on);runtime.interaction.dataset.tool=on?runtime.tool:'';return true}
-  function setTool(tool){runtime.tool=tool||'select';if(runtime.tool!=='prop')runtime.pendingProp=null;if(runtime.tool!=='token')runtime.pendingToken=null;if(runtime.tool==='select')runtime.placementStatus='';setInteractionActive(!['select'].includes(runtime.tool));runtime.paintActive=false;updatePanel();drawInteraction();return runtime.tool}
+  function setTool(tool){runtime.tool=tool||'select';if(runtime.tool!=='prop')runtime.pendingProp=null;if(runtime.tool!=='token')runtime.pendingToken=null;if(runtime.tool==='select')runtime.placementStatus='';setInteractionActive(!['select'].includes(runtime.tool));runtime.paintActive=false;if(runtime.tool!=='edit')runtime.selection=null;updatePanel();renderInspector();drawInteraction();return runtime.tool}
   function gridCellCenter(p){const g=state.grid,q=rot(p,{x:g.offsetX,y:g.offsetY},-g.rotation),cx=Math.floor((q.x-g.offsetX)/Math.max(1,g.cellWidth)),cy=Math.floor((q.y-g.offsetY)/Math.max(1,g.cellHeight));return rot({x:g.offsetX+(cx+.5)*g.cellWidth,y:g.offsetY+(cy+.5)*g.cellHeight},{x:g.offsetX,y:g.offsetY},g.rotation)}
   function addSegment(kind,a,b){const item={id:uid(kind),ax:a.x,ay:a.y,bx:b.x,by:b.y,blocksSight:true,blocksMovement:true,visibility:kind==='wall'?'gm':'all',name:kind==='wall'?'Parede':'Porta'};if(kind==='door'){item.open=false;item.locked=false;state.doors.push(item)}else state.walls.push(item);persistSoon();mark()}
   function paintTerrainAt(p){const c=gridCellCenter(p),type=state.toolOptions?.terrainType||'difficult',r=Math.min(state.grid.cellWidth,state.grid.cellHeight)*.35;if(state.terrain.some(t=>t.type===type&&Math.hypot(t.x-c.x,t.y-c.y)<r))return;state.terrain=state.terrain.filter(t=>Math.hypot(t.x-c.x,t.y-c.y)>=r);state.terrain.push({id:uid('terrain'),x:c.x,y:c.y,w:state.grid.cellWidth,h:state.grid.cellHeight,type});persistSoon();mark()}
@@ -127,6 +127,7 @@
     c.addEventListener('pointerdown',e=>{
       if(!gm()&&!['measure','interact','pan'].includes(runtime.tool))return;
       const raw=pointer(e),p=snapPoint(raw);runtime.hoverBoard=p;e.stopPropagation?.();
+      if(runtime.tool==='edit'){beginEdit(raw,e,c);return}
       if(runtime.tool==='pan'){runtime.cameraDrag={sx:e.clientX,sy:e.clientY,x:state.camera.x,y:state.camera.y};c.setPointerCapture?.(e.pointerId);e.preventDefault();return}
       runtime.paintActive=true;
       if(['wall','door'].includes(runtime.tool)){runtime.drag={kind:runtime.tool,a:p,b:p};c.setPointerCapture?.(e.pointerId)}
@@ -145,6 +146,7 @@
       drawInteraction();e.preventDefault()
     });
     c.addEventListener('pointermove',e=>{
+      if(runtime.editDrag){moveEdit(pointer(e));e.preventDefault();return}
       if(runtime.cameraDrag){state.camera.x=runtime.cameraDrag.x+(e.clientX-runtime.cameraDrag.sx);state.camera.y=runtime.cameraDrag.y+(e.clientY-runtime.cameraDrag.sy);applyFabricCamera();mark();e.preventDefault();return}
       const p=snapPoint(pointer(e));runtime.hoverBoard=p;
       if(runtime.drag)runtime.drag.b=p;
@@ -155,14 +157,14 @@
       else if(runtime.paintActive&&runtime.tool==='erase')eraseAt(p);
       drawInteraction()
     });
-    const end=e=>{runtime.paintActive=false;if(runtime.cameraDrag)runtime.cameraDrag=null;if(runtime.drag){addSegment(runtime.drag.kind,runtime.drag.a,runtime.drag.b);runtime.drag=null}if(runtime.measure)runtime.measure=null;drawInteraction();try{c.releasePointerCapture?.(e.pointerId)}catch(_){}};
+    const end=e=>{if(runtime.editDrag)finishEdit();runtime.paintActive=false;if(runtime.cameraDrag)runtime.cameraDrag=null;if(runtime.drag){addSegment(runtime.drag.kind,runtime.drag.a,runtime.drag.b);runtime.drag=null}if(runtime.measure)runtime.measure=null;drawInteraction();try{c.releasePointerCapture?.(e.pointerId)}catch(_){}};
     c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end);c.addEventListener('pointerleave',()=>{runtime.hoverBoard=null;drawInteraction()});c.addEventListener('contextmenu',e=>e.preventDefault())
   }
 
   let persistTimer=null;function persistSoon(){clearTimeout(persistTimer);persistTimer=setTimeout(()=>persist({broadcast:false}),180)}
   async function persist(options={}){const payload=serialize();await window.MasterTools?.saveArchitectState?.(payload,{broadcast:options.broadcast!==false});return payload}
   function serialize(){return normalize(state)}
-  function load(next,options={}){state=normalize(next||defaultState());if(options.gridConfig){state.grid=normalizeGrid(options.gridConfig);if(Number(options.gridConfig.boardWidth)>0)state.map.width=Number(options.gridConfig.boardWidth);if(Number(options.gridConfig.boardHeight)>0)state.map.height=Number(options.gridConfig.boardHeight)}mark();updatePanel();return serialize()}
+  function load(next,options={}){state=normalize(next||defaultState());if(options.gridConfig){state.grid=normalizeGrid(options.gridConfig);if(Number(options.gridConfig.boardWidth)>0)state.map.width=Number(options.gridConfig.boardWidth);if(Number(options.gridConfig.boardHeight)>0)state.map.height=Number(options.gridConfig.boardHeight)}mark();updatePanel();renderInspector();if(!gm())syncPlayerAmbience();return serialize()}
   function loadScene(scene){const next=migrateLegacy(scene||{});if(scene?.gridConfig){next.grid=normalizeGrid(scene.gridConfig);if(Number(scene.gridConfig.boardWidth)>0)next.map.width=Number(scene.gridConfig.boardWidth);if(Number(scene.gridConfig.boardHeight)>0)next.map.height=Number(scene.gridConfig.boardHeight)}if(scene?.mapUrl&&!next.map.src)next.map.src=scene.mapUrl;load(next);return serialize()}
   function updateFromGridConfig(cfg){state.grid=normalizeGrid(cfg);if(Number(cfg?.boardWidth)>0)state.map.width=Number(cfg.boardWidth);if(Number(cfg?.boardHeight)>0)state.map.height=Number(cfg.boardHeight);mark();return clone(state.grid)}
 
@@ -175,11 +177,153 @@
   function stopAmbient(){window.MS_SOUNDSCAPE?.stop?.();syncAmbientPanel()}
   async function startAmbient(){const engine=window.MS_SOUNDSCAPE;if(!engine)return false;if(runtime.customAudioUrl)engine.setCustomSource(runtime.customAudioUrl,state.ambience.customName||'Áudio personalizado');engine.preserveDialogue(state.ambience.preserveDialogue!==false);const ok=await engine.start([{id:state.ambience.preset||'off',volume:state.ambience.volume},{id:state.ambience.preset2||'off',volume:state.ambience.volume2}]);syncAmbientPanel();if(!ok)window.MS_PLATFORM?.toast?.('Escolha ao menos uma paisagem sonora válida.','info');return ok}
 
+    // ===== Ferramenta ✎ Editar: seleciona, move e edita totens e elementos do cenário =====
+  const escH=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const KIND_LABEL={token:'Totem',prop:'Objeto',door:'Porta',wall:'Parede',light:'Luz',note:'Nota',zone:'Gatilho',terrain:'Terreno'};
+  const listFor=k=>({prop:state.interactives,door:state.doors,wall:state.walls,light:state.lights,note:state.notes,terrain:state.terrain}[k]||[]);
+  const tokenObjects=()=>{const c=window.vttCanvas;return c?.getObjects?c.getObjects().filter(o=>o&&o.msTokenId&&!o.isRuler):[]};
+  function tokenBox(o){const m=boardScale(),w=(Number(o.width)||50)*(Number(o.scaleX)||1),h=(Number(o.height)||50)*(Number(o.scaleY)||1);return{x:(Number(o.left)||0)/m.sx,y:(Number(o.top)||0)/m.sy,w:w/m.sx,h:h/m.sy}}
+  function selectedItem(){const sel=runtime.selection;if(!sel)return null;if(sel.kind==='token')return tokenObjects().find(o=>String(o.msTokenId)===String(sel.id))||null;return listFor(sel.kind).find(o=>String(o.id)===String(sel.id))||null}
+  function findSelectable(p){
+    const r=Math.max(state.grid.cellWidth,state.grid.cellHeight)*.6,toks=tokenObjects();
+    for(let i=toks.length-1;i>=0;i--){const b=tokenBox(toks[i]);if(p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h)return{kind:'token',id:String(toks[i].msTokenId)}}
+    for(let i=state.interactives.length-1;i>=0;i--){const o=state.interactives[i],hw=Math.max(o.widthCells*state.grid.cellWidth/2,r*.5),hh=Math.max(o.heightCells*state.grid.cellHeight/2,r*.5);if(Math.abs(p.x-o.x)<=hw&&Math.abs(p.y-o.y)<=hh)return{kind:'prop',id:o.id}}
+    let best=null;for(const [list,kind] of [[state.lights,'light'],[state.notes,'note']])for(const o of list){const d=Math.hypot(p.x-o.x,p.y-o.y);if(d<r&&(!best||d<best.d))best={kind,id:o.id,d}}if(best)return{kind:best.kind,id:best.id};
+    for(const [list,kind] of [[state.doors,'door'],[state.walls,'wall']])for(const s of list){const d=pointSegDistance(p,s);if(d<r*.6&&(!best||d<best.d))best={kind,id:s.id,d}}if(best)return{kind:best.kind,id:best.id};
+    const t=state.terrain.find(t=>Math.abs(p.x-t.x)<=(t.w||state.grid.cellWidth)/2&&Math.abs(p.y-t.y)<=(t.h||state.grid.cellHeight)/2);return t?{kind:'terrain',id:t.id}:null;
+  }
+  function selectElement(sel){runtime.selection=sel||null;renderInspector();drawInteraction()}
+  function sendTokenMove(o){
+    window.MS_TABLE_SESSION?.send?.('token_move',{tokenId:String(o.msTokenId),left:Number(o.left)||0,top:Number(o.top)||0,angle:Number(o.angle)||0,scaleX:Number(o.scaleX)||1,scaleY:Number(o.scaleY)||1,msTokenWidthCells:Number(o.msTokenWidthCells)||null,msTokenHeightCells:Number(o.msTokenHeightCells)||null})?.catch?.(()=>{});
+    window.MasterTools?.saveGrid?.(window.vttCanvas);
+  }
+  function beginEdit(raw,e,c){
+    const sel=findSelectable(raw);selectElement(sel);if(!sel)return;const it=selectedItem();if(!it)return;
+    const orig=sel.kind==='token'?{left:Number(it.left)||0,top:Number(it.top)||0}:('ax' in it?{ax:it.ax,ay:it.ay,bx:it.bx,by:it.by}:{x:it.x,y:it.y});
+    runtime.editDrag={sel,start:raw,orig,moved:false};c.setPointerCapture?.(e.pointerId);e.preventDefault();
+  }
+  function moveEdit(p){
+    const d=runtime.editDrag,it=selectedItem();if(!d||!it)return;const dx=p.x-d.start.x,dy=p.y-d.start.y;if(!d.moved&&Math.hypot(dx,dy)<3)return;d.moved=true;
+    if(d.sel.kind==='token'){const m=boardScale();it.set?.({left:d.orig.left+dx*m.sx,top:d.orig.top+dy*m.sy});window.vttCanvas?.requestRenderAll?.()}
+    else if('ax' in d.orig){it.ax=d.orig.ax+dx;it.ay=d.orig.ay+dy;it.bx=d.orig.bx+dx;it.by=d.orig.by+dy}
+    else{it.x=d.orig.x+dx;it.y=d.orig.y+dy}
+    mark();
+  }
+  function finishEdit(){
+    const d=runtime.editDrag;runtime.editDrag=null;if(!d?.moved)return;const it=selectedItem();if(!it)return;
+    if(d.sel.kind==='token'){window.MS_GRID_ENGINE?.snapObject?.(it);window.vttCanvas?.requestRenderAll?.();sendTokenMove(it)}
+    else{if(!('ax' in d.orig)&&d.sel.kind!=='terrain'){const q=snapPoint({x:it.x,y:it.y});it.x=q.x;it.y=q.y}else if(d.sel.kind==='terrain'){const q=gridCellCenter({x:it.x,y:it.y});it.x=q.x;it.y=q.y}persistSoon()}
+    mark();renderInspector();
+  }
+  function drawSelection(ctx){
+    const sel=runtime.selection;if(!sel||!gm()||runtime.tool!=='edit')return;const it=selectedItem();if(!it)return;
+    ctx.save();ctx.strokeStyle='#f2ce7d';ctx.lineWidth=2;ctx.setLineDash([6,4]);
+    if(sel.kind==='token'){const b=tokenBox(it),a=boardToScreen({x:b.x,y:b.y}),z=boardToScreen({x:b.x+b.w,y:b.y+b.h});ctx.strokeRect(a.x-4,a.y-4,z.x-a.x+8,z.y-a.y+8)}
+    else if('ax' in it){const a=boardToScreen({x:it.ax,y:it.ay}),b=boardToScreen({x:it.bx,y:it.by});ctx.setLineDash([]);ctx.globalAlpha=.55;ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}
+    else{const m=renderScale(),p=boardToScreen({x:it.x,y:it.y});let w=24,h=24;if(sel.kind==='prop'){w=it.widthCells*state.grid.cellWidth*m.sx;h=it.heightCells*state.grid.cellHeight*m.sy}else if(sel.kind==='terrain'){w=(it.w||state.grid.cellWidth)*m.sx;h=(it.h||state.grid.cellHeight)*m.sy}ctx.strokeRect(p.x-w/2-4,p.y-h/2-4,w+8,h+8)}
+    ctx.restore();
+  }
+  function renderInspector(){
+    const box=runtime.panel?.querySelector('[data-ga-inspector]');if(!box)return;
+    if(runtime.tool!=='edit'){box.hidden=true;box.innerHTML='';return}
+    box.hidden=false;
+    // Não redesenha o formulário enquanto o Mestre digita nele.
+    if(box.contains(document.activeElement)&&box.dataset.selKey===JSON.stringify(runtime.selection||null)&&document.activeElement.matches('input[type=text],input[type=number],textarea'))return;
+    const sel=runtime.selection,it=sel?selectedItem():null;
+    if(!sel||!it){runtime.selection=null;box.dataset.selKey='null';box.innerHTML='<div class="ga-insp-empty"><b>✎ Editar</b><p>Clique em um totem, objeto, porta, parede, luz, nota, gatilho ou terreno no mapa para editar. Arraste para mover.</p></div>';return}
+    box.dataset.selKey=JSON.stringify(sel);
+    const kind=sel.kind==='note'&&it.kind==='zone'?'zone':sel.kind;
+    const txt=(k,l,v)=>`<label>${l}<input type="text" data-gi="${k}" value="${escH(v)}" maxlength="80"></label>`;
+    const area=(k,l,v)=>`<label>${l}<textarea data-gi="${k}" rows="2">${escH(v)}</textarea></label>`;
+    const num=(k,l,v,a='')=>`<label>${l}<input type="number" data-gi="${k}" value="${v===null||v===undefined?'':escH(v)}" ${a}></label>`;
+    const chk=(k,l,v)=>`<label class="ga-insp-check"><input type="checkbox" data-gi="${k}" ${v?'checked':''}> ${l}</label>`;
+    const col=(k,l,v)=>`<label>${l}<input type="color" data-gi="${k}" value="${escH(v)}"></label>`;
+    let h=`<div class="ga-insp-head"><b>✎ ${KIND_LABEL[kind]||'Elemento'}</b><button type="button" data-gi-act="deselect" aria-label="Desmarcar">×</button></div>`;
+    if(kind==='token'){
+      h+=txt('name','Nome',window.msTokenBaseName?.(it)||'Totem')+col('color','Cor',window.msTokenColorHex?.(it)||'#ff3333');
+      h+=`<div class="ga-subgrid">${num('hp','PV atual',it.msHp)}${num('maxHp','PV máximo',it.msMaxHp,'min="0"')}</div>`;
+      h+=`<div class="ga-insp-hp"><input type="number" min="1" value="1" data-gi-amount aria-label="Quantidade"><button type="button" data-gi-act="damage">− Dano</button><button type="button" data-gi-act="heal">＋ Cura</button></div>`;
+      h+=`<label>Tamanho<select data-gi="size">${[1,2,3,4].map(n=>`<option value="${n}" ${Math.round(Number(it.msTokenWidthCells)||1)===n?'selected':''}>${n} × ${n} células</option>`).join('')}</select></label>`;
+    }else if(kind==='prop'){
+      h+=txt('name','Nome',it.name)+area('text','Texto ao investigar',it.text);
+      h+=`<div class="ga-subgrid">${num('widthCells','Largura (células)',it.widthCells,'min="0.25" step="0.25"')}${num('heightCells','Altura (células)',it.heightCells,'min="0.25" step="0.25"')}</div>`;
+      h+=num('rotation','Rotação (graus)',it.rotation,'step="15"')+chk('open','Aberto',it.open)+chk('locked','Trancado',it.locked)+chk('visible','Visível para os jogadores',it.visibility!=='gm')+chk('blocksSight','Bloqueia visão',it.blocksSight)+chk('blocksMovement','Bloqueia movimento',it.blocksMovement);
+    }else if(kind==='door'){h+=chk('open','Aberta',it.open)+chk('locked','Trancada',it.locked);}
+    else if(kind==='wall'){h+=chk('blocksSight','Bloqueia visão',it.blocksSight!==false)+chk('blocksMovement','Bloqueia movimento',it.blocksMovement!==false);}
+    else if(kind==='light'){h+=num('radiusCells','Raio (células)',it.radiusCells,'min="1" max="30" step="0.5"')+col('color','Cor',/^#[0-9a-f]{6}$/i.test(String(it.color||''))?it.color:'#ffd38a');}
+    else if(kind==='zone'){h+=area('text','Texto revelado',it.text)+num('radius','Raio (células)',it.radius,'min="0.5" step="0.5"')+chk('autoReveal','Disparar quando um jogador entrar',it.autoReveal!==false)+chk('revealed','Já disparado (visível)',it.revealed);}
+    else if(kind==='note'){h+=area('text','Texto',it.text)+chk('revealed','Visível para os jogadores',it.revealed);}
+    else if(kind==='terrain'){h+=`<label>Tipo<select data-gi="type">${[['difficult','Difícil'],['water','Água'],['hazard','Perigo'],['cover','Cobertura'],['height','Elevação']].map(([v,l])=>`<option value="${v}" ${it.type===v?'selected':''}>${l}</option>`).join('')}</select></label>`;}
+    h+=`<button type="button" class="ga-insp-delete" data-gi-act="delete">Excluir ${(KIND_LABEL[kind]||'elemento').toLowerCase()}</button>`;
+    box.innerHTML=h;
+    box.querySelectorAll('[data-gi]').forEach(el=>el.addEventListener('change',()=>applyInspectorField(el.dataset.gi,el)));
+    box.querySelectorAll('input[type=text][data-gi],input[type=number][data-gi]').forEach(el=>el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();el.blur()}}));
+    box.querySelectorAll('[data-gi-act]').forEach(b=>b.addEventListener('click',()=>inspectorAction(b.dataset.giAct)));
+  }
+  function applyInspectorField(key,el){
+    const sel=runtime.selection,it=selectedItem();if(!sel||!it)return;
+    const value=el.type==='checkbox'?el.checked:el.value,n=Number(value);
+    if(sel.kind==='token'){
+      if(key==='size'){const c=Math.max(1,Math.min(4,Math.round(n)||1));it.set?.({msTokenWidthCells:c,msTokenHeightCells:c});window.MS_GRID_ENGINE?.applyTokenSize?.(it,c,c,{silent:true});window.vttCanvas?.requestRenderAll?.();sendTokenMove(it);mark();renderInspector();return}
+      window.msEditToken?.(it,{[key]:value});return;
+    }
+    if(key==='visible')it.visibility=value?'all':'gm';
+    else if(['widthCells','heightCells','radiusCells','radius'].includes(key)){if(Number.isFinite(n)&&n>0)it[key]=n}
+    else if(key==='rotation'){if(Number.isFinite(n))it.rotation=((n%360)+360)%360}
+    else if(key==='color'||key==='type'||key==='name'||key==='text')it[key]=String(value);
+    else it[key]=!!value;
+    persistSoon();mark();
+  }
+  function inspectorAction(act){
+    const sel=runtime.selection,it=selectedItem();
+    if(act==='deselect'){selectElement(null);return}if(!sel||!it)return;
+    if(act==='damage'||act==='heal'){const amount=Math.max(1,Math.round(Number(runtime.panel?.querySelector('[data-gi-amount]')?.value)||1)),base=Number(it.msHp??it.msMaxHp??0)||0;window.msEditToken?.(it,{hp:act==='damage'?base-amount:base+amount});return}
+    if(act==='delete'){
+      const name=sel.kind==='token'?(window.msTokenBaseName?.(it)||'Totem'):(it.name||KIND_LABEL[sel.kind]||'elemento');
+      if(!confirm(`Excluir "${name}"?`))return;
+      if(sel.kind==='token'){const c=window.vttCanvas;c?.discardActiveObject?.();c?.remove?.(it);c?.requestRenderAll?.()}
+      else{const list=listFor(sel.kind),i=list.indexOf(it);if(i>=0)list.splice(i,1);persistSoon()}
+      selectElement(null);mark();
+    }
+  }
+
+  // ===== Gatilhos: revelam o texto quando o totem de um jogador entra na zona =====
+  // Só o Mestre avalia (é quem pode gravar o estado e enviar 'reveal' aos jogadores).
+  function checkZoneTriggers(){
+    if(!gm())return;const zones=state.notes.filter(n=>n.kind==='zone'&&n.autoReveal!==false&&!n.revealed);if(!zones.length)return;
+    for(const o of tokenObjects()){
+      if(String(o.owner||'')==='gm')continue;const b=tokenBox(o),cx=b.x+b.w/2,cy=b.y+b.h/2;
+      for(const z of zones){if(z.revealed)continue;if(Math.hypot(cx-z.x,cy-z.y)<=(Number(z.radius)||2)*state.grid.cellWidth){z.revealed=true;fireZone(z,o)}}
+    }
+  }
+  function fireZone(z,o){
+    const body=String(z.text||'');
+    window.MS_PLATFORM?.toast?.(`Gatilho ativado por ${window.msTokenBaseName?.(o)||'um jogador'}.`,'info');
+    window.MS_TABLE_SESSION?.send?.('reveal',{title:'Algo foi descoberto',body})?.catch?.(()=>{});
+    persistSoon();renderInspector();
+  }
+
+  // ===== Ambiência compartilhada: o Mestre toca, os jogadores ouvem =====
+  function setSharedAmbience(playing){if(!gm())return;state.ambience.playing=!!playing;persistSoon()}
+  function syncPlayerAmbience(){
+    const engine=window.MS_SOUNDSCAPE;if(gm()||!engine)return;const a=state.ambience||{};
+    const layer=(id,v)=>({id:id&&id!=='custom'?id:'off',volume:v});const l1=layer(a.preset,a.volume),l2=layer(a.preset2,a.volume2);
+    const want=!!a.playing&&(l1.id!=='off'||l2.id!=='off'),sig=want?`${l1.id}|${l2.id}`:'';
+    if(!want){if(runtime.ambientSig){runtime.ambientSig='';engine.stop?.()}return}
+    if(sig===runtime.ambientSig&&engine.status?.().playing){engine.setVolume?.(0,l1.volume);engine.setVolume?.(1,l2.volume);return}
+    runtime.ambientSig=sig;engine.preserveDialogue?.(a.preserveDialogue!==false);
+    const play=()=>Promise.resolve(engine.start([l1,l2])).catch(()=>false);
+    // O navegador só libera áudio após um gesto: se ainda não houve, toca no primeiro clique.
+    if(navigator.userActivation&&!navigator.userActivation.hasBeenActive){document.addEventListener('pointerdown',()=>{if(runtime.ambientSig===sig)play()},{once:true});return}
+    play().then(ok=>{if(!ok||!engine.status?.().playing)document.addEventListener('pointerdown',()=>{if(runtime.ambientSig===sig&&!engine.status?.().playing)play()},{once:true})});
+  }
+
   function spawnCatalogToken(item){return queueToken(item)}
   function makePanel(){if(runtime.panel?.isConnected)return runtime.panel;const p=document.createElement('aside');p.id='ms-architect-panel';p.className='ms-architect-panel';p.hidden=true;p.innerHTML=`<header><button type="button" data-ga-drag>⠿ ARCHITECT</button><span>Ateliê da Cena</span><button type="button" data-ga-close>×</button></header>
     <div class="ga-tabs"><button data-ga-tab="build" class="active">Tools</button><button data-ga-tab="library">Arte</button><button data-ga-tab="scene">Grid</button><button data-ga-tab="audio">Som</button><button data-ga-tab="fx">FX</button><button data-ga-tab="io">Projeto</button></div>
     <section data-ga-pane="build">
-      <div class="ga-tools">${[['select','Selecionar'],['pan','Câmera'],['measure','Medir'],['terrain','Terreno'],['wall','Parede'],['door','Porta'],['fog','Névoa'],['reveal','Revelar'],['light','Luz'],['note','Nota'],['zone','Gatilho'],['interactive','Interativo'],['interact','Usar'],['erase','Apagar']].map(([k,l])=>`<button data-ga-tool="${k}">${l}</button>`).join('')}</div>
+      <div class="ga-inspector" data-ga-inspector hidden></div>
+      <div class="ga-tools">${[['edit','✎ Editar'],['select','Mover totens'],['pan','Câmera'],['measure','Medir'],['terrain','Terreno'],['wall','Parede'],['door','Porta'],['fog','Névoa'],['reveal','Revelar'],['light','Luz'],['note','Nota'],['zone','Gatilho'],['interactive','Interativo'],['interact','Usar'],['erase','Apagar']].map(([k,l])=>`<button data-ga-tool="${k}">${l}</button>`).join('')}</div>
       <div class="ga-subgrid"><label>Terreno<select data-ga-terrain><option value="difficult">Difícil</option><option value="water">Água</option><option value="hazard">Perigo</option><option value="cover">Cobertura</option><option value="height">Elevação</option></select></label><label>Névoa<select data-ga-fogmode><option value="cover">Cobrir</option><option value="reveal">Revelar</option></select></label></div>
       <div class="ga-subgrid"><label>Raio da luz<input data-ga-light-radius type="number" min="1" max="30" step=".5"></label><label>Cor da luz<input data-ga-light-color type="color"></label></div>
       <div class="ga-placement-status" data-ga-placement-status hidden></div><label>Objeto interativo<select data-ga-interactive><option value="window">Janela</option><option value="drawer">Gaveta</option><option value="safe">Cofre</option><option value="terminal">Terminal</option><option value="elevator">Elevador</option><option value="stairs">Escada</option><option value="clue">Item investigável</option></select></label>
@@ -221,7 +365,7 @@
     p.querySelector('[data-ga-a1]').onchange=e=>{state.ambience.preset=e.target.value;persistSoon();if(window.MS_SOUNDSCAPE?.status?.().playing)startAmbient()};p.querySelector('[data-ga-a2]').onchange=e=>{state.ambience.preset2=e.target.value;persistSoon();if(window.MS_SOUNDSCAPE?.status?.().playing)startAmbient()};
     p.querySelector('[data-ga-v1]').oninput=e=>{state.ambience.volume=+e.target.value;window.MS_SOUNDSCAPE?.setVolume?.(0,state.ambience.volume)};p.querySelector('[data-ga-v1]').onchange=persistSoon;
     p.querySelector('[data-ga-v2]').oninput=e=>{state.ambience.volume2=+e.target.value;window.MS_SOUNDSCAPE?.setVolume?.(1,state.ambience.volume2)};p.querySelector('[data-ga-v2]').onchange=persistSoon;
-    p.querySelector('[data-ga-audio]').onclick=()=>window.MS_SOUNDSCAPE?.status?.().playing?stopAmbient():startAmbient();p.querySelector('[data-ga-audio-stop]').onclick=stopAmbient;
+    p.querySelector('[data-ga-audio]').onclick=()=>{if(window.MS_SOUNDSCAPE?.status?.().playing){stopAmbient();setSharedAmbience(false)}else startAmbient().then(ok=>{if(ok){setSharedAmbience(true);window.MS_PLATFORM?.toast?.(state.ambience.preset==='custom'?'Tocando. Áudio importado toca só neste computador.':'Ambiência tocando para toda a mesa.','success')}})};p.querySelector('[data-ga-audio-stop]').onclick=()=>{stopAmbient();setSharedAmbience(false)};
     const audioFile=p.querySelector('[data-ga-audio-file]');audioFile.closest('.ga-import').onclick=()=>audioFile.click();audioFile.onchange=e=>{const f=e.target.files?.[0];if(!f)return;if(runtime.customAudioUrl)URL.revokeObjectURL(runtime.customAudioUrl);runtime.customAudioUrl=URL.createObjectURL(f);state.ambience.customName=f.name;state.ambience.customSrc='';state.ambience.preset='custom';window.MS_SOUNDSCAPE?.setCustomSource?.(runtime.customAudioUrl,f.name);persistSoon();updatePanel();window.MS_PLATFORM?.toast?.('Áudio carregado para esta sessão.','success');e.target.value=''};const dialogue=p.querySelector('[data-ga-dialogue]');if(dialogue)dialogue.onchange=e=>{state.ambience.preserveDialogue=e.target.checked;window.MS_SOUNDSCAPE?.preserveDialogue?.(e.target.checked);persistSoon()};
     p.querySelectorAll('[data-ga-fx]').forEach(el=>el.onchange=e=>{state.effects[e.target.dataset.gaFx]=e.target.checked;persistSoon();mark();syncAnimation()});p.querySelector('[data-ga-fx-intensity]').oninput=e=>{state.effects.intensity=+e.target.value;mark()};p.querySelector('[data-ga-fx-intensity]').onchange=persistSoon;
     p.querySelector('[data-ga-zout]').onclick=()=>zoomBy(.8);p.querySelector('[data-ga-zin]').onclick=()=>zoomBy(1.25);p.querySelector('[data-ga-reset]').onclick=resetCamera;
@@ -238,12 +382,12 @@
       const lib=p.querySelector('[data-ga-props]');if(lib&&lib.dataset.signature!==sig){lib.dataset.signature=sig;lib.innerHTML=catalogs.props.map((o,i)=>matches(o,'prop')?`<button data-ga-prop="${i}" title="${o.description||''}"><img loading="lazy" decoding="async" src="${o.thumbnail||o.file}" alt=""><span>${o.name}</span></button>`:'').join('')||'<em>Nenhum objeto encontrado.</em>';lib.querySelectorAll('[data-ga-prop]').forEach(b=>b.onclick=()=>queueProp(catalogs.props[+b.dataset.gaProp]))}
       const tok=p.querySelector('[data-ga-tokens]');if(tok&&tok.dataset.signature!==sig){tok.dataset.signature=sig;tok.innerHTML=catalogs.tokens.map((o,i)=>matches(o,'token')?`<button data-ga-token="${i}"><img loading="lazy" decoding="async" src="${o.thumbnail||o.file}" alt=""><span>${o.name}</span></button>`:'').join('')||'<em>Nenhum totem encontrado.</em>';tok.querySelectorAll('[data-ga-token]').forEach(b=>b.onclick=()=>spawnCatalogToken(catalogs.tokens[+b.dataset.gaToken]))}}
   }
-  function openPanel(){if(!gm()){window.MS_PLATFORM?.toast?.('Somente o Mestre usa o Architect.','error');return false}const p=makePanel();p.hidden=false;if(!p.style.left){p.style.left=Math.max(8,innerWidth-p.offsetWidth-18)+'px';p.style.top='90px'}updatePanel();loadCatalogs().then(updatePanel).catch(()=>{});return true}
+  function openPanel(){if(!gm()){window.MS_PLATFORM?.toast?.('Somente o Mestre usa o Architect.','error');return false}const p=makePanel();p.hidden=false;if(!p.style.left){p.style.left=Math.max(8,innerWidth-p.offsetWidth-18)+'px';p.style.top='90px'}setTool('edit');updatePanel();loadCatalogs().then(updatePanel).catch(()=>{});return true}
   function closePanel(){if(runtime.panel)runtime.panel.hidden=true;setTool('select')}
 
   function setMap(src,width,height,name='Mapa'){state.map.src=String(src||'');state.map.name=name;state.map.width=Math.max(128,Number(width)||state.map.width||1024);state.map.height=Math.max(128,Number(height)||state.map.height||1024);persistSoon();mark();return clone(state.map)}
   function setSceneMeta(patch={}){if(patch.grid)state.grid=normalizeGrid(patch.grid);if(patch.mapUrl&&!state.map.src)state.map.src=patch.mapUrl;if(patch.mapWidth)state.map.width=+patch.mapWidth||state.map.width;if(patch.mapHeight)state.map.height=+patch.mapHeight||state.map.height;mark();return serialize()}
-  function boot(){ensureCanvas();if(!runtime.resizeObserver&&typeof ResizeObserver==='function'){runtime.resizeObserver=new ResizeObserver(()=>resize());if(runtime.host)runtime.resizeObserver.observe(runtime.host)}if(!runtime.eventsBound){runtime.eventsBound=true;window.addEventListener('resize',()=>resize());document.addEventListener('visibilitychange',()=>{if(document.hidden){if(runtime.animationRaf){cancelAnimationFrame(runtime.animationRaf);runtime.animationRaf=null}}else{mark();syncAnimation()}});window.MS_PLATFORM?.on?.('vtt:left',()=>{stopAmbient();window.MS_SOUNDSCAPE?.dispose?.();if(runtime.customAudioUrl){try{URL.revokeObjectURL(runtime.customAudioUrl)}catch(_){}runtime.customAudioUrl=''}closePanel();if(runtime.animationRaf){cancelAnimationFrame(runtime.animationRaf);runtime.animationRaf=null}})}const scene=window.MasterTools?.getSceneContext?.();if(scene)loadScene(scene);else load(defaultState());applyFabricCamera();mark();return serialize()}
+  function boot(){ensureCanvas();if(!runtime.resizeObserver&&typeof ResizeObserver==='function'){runtime.resizeObserver=new ResizeObserver(()=>resize());if(runtime.host)runtime.resizeObserver.observe(runtime.host)}if(!runtime.eventsBound){runtime.eventsBound=true;window.addEventListener('resize',()=>resize());document.addEventListener('visibilitychange',()=>{if(document.hidden){if(runtime.animationRaf){cancelAnimationFrame(runtime.animationRaf);runtime.animationRaf=null}}else{mark();syncAnimation()}});window.MS_PLATFORM?.on?.('vtt:left',()=>{stopAmbient();runtime.ambientSig='';runtime.selection=null;runtime.editDrag=null;window.MS_SOUNDSCAPE?.dispose?.();if(runtime.customAudioUrl){try{URL.revokeObjectURL(runtime.customAudioUrl)}catch(_){}runtime.customAudioUrl=''}closePanel();if(runtime.animationRaf){cancelAnimationFrame(runtime.animationRaf);runtime.animationRaf=null}})}const scene=window.MasterTools?.getSceneContext?.();if(scene)loadScene(scene);else load(defaultState());applyFabricCamera();mark();return serialize()}
 
-  window.MS_GRID_ARCHITECT=Object.freeze({version:VERSION,boot,load,loadScene,serialize,normalize,migrateLegacy,updateFromGridConfig,draw,resize,setTool,openPanel,closePanel,resetCamera,zoomBy,panBy,snapPoint,canMoveBetween,constrainTokenMove,addToken:t=>{state.tokens.push(t);persistSoon();mark()},toggleDoor:id=>{const d=state.doors.find(x=>x.id===id);if(!d||d.locked)return false;d.open=!d.open;persistSoon();mark();return d.open},persist,setMap,setSceneMeta,interactAt,handleIntent,exportProject,importProject,startAmbient,stopAmbient,queueProp,queueToken,placeCatalogTokenAt,catalogs:()=>clone(catalogs),state:()=>serialize()});
+  window.MS_GRID_ARCHITECT=Object.freeze({version:VERSION,boot,load,loadScene,serialize,normalize,migrateLegacy,updateFromGridConfig,draw,resize,setTool,openPanel,closePanel,resetCamera,zoomBy,panBy,snapPoint,canMoveBetween,constrainTokenMove,addToken:t=>{state.tokens.push(t);persistSoon();mark()},toggleDoor:id=>{const d=state.doors.find(x=>x.id===id);if(!d||d.locked)return false;d.open=!d.open;persistSoon();mark();return d.open},persist,setMap,setSceneMeta,interactAt,handleIntent,exportProject,importProject,startAmbient,stopAmbient,queueProp,queueToken,placeCatalogTokenAt,refreshInspector:renderInspector,select:selectElement,checkTriggers:checkZoneTriggers,catalogs:()=>clone(catalogs),state:()=>serialize()});
 })();

@@ -1299,3 +1299,7 @@ body.ms-feature-loading:after{content:'Preparando a criação de ficha…';posit
 
 /* V2.10.5 · identificação da matriz tática */
 .ms-grid-dimension{display:block;margin-top:3px;color:#777f85;font:700 .6rem "Orbitron",sans-serif;letter-spacing:.12em;text-transform:uppercase}
+
+/* Entrada na mesa em andamento: feedback imediato e sem cliques duplicados. */
+body.ms-vtt-entering{cursor:progress}
+body.ms-vtt-entering [data-enter],body.ms-vtt-entering [data-player-enter]{opacity:.6;pointer-events:none}

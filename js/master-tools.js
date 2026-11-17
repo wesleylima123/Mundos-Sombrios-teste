@@ -18,14 +18,16 @@
   async function persistScoped(key,val,previous=[]){
     if(!window.MS_DB?.ready || !gm() || tableId()==='draft') return;
     const kind=keyKind(key); const next=Array.isArray(val)?val:[]; const old=Array.isArray(previous)?previous:[];
-    if(kind==='notes'){ for(const n of next) await window.MS_DB.saveGMNote(tableId(),n); for(const n of old) if(!next.some(x=>String(x.id)===String(n.id))) await window.MS_DB.deleteGMNote(n.id); }
-    if(kind==='npcs'){ for(const n of next) await window.MS_DB.saveGMNpc(tableId(),n); for(const n of old) if(!next.some(x=>String(x.id)===String(n.id))) await window.MS_DB.deleteGMNpc(n.id); }
+    // O cliente Supabase devolve {error} em vez de lançar: sem esta checagem a falha era silenciosa.
+    const must=async p=>{const r=await p;if(r?.error)throw r.error;return r;};
+    if(kind==='notes'){ for(const n of next) await must(window.MS_DB.saveGMNote(tableId(),n)); for(const n of old) if(!next.some(x=>String(x.id)===String(n.id))) await must(window.MS_DB.deleteGMNote(n.id)); }
+    if(kind==='npcs'){ for(const n of next) await must(window.MS_DB.saveGMNpc(tableId(),n)); for(const n of old) if(!next.some(x=>String(x.id)===String(n.id))) await must(window.MS_DB.deleteGMNpc(n.id)); }
   }
-  const setScoped=(key,val)=>{const kind=keyKind(key);const next=Array.isArray(val)?val:[];const prev=kind&&Array.isArray(online[kind])?online[kind].slice():[];if(kind) online[kind]=next;persistScoped(key,next,prev).catch(e=>console.warn('[Mundos Sombrios] persistência GM:',e));};
+  const setScoped=(key,val)=>{const kind=keyKind(key);const next=Array.isArray(val)?val:[];const prev=kind&&Array.isArray(online[kind])?online[kind].slice():[];if(kind) online[kind]=next;persistScoped(key,next,prev).catch(e=>{console.warn('[Mundos Sombrios] persistência GM:',e);window.MS_PLATFORM?.toast?.('Não foi possível salvar no servidor: '+(e?.message||'erro desconhecido'),'error');});};
   async function hydrateOnline(options={}){
     if(!window.MS_DB?.ready || !gm() || tableId()==='draft' || online.hydrated) return;
     try{
-      const [notes,npcs,files,state]=await Promise.all([window.MS_DB.fetchGMNotes(tableId()),window.MS_DB.fetchGMNpcs(tableId()),window.MS_DB.fetchGMFiles(tableId()),window.MS_DB.fetchTableState(tableId())]);
+      const [notes,npcs,files,state]=await Promise.all([window.MS_DB.fetchGMNotes(tableId()),window.MS_DB.fetchGMNpcs(tableId()),window.MS_DB.fetchGMFiles(tableId()),options.keepVtt?Promise.resolve({data:null}):window.MS_DB.fetchTableState(tableId())]);
       online.notes=notes.data||[]; online.npcs=npcs.data||[]; online.files=files.data||[]; if(!options.keepVtt) online.vtt=window.MS_TABLE_SESSION?.normalizeState?.(state.data||online.vtt)||state.data||online.vtt||{chat:[],dice:[],gallery:[]}; online.hydrated=true;
     }catch(e){console.warn('[Mundos Sombrios] hidratação das ferramentas do Mestre:',e);}
   }
@@ -146,10 +148,20 @@
   function renderNPCs(panel){
     const npcs=scoped(NPCS);
     panel.innerHTML=`<div class="gm-npc-grid"><form class="gm-npc-form" id="gm-npc-form"><h4>NPC completo / recorrente</h4><input id="npc-name" required placeholder="Nome do NPC"><input id="npc-role" placeholder="Função / ameaça"><div class="gm-npc-stats"><input id="npc-pv" type="number" min="0" placeholder="PV"><input id="npc-def" type="number" placeholder="Defesa"><input id="npc-cd" type="number" placeholder="CD"><input id="npc-mode" value="${mode()}" readonly></div><input id="npc-faction" placeholder="Facção / organização"><div class="gm-npc-stats"><input id="npc-loyalty" placeholder="Lealdade"><input id="npc-fear" placeholder="Medo"><input id="npc-relation" placeholder="Relação com o grupo"><input id="npc-token" placeholder="Token vinculado"></div><textarea id="npc-attacks" rows="2" placeholder="Ataques / ações"></textarea><textarea id="npc-resistances" rows="2" placeholder="Resistências / vulnerabilidades"></textarea><textarea id="npc-powers" rows="2" placeholder="Poderes / recursos"></textarea><textarea id="npc-behavior" rows="2" placeholder="Comportamento e tática"></textarea><textarea id="npc-objectives" rows="2" placeholder="Objetivos e interesses"></textarea><textarea id="npc-history" rows="3" placeholder="Histórico de aparições, promessas, ameaças e mudanças de relação"></textarea><textarea id="npc-notes" rows="3" placeholder="Notas adicionais"></textarea><button type="submit">REGISTRAR NPC</button></form><div class="gm-npc-list" id="gm-npc-list"></div></div>`;
-    const list=panel.querySelector('#gm-npc-list'); if(!npcs.length){list.innerHTML='<div class="gm-empty">Nenhum NPC registrado.</div>';} else npcs.forEach(n=>{list.insertAdjacentHTML('beforeend',`<article class="gm-npc-card"><div><b>${esc(n.name)}</b><small>${esc(n.role||'NPC')} · ${esc(n.mode)}${n.faction?' · '+esc(n.faction):''}</small></div><p>PV ${esc(n.pv??'—')} · DEF ${esc(n.def??'—')} · CD ${esc(n.cd??'—')}</p><p><b>Relação:</b> ${esc(n.relationship||'—')} · <b>Lealdade:</b> ${esc(n.loyalty||'—')} · <b>Medo:</b> ${esc(n.fear||'—')}</p><p><b>Ações:</b> ${esc(n.attacks||'—')}<br><b>Comportamento:</b> ${esc(n.behavior||'—')}<br><b>Objetivo:</b> ${esc(n.objectives||'—')}</p>${n.history?`<details><summary>MEMÓRIA DO NPC</summary><p>${esc(n.history)}</p></details>`:''}<div><button type="button" data-edit-npc="${esc(n.id)}">EDITAR</button><button type="button" class="danger" data-delete-npc="${esc(n.id)}">EXCLUIR</button></div></article>`) });
+    const list=panel.querySelector('#gm-npc-list'); if(!npcs.length){list.innerHTML='<div class="gm-empty">Nenhum NPC registrado.</div>';} else npcs.forEach(n=>{list.insertAdjacentHTML('beforeend',`<article class="gm-npc-card"><div><b>${esc(n.name)}</b><small>${esc(n.role||'NPC')} · ${esc(n.mode)}${n.faction?' · '+esc(n.faction):''}</small></div><p>PV ${esc(n.pv??'—')} · DEF ${esc(n.def??'—')} · CD ${esc(n.cd??'—')}</p><p><b>Relação:</b> ${esc(n.relationship||'—')} · <b>Lealdade:</b> ${esc(n.loyalty||'—')} · <b>Medo:</b> ${esc(n.fear||'—')}</p><p><b>Ações:</b> ${esc(n.attacks||'—')}<br><b>Comportamento:</b> ${esc(n.behavior||'—')}<br><b>Objetivo:</b> ${esc(n.objectives||'—')}</p>${n.history?`<details><summary>MEMÓRIA DO NPC</summary><p>${esc(n.history)}</p></details>`:''}<div><button type="button" data-place-npc="${esc(n.id)}">＋ NO MAPA</button><button type="button" data-edit-npc="${esc(n.id)}">EDITAR</button><button type="button" class="danger" data-delete-npc="${esc(n.id)}">EXCLUIR</button></div></article>`) });
     panel.querySelector('#gm-npc-form').addEventListener('submit',e=>{e.preventDefault();const form=e.currentTarget,editId=form.dataset.editingNpcId||'',get=id=>panel.querySelector('#'+id)?.value?.trim()||'';const name=get('npc-name');if(!name)return;const data={id:editId||(crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random())),name,role:get('npc-role'),pv:Number(get('npc-pv')||0),def:Number(get('npc-def')||0),cd:Number(get('npc-cd')||0),mode:mode(),faction:get('npc-faction'),loyalty:get('npc-loyalty'),fear:get('npc-fear'),relationship:get('npc-relation'),attacks:get('npc-attacks'),resistances:get('npc-resistances'),powers:get('npc-powers'),behavior:get('npc-behavior'),objectives:get('npc-objectives'),history:get('npc-history'),tokenLink:get('npc-token'),notes:get('npc-notes'),updatedAt:Date.now()};const current=scoped(NPCS);setScoped(NPCS,editId?current.map(x=>String(x.id)===String(editId)?data:x):[...current,data]);window.MasterCommandCenter?.log?.('npc',editId?`NPC atualizado: ${name}`:`NPC registrado: ${name}`);renderNPCs(panel);});
+    panel.querySelectorAll('[data-place-npc]').forEach(b=>b.addEventListener('click',()=>{const n=scoped(NPCS).find(x=>String(x.id)===String(b.dataset.placeNpc));if(n)placeNpcOnMap(n);}));
     panel.querySelectorAll('[data-delete-npc]').forEach(b=>b.addEventListener('click',()=>{if(confirm('Excluir este NPC?')){setScoped(NPCS,scoped(NPCS).filter(x=>String(x.id)!==String(b.dataset.deleteNpc)));renderNPCs(panel);}}));
     panel.querySelectorAll('[data-edit-npc]').forEach(b=>b.addEventListener('click',()=>{const n=scoped(NPCS).find(x=>String(x.id)===String(b.dataset.editNpc));if(!n)return;const form=panel.querySelector('#gm-npc-form');if(form){form.dataset.editingNpcId=String(n.id);const submitBtn=form.querySelector('button[type="submit"]');if(submitBtn)submitBtn.textContent='ATUALIZAR NPC';}const map={name:'name',role:'role',pv:'pv',def:'def',cd:'cd',faction:'faction',loyalty:'loyalty',fear:'fear',relation:'relationship',attacks:'attacks',resistances:'resistances',powers:'powers',behavior:'behavior',objectives:'objectives',history:'history',notes:'notes'};Object.entries(map).forEach(([id,k])=>{const el=panel.querySelector('#npc-'+id);if(el)el.value=n[k]??'';});const tok=panel.querySelector('#npc-token');if(tok)tok.value=n.tokenLink||'';}));
+  }
+  function placeNpcOnMap(n){
+    const canvas=window.vttCanvas;
+    const live=canvas&&typeof window.msCreateTokenGroup==='function'&&window.fabric&&String(currentTableData?.id||'')===tableId();
+    if(!live){window.MS_PLATFORM?.toast?.('Entre ao vivo nesta mesa e abra o Mapa & Grid para colocar o NPC.','error');return false;}
+    const color='#ff3333';
+    const circle=new window.fabric.Circle({radius:25,fill:color,stroke:'#000',strokeWidth:2});
+    window.msCreateTokenGroup(circle,n.name||'NPC','gm',color,null,null,window.currentUser?.id||null,window.currentUser?.authUserId||null,1,1);
+    window.MS_PLATFORM?.toast?.(`${n.name||'NPC'} colocado no mapa.`,'success');return true;
   }
   function workbench(){const s=vttState();s.gmWorkbench=s.gmWorkbench||{encounters:[],combat:{round:1,active:0,entries:[]},clues:[],world:[]};s.gmWorkbench.encounters=s.gmWorkbench.encounters||[];s.gmWorkbench.combat=s.gmWorkbench.combat||{round:1,active:0,entries:[]};s.gmWorkbench.clues=s.gmWorkbench.clues||[];s.gmWorkbench.world=s.gmWorkbench.world||[];return s.gmWorkbench;}
   function persistWorkbench(){const s=vttState();s.gmWorkbench=workbench();saveVtt(s);}
@@ -237,13 +249,27 @@
   function unmountShield(){try{state.shield?.cleanup?.();}catch(_){}document.getElementById('master-shield-cube')?.remove();document.getElementById('master-shield-panel')?.remove();state.shield=null;try{window.__msVttIsGM=false}catch(_){}}
 
   function vttState(){online.vtt=window.MS_TABLE_SESSION?.normalizeState?.(online.vtt)||online.vtt||{chat:[],dice:[],gallery:[]};return online.vtt;}
+  // Cada movimento/pincelada chamava um upsert do estado inteiro (e um aviso aos jogadores).
+  // Agrupa rajadas em uma gravação; pagehide/troca de mesa descarregam o que estiver pendente.
+  let saveTimer=null,savePendingTable=null,savePendingState=null;
+  function flushVttSave(){
+    if(!saveTimer)return;clearTimeout(saveTimer);saveTimer=null;const id=savePendingTable,snapshot=savePendingState;savePendingTable=null;savePendingState=null;
+    if(!id||id==='draft'||!snapshot||!window.MS_DB?.ready)return;
+    // Usa a referência gravada por saveVtt: se a Sala trocar de mesa antes do disparo,
+    // o estado da mesa nova nunca é escrito na anterior.
+    window.MS_SERVICES?.VTT?.saveState?.(id,snapshot).catch(e=>console.warn('[Mundos Sombrios] Estado VTT:',e));
+  }
   function saveVtt(nextState){
     online.vtt=window.MS_TABLE_SESSION?.normalizeState?.(nextState)||nextState;
     // Snapshot é apenas estrutural. Chat/dados são event log e não dependem deste write.
-    if(window.MS_DB?.ready&&tableId()!=='draft'&&gm()) window.MS_SERVICES?.VTT?.saveState?.(tableId(),online.vtt).catch(e=>console.warn('[Mundos Sombrios] Estado VTT:',e));
+    if(!(window.MS_DB?.ready&&tableId()!=='draft'&&gm()))return;
+    if(savePendingTable&&savePendingTable!==tableId())flushVttSave();
+    savePendingTable=tableId();savePendingState=online.vtt;clearTimeout(saveTimer);saveTimer=setTimeout(flushVttSave,250);
   }
+  window.addEventListener('pagehide',flushVttSave);
   async function onVttEnter(table,isGM){
     try{window.__msVttIsGM=!!isGM}catch(_){}
+    flushVttSave();
     if(table) contextTable=table;
     if(online.unsubscribe){try{online.unsubscribe();}catch(_){} online.unsubscribe=null;}
     online.hydrated=false; online.notes=[];online.npcs=[];online.files=[];online.vtt=window.MS_TABLE_SESSION?.normalizeState?.(null)||{chat:[],dice:[],gallery:[]};

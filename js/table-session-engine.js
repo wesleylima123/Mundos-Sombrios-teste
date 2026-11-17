@@ -10,6 +10,8 @@
   const DEFAULT_STATE=Object.freeze({schemaVersion:3,scene:{},grid:{},controls:{chatLocked:false,npcHealthPublic:true,paused:false},gallery:[],chat:[],dice:[],initiative:{active:false,round:0,turn:0,order:[]}});
   const state={tableId:null,status:'idle',lastEventId:0,pending:0,reconnects:0,lastError:null,connectedAt:null,lastEventAt:null,seen:new Set(),handler:null,stop:null,reconnectTimer:null,presenceTimer:null,bootstrapping:false,buffer:[]};
   function clone(v){return JSON.parse(JSON.stringify(v));}
+  // Tipos usados para reconstruir a sessão ao entrar (ver replayBootstrapEvents em master-tools).
+  const BOOT_EVENT_TYPES=['chat','dice','control','token_add','token_move','token_remove'];
 
   function stopPresenceHeartbeat(){if(state.presenceTimer&&typeof globalThis.clearInterval==='function')globalThis.clearInterval(state.presenceTimer);state.presenceTimer=null;}
   function touchPresence(online=true){
@@ -56,16 +58,28 @@
       if(['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(status)&&state.tableId){state.status='offline';state.lastError=new Error(`Realtime ${status}`);health();scheduleReconnect();}
     };
     try{
-      // Inscreve PRIMEIRO. Eventos recebidos durante o bootstrap ficam no buffer.
-      state.stop=await realtime().connect(id,deliver,{status:onStatus});
-      const [remoteState,events]=await Promise.all([services().VTT.state(id),window.MS_DB.fetchTableEventsAfter(id,0,500)]);
+      // Inscrição e downloads correm em PARALELO (antes eram em série: até 12 s esperando o canal
+      // para só então baixar estado e eventos). Eventos que chegam pelo canal durante o bootstrap
+      // ficam no buffer; um catch-up final cobre o intervalo entre a consulta e a inscrição.
+      const recent=window.MS_DB.fetchRecentTableEvents?window.MS_DB.fetchRecentTableEvents(id,BOOT_EVENT_TYPES,500):window.MS_DB.fetchTableEventsAfter(id,0,500);
+      const latest=window.MS_DB.fetchLatestTableEventId?window.MS_DB.fetchLatestTableEventId(id).catch(()=>({data:0})):Promise.resolve({data:0});
+      const [stop,remoteState,events,latestId]=await Promise.all([realtime().connect(id,deliver,{status:onStatus}),services().VTT.state(id),recent,latest]);
+      state.stop=stop;
+      if(state.tableId!==id){try{stop?.();}catch(_){}throw new Error('Conexão substituída por outra mesa.');}
+      if(events?.error)throw events.error;
       const normalized=normalize(remoteState?.data!==undefined?remoteState.data:remoteState);
       const rows=(events?.data||[]).slice().sort((a,b)=>Number(a.id)-Number(b.id));
       // Histórico é devolvido ao consumidor para reconstrução determinística, sem disparar efeitos visuais antigos.
       rows.forEach(remember);
+      // O snapshot já contém o que veio antes deste ponto; o catch-up só busca o que for mais novo.
+      state.lastEventId=Math.max(state.lastEventId,Number(latestId?.data)||0);
       state.bootstrapping=false;
       const buffered=state.buffer.splice(0).sort((a,b)=>Number(a?.id||0)-Number(b?.id||0));buffered.forEach(deliver);
-      state.status='synced';health({bootstrapEvents:rows.length,bufferedEvents:buffered.length});return {state:normalized,events:rows};
+      state.status='synced';health({bootstrapEvents:rows.length,bufferedEvents:buffered.length});
+      // Eventos gravados entre a consulta e a inscrição (a resposta da rede chega depois que o consumidor monta a mesa).
+      // Só com o marcador confiável: sem ele o catch-up baixaria o histórico antigo inteiro.
+      if(Number(latestId?.data)>0)catchUp().catch(()=>{});
+      return {state:normalized,events:rows};
     }catch(error){state.bootstrapping=false;state.buffer=[];state.status='offline';state.lastError=error;health();throw error;}
   }
   function scheduleReconnect(){

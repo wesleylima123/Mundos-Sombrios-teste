@@ -301,8 +301,11 @@ async function msApplyAuthenticatedSession(profileOverride = null) {
         const gmTab=document.getElementById('tab-btn-gm'); if(gmTab) gmTab.style.display=(currentUser.role==='mestre'||currentUser.role==='admin')?'inline-block':'none';
         const shieldButton=document.getElementById('btn-master-shield'); if(shieldButton) shieldButton.style.display=(currentUser.role==='mestre'||currentUser.role==='admin')?'inline-block':'none';
 
+        // Lido antes de abrir o Portal: showScreen grava a rota e apagaria a tela em que a pessoa estava.
+        const routeToRestore = msReadUiRoute();
         // Acesso à conta não fica bloqueado pela hidratação de mesas/fichas.
         showScreen('screen-portal');
+        if (routeToRestore) msWriteUiRoute(routeToRestore);
         if(typeof window.renderOfficialPortal==='function') window.renderOfficialPortal();
         window.MS_PLATFORM?.emit('auth:profile-ready',{user:currentUser});
 
@@ -312,6 +315,8 @@ async function msApplyAuthenticatedSession(profileOverride = null) {
                 try { usersDB = await window.MS_DB.fetchUsers(); } catch(error) { console.warn('[Mundos Sombrios] Perfis:',error); }
             }
             try { await msHydrateRemoteGameState(); } catch(error) { console.warn('[Mundos Sombrios] Hidratação:',error); }
+            // Recarregar a página volta para a tela em que a pessoa estava (Sala dos Mestres, mesa...).
+            if (routeToRestore) { try { await msRestoreUiRoute(routeToRestore); } catch(error) { console.warn('[Mundos Sombrios] Restaurar tela:',error); } }
             // syncUserState é read-only desde V2.8.1; não é necessário manter uma ida extra no caminho pós-login.
             try { await window.MS_SOUL?.fetchState?.({quiet:true}); } catch(error) { console.warn('[Mundos Sombrios] Soul:',error); }
         },0);
@@ -407,6 +412,7 @@ async function doLogin() {
 async function doLogout() {
     if(!confirm('Deseja desconectar do Vazio?')) return;
     try{if(window.MS_DB?.ready) await window.MS_DB.signOut();}catch(error){console.warn('[Mundos Sombrios] Logout:',error);}
+    msWriteUiRoute(null);
     currentUser=null; const emblem=document.getElementById('master-emblem'); if(emblem) emblem.style.display='none'; const req=document.getElementById('admin-requests-container'); if(req) req.innerHTML='';
     if(typeof window.openOfficialPortal==='function') window.openOfficialPortal(); else showScreen('screen-portal'); msRefreshInitialSetupButton();
 }
@@ -1069,6 +1075,52 @@ function applyNatureTheme(nature) {
 }
 
 // NAVIGATION
+// Rota da interface (só navegação, nunca dados): permite que o F5 devolva a pessoa à mesma tela.
+// sessionStorage vale apenas para esta aba; a autoridade é sempre recalculada ao restaurar.
+const MS_UI_ROUTE_KEY = 'ms:ui:route:v1';
+const MS_RESTORABLE_SCREENS = new Set(['screen-ancoragem','screen-vtt','screen-char-select','screen-master-shield','screen-codex','screen-mode-select']);
+function msReadUiRoute() {
+    try { const r = JSON.parse(sessionStorage.getItem(MS_UI_ROUTE_KEY) || 'null'); return r && typeof r === 'object' && MS_RESTORABLE_SCREENS.has(r.screen) ? r : null; } catch(_) { return null; }
+}
+function msWriteUiRoute(route) {
+    try { if (route) sessionStorage.setItem(MS_UI_ROUTE_KEY, JSON.stringify(route)); else sessionStorage.removeItem(MS_UI_ROUTE_KEY); } catch(_) {}
+}
+function msRememberScreen(id) {
+    if (id === 'screen-portal' || id === 'screen-login') { msWriteUiRoute(null); return; }
+    if (!MS_RESTORABLE_SCREENS.has(id)) return; // telas transitórias (Forja etc.) mantêm a rota anterior
+    if (id === 'screen-vtt') {
+        if (isDraftMode || !currentTableData?.id) return;
+        msWriteUiRoute({ screen: id, tableId: String(currentTableData.id) });
+        return;
+    }
+    const prev = msReadUiRoute();
+    msWriteUiRoute({ screen: id, tab: id === 'screen-ancoragem' && prev?.screen === id ? prev.tab : undefined });
+}
+window.msRememberAncoragemTab = function(tab) {
+    const prev = msReadUiRoute();
+    if (prev?.screen === 'screen-ancoragem') msWriteUiRoute({ ...prev, tab: String(tab || 'player') });
+};
+async function msRestoreUiRoute(route) {
+    if (!route || !currentUser) return false;
+    const active = document.querySelector('.screen.active')?.id;
+    // Se a pessoa já navegou para outra tela enquanto carregava, respeita a escolha dela.
+    if (active && active !== 'screen-portal') return false;
+    if (route.screen === 'screen-vtt') {
+        if (!route.tableId || !msGetTableByCodeOrId(route.tableId)) { msWriteUiRoute(null); return false; }
+        const table = msGetTableByCodeOrId(route.tableId);
+        return !!(await enterVTT(route.tableId, msCanUseMasterAuthority(table)));
+    }
+    if (route.screen === 'screen-ancoragem') {
+        await window.MS_FEATURES?.ensureMasterRuntime?.();
+        showScreen('screen-ancoragem', { skipAncoragemRender: true });
+        window.switchAncoragemTab?.(route.tab || 'player');
+        return true;
+    }
+    if (route.screen === 'screen-master-shield') { if (typeof window.openMasterShield === 'function') { window.openMasterShield(); return true; } }
+    return showScreen(route.screen);
+}
+window.msRestoreUiRoute = msRestoreUiRoute;
+
 function showScreen(id, options = {}) {
     window.MS_PLATFORM?.emit('screen:changing',{screen:id});
     if(id==='screen-builder' && window.MS_FEATURES && !window.MS_FEATURES.isBuilderReady()) { window.MS_FEATURES.ensureBuilder().catch(error=>window.MS_PLATFORM?.toast(error.message||'Falha ao carregar a Forja.','error')); }
@@ -1084,6 +1136,7 @@ function showScreen(id, options = {}) {
     document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active', 'overlay'); s.setAttribute('aria-hidden','true'); });
     target.classList.add('active');
     target.setAttribute('aria-hidden','false');
+    msRememberScreen(id);
     
     if(id === 'screen-char-select') {
         isEditMode = true; 
@@ -2472,7 +2525,10 @@ function canvasAddPCToken() {
     });
 }
 function canvasAddNPCToken() {
-    if(!isVttGM)return;const color=prompt('Cor do Monstro/NPC (Ex: red, #ff00ff):','#ff3333');const name=prompt('Nome do Monstro:','Goblin Abissal');if(!name)return;
+    if(!isVttGM){window.MS_PLATFORM?.toast?.('Somente a direção da mesa cria totens de NPC.','error');return;}
+    if(!vttCanvas||!window.fabric){window.MS_PLATFORM?.toast?.('Abra o Mapa & Grid antes de criar o totem.','error');return;}
+    const name=(prompt('Nome do Monstro/NPC:','Goblin Abissal')||'').trim();if(!name)return;
+    const color=(prompt('Cor do totem (Ex: red, #ff00ff):','#ff3333')||'').trim()||'#ff3333';
     const circle=new fabric.Circle({radius:25,fill:color,stroke:'#000',strokeWidth:2,shadow:new fabric.Shadow({color:'rgba(0,0,0,0.8)',blur:10,offsetX:5,offsetY:5})});createTokenGroup(circle,name,'gm',color,null,null,currentUser?.id||null,currentUser?.authUserId||null,1,1);
 }
 function createTokenGroup(mainObj,nameText,owner,color,borderObj=null,characterId=null,ownerId=null,ownerAuthId=null,widthCells=1,heightCells=widthCells,left=100,top=100) {
@@ -4227,7 +4283,17 @@ async function confirmJoinTable() {
     }catch(error){window.MS_PLATFORM?.toast(error.message||'Não foi possível entrar nessa Fenda.','error');return false;}
 }
 
+let msEnterVttInFlight = null;
 async function enterVTT(tableIdOrCode, asGM, draftName = null) {
+    // Cliques repetidos enquanto a mesa carrega não abrem duas conexões concorrentes.
+    if (msEnterVttInFlight) return msEnterVttInFlight;
+    document.body.classList.add('ms-vtt-entering');
+    window.MS_PLATFORM?.toast?.('Abrindo a mesa…','info');
+    msEnterVttInFlight = msEnterVttNow(tableIdOrCode, asGM, draftName);
+    try { return await msEnterVttInFlight; }
+    finally { msEnterVttInFlight = null; document.body.classList.remove('ms-vtt-entering'); }
+}
+async function msEnterVttNow(tableIdOrCode, asGM, draftName = null) {
     await window.MS_FEATURES?.ensureTableRuntime?.();
     window.MS_FEATURES?.ensureProgression?.().catch(()=>{});
     isVttGM = !!asGM;
@@ -4244,7 +4310,19 @@ async function enterVTT(tableIdOrCode, asGM, draftName = null) {
         if (!currentTableData) { window.MS_PLATFORM?.toast('Mesa não encontrada nesta sessão. Atualize suas mesas.','error'); return false; }
         document.getElementById('vtt-table-name').innerText = currentTableData.name;
         if (currentTableData.theme) { document.getElementById('vtt-theme-select').value = currentTableData.theme; previewVttTheme(); }
+    }
 
+    // Separa papel da conta (acesso ao Escudo) da autoridade nesta mesa (Direção).
+    // Calculado antes das cargas: não depende do roster e libera a conexão da mesa em paralelo.
+    const accountRole = String(currentUser?.role || 'jogador').toLowerCase();
+    const membershipRole = String(currentTableData?.myMemberRole || window.__msTableMemberships?.[String(currentTableData?.id || '')]?.role || '').toLowerCase();
+    isVttGM = !!asGM || accountRole === 'admin' || !!currentTableData?.isOwner || ['mestre','co_mestre'].includes(membershipRole);
+    try { window.__msVttIsGM = !!isVttGM; } catch(_) {}
+    document.querySelectorAll('.gm-only-btn').forEach(el => el.style.display = isVttGM ? 'flex' : 'none');
+    if(isVttGM) window.MS_FEATURES?.ensureOperational?.().catch(()=>{});
+
+    const loadRoster = async () => {
+        if (tableIdOrCode === 'draft' || !currentTableData) return;
         // Fichas completas seguem privadas: jogador recebe apenas a própria; direção recebe as autorizadas.
         // O roster sanitizado complementa a lateral com cartões públicos dos demais participantes.
         try {
@@ -4287,17 +4365,13 @@ async function enterVTT(tableIdOrCode, asGM, draftName = null) {
         if (asGM && !tablePlayers.length && Array.isArray(characters)) {
             characters.forEach(c => { const mine=msClone(c); mine.isMe=true; mine.sourceOwnerId=currentUser.id; mine.sourceCharId=mine.id; mine.participantUserId=currentUser.id; tablePlayers.push(mine); });
         }
-    }
+    };
 
-    // Separa papel da conta (acesso ao Escudo) da autoridade nesta mesa (Direção).
-    const accountRole = String(currentUser?.role || 'jogador').toLowerCase();
-    const membershipRole = String(currentTableData?.myMemberRole || window.__msTableMemberships?.[String(currentTableData?.id || '')]?.role || '').toLowerCase();
-    isVttGM = !!asGM || accountRole === 'admin' || !!currentTableData?.isOwner || ['mestre','co_mestre'].includes(membershipRole);
-    try { window.__msVttIsGM = !!isVttGM; } catch(_) {}
-    document.querySelectorAll('.gm-only-btn').forEach(el => el.style.display = isVttGM ? 'flex' : 'none');
-    if(isVttGM) window.MS_FEATURES?.ensureOperational?.().catch(()=>{});
-
-    if (window.MasterTools && typeof window.MasterTools.onVttEnter === 'function') await window.MasterTools.onVttEnter(currentTableData, isVttGM);
+    // Roster e conexão em tempo real (estado + eventos + canal) correm juntos.
+    await Promise.all([
+        loadRoster(),
+        (window.MasterTools && typeof window.MasterTools.onVttEnter === 'function') ? window.MasterTools.onVttEnter(currentTableData, isVttGM) : null
+    ]);
     showScreen('screen-vtt');
     if (window.MasterTools && typeof window.MasterTools.mountShield === 'function') window.MasterTools.mountShield(isVttGM, currentTableData);
     document.querySelectorAll('#ms-room-workspace>.vtt-floating-window').forEach(el => el.style.display = 'none');

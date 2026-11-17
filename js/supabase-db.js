@@ -528,6 +528,22 @@ window.MS_DB_READY = (async function () {
             const {data,error}=await q; return {data:Array.isArray(data)?data:[],error};
         },
 
+        // Entrada na mesa: só os tipos que reconstroem a sessão (chat, dados, controle, totens),
+        // os MAIS RECENTES. Antes vinham os 500 mais antigos de todos os tipos, inclusive eventos
+        // 'scene' com o cenário inteiro (mapa em base64) — megabytes a cada entrada, e numa mesa
+        // com mais de 500 eventos o chat recente nem aparecia.
+        async fetchRecentTableEvents(tableId, types = [], limit = 500) {
+            let q = supabase.from(tableNames.table_events).select('*').eq('table_id', String(tableId)).order('id', { ascending: false }).limit(limit);
+            if (Array.isArray(types) && types.length) q = q.in('event_type', types);
+            const { data, error } = await q;
+            return { data: Array.isArray(data) ? data.reverse() : [], error };
+        },
+
+        async fetchLatestTableEventId(tableId) {
+            const { data, error } = await supabase.from(tableNames.table_events).select('id').eq('table_id', String(tableId)).order('id', { ascending: false }).limit(1);
+            return { data: Number(data?.[0]?.id || 0), error };
+        },
+
         async subscribeTable(tableId, handlers = {}) {
             const id = String(tableId);
             const onEvent = typeof handlers === 'function' ? handlers : handlers?.event;

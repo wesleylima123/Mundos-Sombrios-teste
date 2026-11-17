@@ -84,6 +84,7 @@
 
   window.renderPlayerConnections=renderPlayerConnections;window.renderMasterRoom=render;window.renderAncoragem=async function(){await render();if(document.getElementById('ancoragem-directory-tab')?.style.display!=='none')window.MS_TABLE_DIRECTORY?.refresh?.(true);};
   window.switchAncoragemTab=function(tab){
+    window.msRememberAncoragemTab?.(tab);
     const player=document.getElementById('ancoragem-player-tab'),gmRoot=document.getElementById('ancoragem-gm-tab'),directory=document.getElementById('ancoragem-directory-tab');
     const gmActive=tab==='gm'&&canUseGmLobby(),dirActive=tab==='directory';
     if(player)player.style.display=(!gmActive&&!dirActive)?'flex':'none';

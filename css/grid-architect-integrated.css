@@ -3,6 +3,10 @@
 #canvas-wrapper>.ms-architect-stage,#canvas-wrapper>.ms-architect-interaction{position:absolute;inset:0;width:100%;height:100%}
 #canvas-wrapper>.ms-architect-stage{z-index:0;pointer-events:none}
 #canvas-wrapper>.canvas-container{position:relative!important;z-index:2;background:transparent!important}
+/* Camada de totens (Fabric Lite desenha direto no #vtt-canvas, sem .canvas-container).
+   Sem posição própria ela ficava ATRÁS do palco opaco do Architect: os totens de NPC/jogador
+   eram criados e sincronizados, mas ninguém os via. */
+#canvas-wrapper>#vtt-canvas{position:absolute;inset:0;z-index:2;width:100%;height:100%;background:transparent;touch-action:none}
 #canvas-wrapper>.ms-grid-overlay{z-index:3}
 #canvas-wrapper>.ms-grid-overlay-legacy-hidden{opacity:0!important;pointer-events:none!important}
 #canvas-wrapper>.ms-architect-interaction{z-index:8;pointer-events:none;background:transparent}

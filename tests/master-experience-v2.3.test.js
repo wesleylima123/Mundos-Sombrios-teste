@@ -66,7 +66,7 @@ test('Rolagem de dados V2.4 usa modelos 3D por canvas, animação por frame e en
 });
 
 test('Papéis Co-Mestre e Observador possuem contrato de banco e serviço explícitos',()=>{
-  const migration=read('supabase-master-v2.3-migration.sql');
+  const migration=read('sql/historico/supabase-master-v2.3-migration.sql');
   const db=read('js/supabase-db.js'),services=read('js/ms-services.js');
   assert.match(migration,/co_mestre/);assert.match(migration,/observador/);assert.match(migration,/can_manage_table/);assert.match(migration,/set_table_member_role/);
   assert.match(db,/setTableMemberRole/);assert.match(services,/setMemberRole/);

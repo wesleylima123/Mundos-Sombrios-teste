@@ -4,8 +4,8 @@ import { readFileSync } from 'node:fs';
 
 const services = readFileSync('js/ms-services.js', 'utf8');
 const db = readFileSync('js/supabase-db.js', 'utf8');
-const migration = readFileSync('supabase-online-migration.sql', 'utf8');
-const production = readFileSync('supabase-production.sql', 'utf8');
+const migration = readFileSync('sql/historico/supabase-online-migration.sql', 'utf8');
+const production = readFileSync('sql/historico/supabase-production.sql', 'utf8');
 const room = readFileSync('js/master-room.js', 'utf8');
 const tools = readFileSync('js/master-tools.js', 'utf8');
 const index = readFileSync('index.html', 'utf8');
@@ -59,7 +59,7 @@ test('Realtime de mesa usa Broadcast privado e Presence, sem Postgres Changes', 
 });
 
 test('Autorização Realtime limita canais à mesa do usuário', () => {
-  const sql = read('supabase-production.sql');
+  const sql = read('sql/historico/supabase-production.sql');
   assert.match(sql, /ms_realtime_table_select/);
   assert.match(sql, /realtime\.topic\(\) like 'ms:table:%'/);
   assert.match(sql, /table_members tm/);

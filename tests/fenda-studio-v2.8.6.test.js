@@ -17,7 +17,7 @@ test('V2.8.6 trava salvamento repetido no cliente e reutiliza identidade do rasc
 });
 
 test('create_table_secure é idempotente por p_id inclusive contra retries concorrentes',()=>{
-  for(const f of ['supabase-production.sql','supabase-bugfix-v2.8.6-migration.sql']){
+  for(const f of ['sql/historico/supabase-production.sql','sql/historico/supabase-bugfix-v2.8.6-migration.sql']){
     const sql=read(f);
     assert.match(sql,/v_id := coalesce\(nullif\(trim\(p_id\),''\), gen_random_uuid\(\)::text\)/);
     assert.match(sql,/on conflict \(id\) do nothing/);

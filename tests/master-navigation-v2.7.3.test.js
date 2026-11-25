@@ -46,7 +46,7 @@ test('Co-Mestre é tratado como direção da mesa, não como jogador comum',()=>
 });
 
 test('migração 2.7.3 restringe eventos privilegiados e corrige RPCs legados',()=>{
-  const sql=read('supabase-table-session-v2.7.3-migration.sql');
+  const sql=read('sql/historico/supabase-table-session-v2.7.3-migration.sql');
   assert.match(sql,/v_type in \('chat','dice','token_add','token_move','token_remove'\)/);
   assert.match(sql,/v_type in \('control','scene','master_notice','reveal'\)/);
   assert.match(sql,/GM_EVENT_REQUIRED/);
@@ -112,7 +112,7 @@ test('mudança de papel em tempo real recalcula autoridade e arquivamento força
 });
 
 test('totens usam propriedade autenticada e ciclo add move remove compartilhado',()=>{
-  const script=read('js/script.js'),tools=read('js/master-tools.js'),sql=read('supabase-table-session-v2.7.3-migration.sql');
+  const script=read('js/script.js'),tools=read('js/master-tools.js'),sql=read('sql/historico/supabase-table-session-v2.7.3-migration.sql');
   assert.match(script,/ownerAuthId/);
   assert.match(script,/send\?\.\('token_add'/);
   assert.match(script,/send\?\.\('token_remove'/);

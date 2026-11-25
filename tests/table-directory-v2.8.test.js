@@ -30,7 +30,7 @@ test('Ancoragem oferece Diretório de Fendas universal e criação com três mod
 });
 
 test('Diretório público é sanitizado e full tables continuam membership-only',()=>{
-  const sql=read('supabase-table-directory-v2.8-migration.sql');
+  const sql=read('sql/historico/supabase-table-directory-v2.8-migration.sql');
   const rpc=sql.slice(sql.indexOf('create or replace function public.fetch_public_table_directory'),sql.indexOf('-- ---------------------------------------------------------------------------\n-- 6)'));
   assert.match(rpc,/description text/);
   assert.match(rpc,/allowed_expansions jsonb/);
@@ -44,7 +44,7 @@ test('Diretório público é sanitizado e full tables continuam membership-only'
 });
 
 test('Pré-requisitos são validados no servidor para modo, expansão, classe e capacidade',()=>{
-  const sql=read('supabase-table-directory-v2.8-migration.sql');
+  const sql=read('sql/historico/supabase-table-directory-v2.8-migration.sql');
   const helper=sql.slice(sql.indexOf('create or replace function private.table_join_rejection'),sql.indexOf('-- ---------------------------------------------------------------------------\n-- 5)'));
   for(const token of ['GAME_MODE_MISMATCH','EXPANSION_MISMATCH','CLASS_MISMATCH','TABLE_FULL','CHARACTER_NOT_OWNED','MEMBER_BANNED']) assert.match(helper,new RegExp(token));
   assert.match(helper,/v_mode='hybrid'/);
@@ -54,7 +54,7 @@ test('Pré-requisitos são validados no servidor para modo, expansão, classe e 
 });
 
 test('Código privado e convites não contornam validação e admissões são serializadas',()=>{
-  const sql=read('supabase-table-directory-v2.8-migration.sql');
+  const sql=read('sql/historico/supabase-table-directory-v2.8-migration.sql');
   const join=sql.slice(sql.indexOf('create or replace function public.join_table_secure'),sql.indexOf('-- ---------------------------------------------------------------------------\n-- 11)'));
   assert.match(join,/private\.table_join_rejection/);
   assert.match(join,/CHARACTER_NOT_OWNED/);
@@ -67,7 +67,7 @@ test('Código privado e convites não contornam validação e admissões são se
 });
 
 test('Solicitações e convites têm fluxo persistente e lobby privado de atualização',()=>{
-  const sql=read('supabase-table-directory-v2.8-migration.sql');
+  const sql=read('sql/historico/supabase-table-directory-v2.8-migration.sql');
   assert.match(sql,/create table if not exists public\.table_join_requests/);
   assert.match(sql,/create unique index if not exists idx_table_join_requests_pending/);
   assert.match(sql,/create table if not exists public\.table_recruitment_invites/);
@@ -80,7 +80,7 @@ test('Solicitações e convites têm fluxo persistente e lobby privado de atuali
 });
 
 test('Solicitação administrativa usa resolução atômica e frontend limpa resposta vazia',()=>{
-  const sql=read('supabase-table-directory-v2.8-migration.sql');
+  const sql=read('sql/historico/supabase-table-directory-v2.8-migration.sql');
   const js=read('js/script.js');
   assert.match(sql,/create or replace function public\.resolve_admin_request_secure/);
   assert.match(sql,/for update/);

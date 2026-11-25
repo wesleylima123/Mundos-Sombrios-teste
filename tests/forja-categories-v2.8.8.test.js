@@ -59,7 +59,7 @@ test('sandbox integrado possui runtime integral e namespace próprio',{skip:!has
 
 
 test('supabase-production consolidado inclui presença, status ao vivo e sumários atuais',()=>{
-  const sql=read('supabase-production.sql');
+  const sql=read('sql/historico/supabase-production.sql');
   for(const fn of ['touch_table_presence','set_table_live_status','fetch_my_table_summaries','delete_table_secure']) assert.match(sql,new RegExp(`function public\\.${fn}`));
   assert.match(sql,/CHARACTER_CATEGORY_REQUIRED/);
 });

@@ -39,8 +39,8 @@ test('Escudo preserva contexto de retorno à Mesa V3',()=>{
 
 test('V2.7.3 inclui hardening complementar sem recriar a base',()=>{
   assert.match(read('VERSION.txt').trim(),/^2\.(?:7|8|9|10|11)\./);
-  assert.equal(fs.existsSync('supabase-table-session-v2.7.3-migration.sql'),true);
-  const sql=read('supabase-table-session-v2.7.3-migration.sql');
+  assert.equal(fs.existsSync('sql/historico/supabase-table-session-v2.7.3-migration.sql'),true);
+  const sql=read('sql/historico/supabase-table-session-v2.7.3-migration.sql');
   assert.match(sql,/append_table_event_v3/);
   assert.match(sql,/GM_EVENT_REQUIRED/);
   assert.match(sql,/EVENT_TYPE_NOT_ALLOWED/);

@@ -76,7 +76,7 @@ test('Simulador aceita apenas os dez comandos econômicos predefinidos',()=>{
 });
 
 test('Migração RLS protege estado do Escudo e pedidos cartográficos no banco',()=>{
-  const sql=read('supabase-atlas-v2.6-migration.sql');
+  const sql=read('sql/historico/supabase-atlas-v2.6-migration.sql');
   assert.match(sql,/ms_site_settings_public_select/);
   assert.match(sql,/key not like 'master_shield_%'/);
   assert.match(sql,/ms_site_settings_shield_select/);

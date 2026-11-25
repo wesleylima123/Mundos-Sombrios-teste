@@ -6,7 +6,7 @@
  * 2) substitua SUPABASE_PUBLISHABLE_KEY pela chave publishable/anon pública;
  * 3) NUNCA coloque service_role aqui.
  *
- * Se esta configuração for removida manualmente, o fallback local também permanece suportado.
+ * Não existe modo offline nesta versão: sem URL e chave válidas, login, fichas e mesas não funcionam.
  */
 (function(){
   'use strict';

@@ -21,7 +21,7 @@ test('Cliente expõe resolução, silenciamento e exclusão administrativa segur
 });
 
 test('Patch SQL reconhece owner profile e owner auth legado e restringe exclusão a dono ou ADM',()=>{
-  const sql=read('supabase-bugfix-v2.8.2-migration.sql');
+  const sql=read('sql/historico/supabase-bugfix-v2.8.2-migration.sql');
   assert.match(sql,/tb\.owner_id=auth\.uid\(\)::text/);
   assert.match(sql,/tb\.owner_id=\(select p\.id from public\.profiles p where p\.auth_user_id=auth\.uid\(\)/);
   assert.match(sql,/create or replace function public\.can_manage_table/);
@@ -32,6 +32,6 @@ test('Patch SQL reconhece owner profile e owner auth legado e restringe exclusã
 });
 
 test('supabase-production consolidado contém as RPCs administrativas da V2.8.2',()=>{
-  const sql=read('supabase-production.sql');
+  const sql=read('sql/historico/supabase-production.sql');
   for(const fn of ['resolve_admin_request_secure','silence_admin_request_secure','delete_admin_request_secure']) assert.match(sql,new RegExp(`create or replace function public\\.${fn}`));
 });

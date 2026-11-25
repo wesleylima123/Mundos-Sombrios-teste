@@ -28,7 +28,7 @@ test('Interface declara claramente os quatro pré-requisitos e deixa demais camp
 });
 
 test('Backend atual aplica os quatro pré-requisitos e preserva Soul Economy',()=>{
-  const sql=read('supabase-v2.8.8-category-required.sql');
+  const sql=read('sql/historico/supabase-v2.8.8-category-required.sql');
   for(const guard of ['CHARACTER_NAME_REQUIRED','CHARACTER_CATEGORY_REQUIRED','CHARACTER_EXPANSION_REQUIRED','CHARACTER_CLASS_REQUIRED']) assert.match(sql,new RegExp(guard));
   assert.match(sql,/soul_character_capacity/);
   assert.match(sql,/soul_has_expansion/);

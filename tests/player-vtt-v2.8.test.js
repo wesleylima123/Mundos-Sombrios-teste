@@ -28,7 +28,7 @@ test('Mesa mantém três janelas próprias e comunicação independente para Jog
 });
 
 sandboxTest('Jogador recebe roster público da própria mesa sem receber fichas completas alheias',async()=>{
-  const sql=read('supabase-table-directory-v2.8-migration.sql');
+  const sql=read('sql/historico/supabase-table-directory-v2.8-migration.sql');
   assert.match(sql,/create or replace function public\.fetch_table_roster\(p_table_id text\)[\s\S]*public\.can_access_table_session\(p_table_id\)/);
   const script=read('js/script.js');
   assert.match(script,/Games\.roster\(currentTableData\.id\)/);
